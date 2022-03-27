@@ -3,8 +3,8 @@ Type Coordinate
     y As Double
 End Type
 
-Sub cut_lines()
-    '// 代码运行时关闭窗口刷新
+Sub ShapesRange()
+'// 代码运行时关闭窗口刷新
     Application.Optimization = True
     ActiveDocument.Unit = cdrMillimeter
     Dim OrigSelection As ShapeRange
@@ -44,14 +44,11 @@ Sub cut_lines()
             Next i
         End If
     Next Target
-
-    Dim s As Shape   '// 使用 ObjectData 搜索裁切线，群组裁切线
-    For Each s In ActivePage.Shapes
-        If "cut_line" = s.ObjectData("name").Value Then
-            ActiveDocument.AddToSelection s
-        End If
-    Next s
+  
+    '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
+    ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
     ActiveSelection.Group
+    ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
     
     '// 代码操作结束恢复窗口刷新
     Application.Optimization = False
@@ -83,8 +80,6 @@ Private Function draw_line(dot As Coordinate, border As Variant)
 End Function
 
 Private Function set_line_color(line As Shape)
-    '// 设置线宽和注册色，添加物件名为最后群组使用
-    line.Outline.SetProperties 0.1
-    line.Outline.SetProperties Color:=CreateRegistrationColor
-    line.ObjectData("Name").Value = "cut_line"
+    '// 设置线宽和注册色
+   line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
 End Function
