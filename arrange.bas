@@ -60,7 +60,7 @@ ErrorHandler:
     On Error Resume Next
 End Sub
 
-            Private Function GetClipBoardString() As String
+Private Function GetClipBoardString() As String
     On Error Resume Next
     Dim MyData As New DataObject
     GetClipBoardString = ""

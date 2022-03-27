@@ -1,13 +1,21 @@
-Attribute VB_Name = "剪贴板尺寸建立矩形"
-Public O_O As Double
+'// Attribute VB_Name = "剪贴板尺寸建立矩形"
+Type Coordinate
+    x As Double
+    y As Double
+End Type
+Public O_O As Coordinate
 
 Sub start()
+    '// 坐标原点
+    O_O.x = 0:   O_O.y = 0
+    Dim ost As ShapeRange
+    Set ost = ActiveSelectionRange
+
+    O_O.x = ost.LeftX
+    O_O.y = ost.BottomY - 50    '选择物件 下移动 50mm
+
     '// 建立矩形 Width  x Height 单位 mm
     ' Rectangle 101, 151
-    
-    ' setRectangle 200, 200
-    
-    O_O = 0
     Dim Str, arr, n
     Str = GetClipBoardString
 
@@ -21,7 +29,6 @@ Sub start()
     Do While InStr(Str, "  ") '多个空格换成一个空格
         Str = VBA.Replace(Str, "  ", " ")
     Loop
-    
     arr = Split(Str)
     
     Dim x As Double
@@ -33,22 +40,19 @@ Sub start()
         
         If x > 0 And y > 0 Then
             Rectangle x, y
-            O_O = O_O + x + 30
+            O_O.x = O_O.x + x + 30
         End If
-        
     Next
-
 End Sub
 
 Private Function Rectangle(Width As Double, Height As Double)
-
     ActiveDocument.Unit = cdrMillimeter
     Dim size As Shape
     Dim d As Document
     Dim s1 As Shape
-    
+
     '// 建立矩形 Width  x Height 单位 mm
-    Set s1 = ActiveLayer.CreateRectangle(O_O, 0, O_O + Width, Height)
+    Set s1 = ActiveLayer.CreateRectangle(O_O.x, O_O.y, O_O.x + Width, O_O.y - Height)
     
     '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
     s1.Fill.ApplyNoFill
@@ -56,15 +60,11 @@ Private Function Rectangle(Width As Double, Height As Double)
         
     sw = s1.SizeWidth
     sh = s1.SizeHeight
-  
-    Text = "建立矩形:" + Str(sw) + " x" + Str(sh) + "mm"
-    ' MsgBox Text
-    
+
     Text = Trim(Str(sw)) + "x" + Trim(Str(sh)) + "mm"
     Set d = ActiveDocument
-    Set size = d.ActiveLayer.CreateArtisticText(O_O + sw / 2 - 25, sh + 10, Text)
+    Set size = d.ActiveLayer.CreateArtisticText(O_O.x + sw / 2 - 25, O_O.y + 10, Text)  '// O_O.y + 10  标注尺寸上移 10mm
     size.Fill.UniformColor.CMYKAssign 0, 100, 100, 0
-
 End Function
 
 Private Function setRectangle(Width As Double, Height As Double)
@@ -83,7 +83,6 @@ Private Function setRectangle(Width As Double, Height As Double)
 
 End Function
 
-
 Private Function GetClipBoardString() As String
     On Error Resume Next
     Dim MyData As New DataObject
@@ -92,4 +91,3 @@ Private Function GetClipBoardString() As String
     GetClipBoardString = MyData.GetText
     Set MyData = Nothing
 End Function
-
