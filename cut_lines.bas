@@ -3,9 +3,10 @@ Type Coordinate
     y As Double
 End Type
 
-Sub ShapesRange()
+Sub Cut_lines()
 '// 代码运行时关闭窗口刷新
     Application.Optimization = True
+    ActiveDocument.BeginCommandGroup  '一步撤消'
     ActiveDocument.Unit = cdrMillimeter
     Dim OrigSelection As ShapeRange
     Set OrigSelection = ActiveSelectionRange
@@ -45,6 +46,7 @@ Sub ShapesRange()
         End If
     Next Target
   
+    ActiveDocument.EndCommandGroup
     '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
     ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
     ActiveSelection.Group

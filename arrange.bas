@@ -4,8 +4,8 @@ Sub arrange()
     ActiveDocument.Unit = cdrMillimeter
     row = 3     ' 拼版 3 x 4
     List = 4
-    sp = 0       '间隔 0mm
-    
+    sp = 0       '间隔 0mm 
+
     Dim Str, arr, n
     Str = GetClipBoardString
 
@@ -16,20 +16,19 @@ Sub arrange()
     Str = VBA.Replace(Str, Chr(13), " ")
     Str = VBA.Replace(Str, Chr(9), " ")
     
-    Do While InStr(Str, "  ") '多个空格换成一个空格
+    Do While InStr(Str, "  ")    '多个空格换成一个空格
         Str = VBA.Replace(Str, "  ", " ")
     Loop
     
     arr = Split(Str)
 
-    Dim x As Double
-    Dim y As Double
-    x = Val(arr(0))
-    y = Val(arr(1))
-    
+    Dim x As Double, y As Double
+    x = Val(arr(0)):    y = Val(arr(1))
+    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    List = Int(ActiveDocument.Pages.First.SizeHeight / y)
+
     If UBound(arr) > 2 Then
-    row = Val(arr(2))     ' 拼版 3 x 4
-    List = Val(arr(3))
+    row = Val(arr(2)):  List = Val(arr(3))
         If UBound(arr) > 3 Then
             sp = Val(arr(4))       '间隔
         End If
@@ -44,9 +43,8 @@ Sub arrange()
     s1.Outline.SetProperties 0.3, OutlineStyles(0), CreateCMYKColor(0, 100, 0, 0), ArrowHeads(0), _
         ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
 
-    sw = x
-    sh = y
-    
+    sw = x:  sh = y
+
     '// StepAndRepeat 方法在范围内创建多个形状副本
     Dim dup1 As ShapeRange
     Set dup1 = s1.StepAndRepeat(row - 1, sw + sp, 0#)

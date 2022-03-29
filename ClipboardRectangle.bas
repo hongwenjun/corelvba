@@ -31,6 +31,7 @@ Sub start()
     Loop
     arr = Split(Str)
     
+    ActiveDocument.BeginCommandGroup  '一步撤消'
     Dim x As Double
     Dim y As Double
     For n = LBound(arr) To UBound(arr) - 1 Step 2
@@ -43,6 +44,7 @@ Sub start()
             O_O.x = O_O.x + x + 30
         End If
     Next
+    ActiveDocument.EndCommandGroup
 End Sub
 
 Private Function Rectangle(Width As Double, Height As Double)

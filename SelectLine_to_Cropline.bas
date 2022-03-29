@@ -5,6 +5,8 @@ Sub SelectLine_to_Cropline()
     Application.Optimization = True
     ActiveDocument.Unit = cdrMillimeter
     
+    ActiveDocument.BeginCommandGroup  '一步撤消'
+    
     '// 获得页面中心点 x,y
     px = ActiveDocument.Pages.First.CenterX
     py = ActiveDocument.Pages.First.CenterY
@@ -28,7 +30,7 @@ Sub SelectLine_to_Cropline()
         sh = s.SizeHeight
        
        '// 判断横线(高度小于宽度)，在页面左边还是右边
-       If sh < sw Then
+       If sh <= sw Then
         s.Delete
         If cx < px Then
             Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + line_len, cy)
@@ -51,9 +53,9 @@ Sub SelectLine_to_Cropline()
         line.Outline.SetProperties Color:=CreateRegistrationColor
     Next s
     
+    ActiveDocument.EndCommandGroup
     '// 代码操作结束恢复窗口刷新
     Application.Optimization = False
     ActiveWindow.Refresh
     Application.Refresh
 End Sub
-
