@@ -255,3 +255,29 @@ sh.AlignToPage cdrAlignLeft + cdrAlignBottom
 sh.Duplicate 0, 0
 sh.Rotate 180
 sh.AlignToPage cdrAlignRight + cdrAlignTop
+
+
+'// 获得选择物件大小信息
+Sub get_all_size()
+  ActiveDocument.Unit = cdrMillimeter
+  Set fs = CreateObject("Scripting.FileSystemObject")
+  Set f = fs.CreateTextFile("R:\size.txt", True)
+  Dim sh As Shape, shs As Shapes
+  Set shs = ActiveSelection.Shapes
+  Dim s As String
+  For Each sh In shs
+    size = Trim(Str(Int(sh.SizeWidth + 0.5))) + "x" + Trim(Str(Int(sh.SizeHeight + 0.5))) + "mm"
+    f.WriteLine (size)
+    s = s + size + vbNewLine
+  Next sh
+  f.Close
+  MsgBox "输出物件尺寸信息到文件" & "R:\size.txt" & vbNewLine & s
+  WriteClipBoard s
+End Sub
+
+Private Function WriteClipBoard(s As String)
+  On Error Resume Next
+  Dim MyData As New DataObject
+  MyData.SetText s
+  MyData.PutInClipboard
+End Function
