@@ -13,7 +13,7 @@ Sub Auto_ColorMark()
     '// 导入色阶条中线对准线标记文件 ColorMark.cdr 解散群组
     doc.ActiveLayer.Import Path & "GMS\ColorMark.cdr"
     ActiveDocument.ReferencePoint = cdrBottomMiddle
-    ActiveDocument.Selection.SetPosition px, -100
+    ' ActiveDocument.Selection.SetPosition px, -100
     ActiveDocument.Selection.Ungroup
 
     Dim sh As Shape, shs As Shapes
@@ -31,16 +31,16 @@ Sub Auto_ColorMark()
     ElseIf "ColorStrip" = sh.ObjectData("MarkName").Value Then
         put_ColorStrip sh   ' 放置彩色色阶条
 
-        ' sh.Delete  ' 工厂定置不用色阶条
+       ' sh.Delete  ' 工厂定置不用色阶条
 
     ElseIf "ColorMark" = sh.ObjectData("MarkName").Value Then
         ' CMYK四色标记放置咬口
         If (px > py) Then
-        sh.SetPosition px + 30#, 0
+        sh.SetPosition px + 25#, 0
         Else
         sh.Rotate 270#
         ActiveDocument.ReferencePoint = cdrBottomLeft
-        sh.SetPosition 0, py - 52#
+        sh.SetPosition 0, py - 48#
         End If
     Else
         sh.Delete ' 没找到标记 ColorMark 删除
@@ -52,6 +52,11 @@ Sub Auto_ColorMark()
     put_page_size
     put_page_line
     
+    '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
+    ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
+    ActiveSelection.Group
+    ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
+
     '// 代码操作结束恢复窗口刷新
     ActiveDocument.EndCommandGroup
     Application.Optimization = False
@@ -75,8 +80,14 @@ Private Sub set_page_size()
     sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
 End Sub
 
+Private Function set_line_color(line As Shape)
+    '// 设置线宽和注册色
+   line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
+End Function
+
 Private Function put_target_line(sh As Shape)
     ' 在页面四角放置套准标记线  Set sh = ActiveDocument.Selection
+    set_line_color sh
     sh.AlignToPage cdrAlignLeft + cdrAlignTop
     sh.Duplicate 0, 0
     sh.Rotate 180
@@ -91,6 +102,7 @@ End Function
 
 Private Function put_center_line(sh As Shape)
     ' 在页面四边放置中线 Set sh = ActiveDocument.Selection
+    set_line_color sh
     sh.AlignToPage cdrAlignHCenter + cdrAlignTop
     sh.Duplicate 0, 0
     sh.Rotate 180
@@ -108,22 +120,22 @@ Private Function put_ColorStrip(sh As Shape)
     sh.OrderToBack
   If ActivePage.SizeWidth >= ActivePage.SizeHeight Then
     sh.AlignToPage cdrAlignLeft + cdrAlignTop
-    sh.Duplicate 10, 0
+    sh.Duplicate 5, 0
     sh.AlignToPage cdrAlignRight + cdrAlignTop
     sh.Duplicate -25, 0
     sh.Rotate 90
     sh.AlignToPage cdrAlignLeft + cdrAlignBottom
-    sh.Duplicate 0, 10
+    sh.Duplicate 0, 5
     sh.AlignToPage cdrAlignRight + cdrAlignBottom
-    sh.Move 0, 10
+    sh.Move 0, 5
   Else
     sh.AlignToPage cdrAlignLeft + cdrAlignTop
-    sh.Duplicate 10, 0
+    sh.Duplicate 5, 0
     sh.AlignToPage cdrAlignLeft + cdrAlignBottom
-    sh.Duplicate 10, 0
+    sh.Duplicate 5, 0
     sh.Rotate 270
     sh.AlignToPage cdrAlignRight + cdrAlignTop
-    sh.Duplicate 0, -10
+    sh.Duplicate 0, -5
     sh.AlignToPage cdrAlignRight + cdrAlignBottom
     sh.Move 0, 25
   End If
