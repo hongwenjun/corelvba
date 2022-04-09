@@ -31,14 +31,19 @@ Private Sub get_little_points()
     sh.BreakApartEx
   Next sh
   
-  ActivePage.Shapes.FindShapes(Query:="@width < {" & red_point_Size & " mm} and @width > {0.1 mm} and @height <{" & red_point_Size & " mm} and @height >{0.1 mm}").CreateSelection
-  Set sh = ActiveSelection.Group
-  sh.Outline.SetProperties 0.03, Color:=CreateCMYKColor(0, 100, 100, 0)
-  
-  Set OrigSelection = ActiveSelectionRange
-  OrigSelection.ApplyUniformFill CreateCMYKColor(0, 100, 100, 0)
-  sh.Move 0, 0.015
-  
+  ActiveDocument.ClearSelection
+  Dim sr As ShapeRange
+  Set sr = ActivePage.Shapes.FindShapes(Query:="@width < {" & red_point_Size & " mm} and @width > {0.1 mm} and @height <{" & red_point_Size & " mm} and @height >{0.1 mm}")
+  If sr.Count <> 0 Then
+    sr.CreateSelection
+    Set sh = ActiveSelection.Group
+    sh.Outline.SetProperties 0.03, Color:=CreateCMYKColor(0, 100, 100, 0)
+    sr.ApplyUniformFill CreateCMYKColor(0, 100, 100, 0)
+    sh.Move 0, 0.015
+  Else
+    MsgBox "文件中小圆点足够大，不需要加粗!"
+  End If
+
   ActivePage.Shapes.FindShapes(Query:="@colors.find(CMYK(50, 0, 0, 0))").CreateSelection
   ActiveSelection.Group
   
