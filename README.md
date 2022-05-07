@@ -1,17 +1,13 @@
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
-
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
-
-
-## [CorelDRAW VBA 拼版功能-自动添加裁切线功能](https://262235.xyz/index.php/archives/1006/)
-
-
-## [蘭雅CorelVBA工具箱工具栏UI功能导图](https://262235.xyz/index.php/archives/1036/)
-![](https://262235.xyz/usr/uploads/2022/05/756737974.jpg)
 
 ## 实际使用演示视频
 ![](https://262235.xyz/usr/uploads/2022/05/1830503659.gif)
 
+## [蘭雅CorelVBA工具箱工具栏UI功能导图](https://262235.xyz/index.php/archives/1036/)
+![](https://262235.xyz/usr/uploads/2022/05/756737974.jpg)
+
+## [CorelDRAW VBA 拼版功能-自动添加裁切线功能](https://262235.xyz/index.php/archives/1006/)
 
 物件排列拼版简单代码 和 自动添加裁切线功能是两个独立的功能，可能各自单独使用。自动裁切线演...
 
