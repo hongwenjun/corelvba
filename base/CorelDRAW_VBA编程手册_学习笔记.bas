@@ -281,3 +281,61 @@ Private Function WriteClipBoard(s As String)
   MyData.SetText s
   MyData.PutInClipboard
 End Function
+
+' GetSetting 函数
+' 从 Windows 注册表中 或 (Macintosh中)应用程序初始化文件中的信息的应用程序项目返回注册表项设置值。                                                                                    
+Sub 加ID()
+ActiveDocument.Unit = cdrMillimeter
+Dim n As String
+Dim s1 As Shape
+Dim s As Shape
+Set s = ActiveShape
+If s Is Nothing Then
+    MsgBox "请选择一个图形"
+    Exit Sub
+End If
+n = vba.GetSetting("addID", "nm", "id")
+If n = "" Then
+    n = "1"
+    vba.SaveSetting "addID", "nm", "id", "1"
+Else
+    n = CStr(Val(vba.GetSetting("addID", "nm", "id")) + 1)
+    vba.SaveSetting "addid", "nm", "id", n
+End If
+Set s1 = ActiveLayer.CreateArtisticText(0, 0, "ID " & n, , , , 30)
+s1.CenterX = s.CenterX
+s1.CenterY = s.CenterY
+End Sub
+
+'// 查找文本选择
+Sub find_id()
+    Find_Text "ID"
+End Sub
+                                                                                                            
+Public Function Find_Text(s_s As String)
+  Dim s As Shape
+  For Each s In ActivePage.FindShapes(, cdrTextShape)
+  '  这里添加 文字判断
+    If s.Text.Type = cdrArtisticText And InStr(s.Text.Story, s_s) <> 0 Then
+     ' s.Text.Story = "找到 ID"
+      s.AddToSelection
+    End If
+  Next s
+End Function
+
+'// 屏幕分辨率                                                                                                   
+Public SystemX As Long
+Public SystemY As Long
+
+Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+
+Public Function filePath()
+  filePath = Application.Path & "GMS"
+End Function
+
+Function GetSysM(SystemX As Long, SystemY As Long)
+    Dim XVal As Long, YVal As Long
+    SystemX = GetSystemMetrics(0)
+    SystemY = GetSystemMetrics(1)
+    GetSysM = SystemX & "#" & SystemY
+End Function
