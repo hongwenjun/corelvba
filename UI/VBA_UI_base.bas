@@ -54,7 +54,8 @@ End Sub
 
 Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     If Button Then
-        Me.Move Me.Left - mX + X, Me.Top - mY + Y
+    Me.Left = Me.Left - mx + x
+    Me.Top = Me.Top - my + y
     End If
 End Sub
 

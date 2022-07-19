@@ -53,7 +53,8 @@ End Sub
 
 Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
   If Button Then
-    Me.Move Me.Left - mX + x, Me.TOP - mY + y
+    Me.Left = Me.Left - mx + x
+    Me.Top = Me.Top - my + y
   End If
 End Sub
 
