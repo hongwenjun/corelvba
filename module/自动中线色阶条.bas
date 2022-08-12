@@ -168,7 +168,7 @@ Private Function put_page_size()
     ' 添加文字 页面大小和文件名
     Dim st As Shape
     size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
-    size = size & " " & ActiveDocument.FileName & " " & Date & vbNewLine & "Https://262235.xyz 需要您的支持!"
+    size = size & " " & ActiveDocument.FileName & " " & Date '   & vbNewLine & "Https://262235.xyz 需要您的支持!"
     Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
 End Function
 

@@ -21,7 +21,11 @@ Sub Cut_lines()
   set_lx = OrigSelection.LeftX:   set_rx = OrigSelection.RightX
   set_by = OrigSelection.BottomY: set_ty = OrigSelection.TopY
   set_cx = OrigSelection.CenterX: set_cy = OrigSelection.CenterY
-  radius = 8:  border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius)
+  radius = 8
+  Bleed = API.GetSet("Bleed")
+  Line_len = API.GetSet("Line_len")
+  Outline_Width = API.GetSet("Outline_Width")
+  border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius, Bleed, Line_len)
   
   ' 创建边界矩形，用来添加角线
   Set sbd = ActiveLayer.CreateRectangle(set_lx, set_by, set_rx, set_ty)
@@ -57,7 +61,7 @@ Sub Cut_lines()
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
   ActiveSelection.Group
-  ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
+  ActiveSelection.Outline.SetProperties Outline_Width, Color:=CreateRegistrationColor
   
   ActiveDocument.EndCommandGroup
   '// 代码操作结束恢复窗口刷新
@@ -66,24 +70,24 @@ Sub Cut_lines()
   Application.Refresh
 End Sub
 
-'范围边界 border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius)
+'范围边界 border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius, Bleed, Line_len)
 Private Function draw_line(dot As Coordinate, border As Variant)
-    Bleed = 2:  line_len = 3:  radius = border(6)
+    radius = border(6): Bleed = border(7):  Line_len = border(8)
     Dim line As Shape
 
     If Abs(dot.y - border(3)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, border(3) + Bleed, dot.x, border(3) + (line_len + Bleed))
+        Set line = ActiveLayer.CreateLineSegment(dot.x, border(3) + Bleed, dot.x, border(3) + (Line_len + Bleed))
         set_line_color line
     ElseIf Abs(dot.y - border(2)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, border(2) - Bleed, dot.x, border(2) - (line_len + Bleed))
+        Set line = ActiveLayer.CreateLineSegment(dot.x, border(2) - Bleed, dot.x, border(2) - (Line_len + Bleed))
         set_line_color line
     End If
     
     If Abs(dot.x - border(1)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.y, border(1) + (line_len + Bleed), dot.y)
+        Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.y, border(1) + (Line_len + Bleed), dot.y)
         set_line_color line
     ElseIf Abs(dot.x - border(0)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.y, border(0) - (line_len + Bleed), dot.y)
+        Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.y, border(0) - (Line_len + Bleed), dot.y)
         set_line_color line
     End If
 
@@ -91,29 +95,29 @@ End Function
 
 '// 旧版本
 Private Function draw_line_按点基准(dot As Coordinate, border As Variant)
-    Bleed = 2:  line_len = 3:  radius = border(6)
+    Bleed = 2:  Line_len = 3:  radius = border(6)
     Dim line As Shape
 
     If Abs(dot.y - border(3)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y + Bleed, dot.x, dot.y + (line_len + Bleed))
+        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y + Bleed, dot.x, dot.y + (Line_len + Bleed))
         set_line_color line
     ElseIf Abs(dot.y - border(2)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y - Bleed, dot.x, dot.y - (line_len + Bleed))
+        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y - Bleed, dot.x, dot.y - (Line_len + Bleed))
         set_line_color line
     End If
     
     If Abs(dot.x - border(1)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x + Bleed, dot.y, dot.x + (line_len + Bleed), dot.y)
+        Set line = ActiveLayer.CreateLineSegment(dot.x + Bleed, dot.y, dot.x + (Line_len + Bleed), dot.y)
         set_line_color line
     ElseIf Abs(dot.x - border(0)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x - Bleed, dot.y, dot.x - (line_len + Bleed), dot.y)
+        Set line = ActiveLayer.CreateLineSegment(dot.x - Bleed, dot.y, dot.x - (Line_len + Bleed), dot.y)
         set_line_color line
     End If
 
 End Function
 
 Private Function set_line_color(line As Shape)
-    '// 设置线宽和注册色
+    '// 设置轮廓线注册色
    line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
 End Function
 

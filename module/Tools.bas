@@ -28,9 +28,12 @@ Public Function 傻瓜火车排列()
 ' X4 不支持 ShapeRange.sort
 #End If
 
-  ActiveDocument.ReferencePoint = cdrBottomLeft
+  ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
+    '' 底对齐 If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
+    '' 改成顶对齐 2022-08-10
+    ActiveDocument.ReferencePoint = cdrTopLeft + cdrBottomTop
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).TopY
     cnt = cnt + 1
   Next s
 
@@ -80,7 +83,7 @@ Public Function TextShape_ConvertToCurves()
   ActiveWindow.Refresh:    Application.Refresh
 End Function
 
-
+'' 复制物件
 Public Function copy_shape()
   Dim OrigSelection As ShapeRange
   Set OrigSelection = ActiveSelectionRange
@@ -88,7 +91,7 @@ Public Function copy_shape()
 
 End Function
 
-
+'' 旋转物件角度
 Public Function Rotate_Shapes(n As Double)
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
@@ -105,6 +108,7 @@ Public Function Rotate_Shapes(n As Double)
   ActiveWindow.Refresh:    Application.Refresh
 End Function
 
+'' 得到物件尺寸
 Public Function get_shape_size(ByRef sx As Double, ByRef sy As Double)
   ActiveDocument.Unit = cdrMillimeter
   Dim sh As ShapeRange
@@ -115,6 +119,7 @@ Public Function get_shape_size(ByRef sx As Double, ByRef sy As Double)
   sy = Int(sy * 100 + 0.5) / 100
 End Function
 
+'' 批量设置物件尺寸
 Public Function Set_Shapes_size(ByRef sx As Double, ByRef sy As Double)
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
@@ -187,6 +192,7 @@ Public Function Python二维码QRCode()
     Shell cmd_line
 End Function
 
+'' QRCode二维码制作
 Public Function QRCode_replace()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -214,17 +220,18 @@ Public Function QRCode_replace()
     sh.Delete
     
   Next sh
-
+  
     '// 代码操作结束恢复窗口刷新
     ActiveDocument.EndCommandGroup
     Application.Optimization = False
     ActiveWindow.Refresh:    Application.Refresh
 Exit Function
 ErrorHandler:
-    Application.Optimization = False
-    On Error Resume Next
+  Application.Optimization = False
+  On Error Resume Next
 End Function
 
+'' QRCode二维码转矢量图
 Public Function QRCode_to_Vector()
   On Error GoTo ErrorHandler
   
@@ -236,9 +243,37 @@ Public Function QRCode_to_Vector()
     .DeleteOriginalObject = True
     .Finish
   End With
-
-  
+ 
 Exit Function
 ErrorHandler:
     On Error Resume Next
+End Function
+
+'' 选择多物件，组合然后拆分线段，为角线爬虫准备
+Public Function Split_Segment()
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
+  Dim ssr As ShapeRange
+  Set ssr = ActiveSelectionRange
+  Dim s As Shape
+  Dim nr As NodeRange
+  Dim nd As Node
+  
+  Set s = ssr.Combine
+  Set nr = s.Curve.Nodes.All
+  
+  nr.BreakApart
+  s.BreakApartEx
+'  For Each nd In nr
+'    nd.BreakApart
+'  Next nd
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
 End Function

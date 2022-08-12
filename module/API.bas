@@ -1,12 +1,28 @@
 Attribute VB_Name = "API"
+Public Function GetSet(s As String)
+  Bleed = Val(GetSetting("262235.xyz", "Settings", "Bleed", "2.0"))
+  Line_len = Val(GetSetting("262235.xyz", "Settings", "Line_len", "3.0"))
+  Outline_Width = Val(GetSetting("262235.xyz", "Settings", "Outline_Width", "0.2"))
+' Debug.Print Bleed, Line_len, Outline_Width
+
+  If s = "Bleed" Then
+    GetSet = Bleed
+  ElseIf s = "Line_len" Then
+    GetSet = Line_len
+  ElseIf s = "Outline_Width" Then
+    GetSet = Outline_Width
+  End If
+  
+End Function
+
 '// 获得剪贴板文本字符
 Public Function GetClipBoardString() As String
-    On Error Resume Next
-    Dim MyData As New DataObject
-    GetClipBoardString = ""
-    MyData.GetFromClipboard
-    GetClipBoardString = MyData.GetText
-    Set MyData = Nothing
+  On Error Resume Next
+  Dim MyData As New DataObject
+  GetClipBoardString = ""
+  MyData.GetFromClipboard
+  GetClipBoardString = MyData.GetText
+  Set MyData = Nothing
 End Function
 
 '// 文本字符复制到剪贴板

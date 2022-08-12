@@ -6,10 +6,11 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
   Application.Optimization = True
   ActiveDocument.BeginCommandGroup  '一步撤消'
 
-   '// 设置当前文档 尺寸单位mm 出血和线长
+   '// 设置当前文档 尺寸单位mm 出血和线长和线宽
   ActiveDocument.Unit = cdrMillimeter
-  Bleed = 2
-  line_len = 3
+  Bleed = API.GetSet("Bleed")
+  Line_len = API.GetSet("Line_len")
+  Outline_Width = API.GetSet("Outline_Width")
 
   Dim OrigSelection As ShapeRange
   Set OrigSelection = ActiveSelectionRange
@@ -26,22 +27,22 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
       
       '//  添加裁切线，分别左下-右下-左上-右上
       Dim s2, s3, s4, s5, s6, s7, s8, s9 As Shape
-      Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + line_len), by)
-      Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + line_len))
+      Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
+      Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + Line_len))
 
-      Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + line_len), by)
-      Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + line_len))
+      Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + Line_len), by)
+      Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + Line_len))
 
-      Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + line_len), ty)
-      Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + line_len))
+      Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
+      Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + Line_len))
 
-      Set s8 = ActiveLayer.CreateLineSegment(rx + Bleed, ty, rx + (Bleed + line_len), ty)
-      Set s9 = ActiveLayer.CreateLineSegment(rx, ty + Bleed, rx, ty + (Bleed + line_len))
+      Set s8 = ActiveLayer.CreateLineSegment(rx + Bleed, ty, rx + (Bleed + Line_len), ty)
+      Set s9 = ActiveLayer.CreateLineSegment(rx, ty + Bleed, rx, ty + (Bleed + Line_len))
 
       '// 选中裁切线 群组 设置线宽和注册色
       ActiveDocument.AddToSelection s2, s3, s4, s5, s6, s7, s8, s9
       ActiveSelection.Group
-      ActiveSelection.Outline.SetProperties 0.1
+      ActiveSelection.Outline.SetProperties Outline_Width
       ActiveSelection.Outline.SetProperties Color:=CreateRegistrationColor
   
   Next Target
@@ -67,8 +68,9 @@ Sub SelectLine_to_Cropline()
   '// 获得页面中心点 x,y
   px = ActiveDocument.Pages.First.CenterX
   py = ActiveDocument.Pages.First.CenterY
-  Bleed = 2
-  line_len = 3
+  Bleed = API.GetSet("Bleed")
+  Line_len = API.GetSet("Line_len")
+  Outline_Width = API.GetSet("Outline_Width")
   
   Dim s As Shape
   Dim line As Shape
@@ -90,9 +92,9 @@ Sub SelectLine_to_Cropline()
      If sh <= sw Then
       s.Delete
       If cx < px Then
-          Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + line_len, cy)
+          Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + Line_len, cy)
       Else
-          Set line = ActiveLayer.CreateLineSegment(px * 2, cy, px * 2 - line_len, cy)
+          Set line = ActiveLayer.CreateLineSegment(px * 2, cy, px * 2 - Line_len, cy)
       End If
      End If
    
@@ -100,13 +102,13 @@ Sub SelectLine_to_Cropline()
      If sh > sw Then
       s.Delete
       If cy < py Then
-          Set line = ActiveLayer.CreateLineSegment(cx, 0, cx, 0 + line_len)
+          Set line = ActiveLayer.CreateLineSegment(cx, 0, cx, 0 + Line_len)
       Else
-          Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - line_len)
+          Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - Line_len)
       End If
      End If
   
-      line.Outline.SetProperties 0.1
+      line.Outline.SetProperties Outline_Width
       line.Outline.SetProperties Color:=CreateRegistrationColor
   Next s
   

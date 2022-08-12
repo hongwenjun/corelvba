@@ -1,3 +1,18 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Replace_UI 
+   Caption         =   "使剪贴板上的物件替换选择的目标物件"
+   ClientHeight    =   4560
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   7590
+   OleObjectBlob   =   "Replace_UI.frx":0000
+   StartUpPosition =   1  '所有者中心
+End
+Attribute VB_Name = "Replace_UI"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
@@ -47,8 +62,8 @@ End Sub
 
 Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
   If Button Then
-    mX = x
-    mY = y
+    mx = x
+    my = y
   End If
 End Sub
 

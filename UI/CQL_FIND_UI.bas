@@ -1,3 +1,18 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CQL_FIND_UI 
+   Caption         =   "使剪贴板上的物件替换选择的目标物件"
+   ClientHeight    =   4575
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   7575
+   OleObjectBlob   =   "CQL_FIND_UI.frx":0000
+   StartUpPosition =   1  '所有者中心
+End
+Attribute VB_Name = "CQL_FIND_UI"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
@@ -46,13 +61,15 @@ End Sub
 
 Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
   If Button Then
-    mX = x
-    mY = y
+    mx = x
+    my = y
+
   End If
 End Sub
 
 Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
   If Button Then
+  Debug.Print x, y
     Me.Left = Me.Left - mx + x
     Me.Top = Me.Top - my + y
   End If

@@ -1,6 +1,6 @@
-Attribute VB_Name = "CorelVBA窗口"
+Attribute VB_Name = "CorelVBA´°¿Ú"
 Public Sub start()
-  ToolBar.Show 0
+  Toolbar.Show 0
 ' CorelVBA.show 0
 End Sub
 

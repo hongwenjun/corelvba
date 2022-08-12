@@ -1,3 +1,18 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Toolbar 
+   Caption         =   "Toolbar"
+   ClientHeight    =   3960
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   6750
+   OleObjectBlob   =   "Toolbar.frx":0000
+   StartUpPosition =   1  '所有者中心
+End
+Attribute VB_Name = "ToolBar"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
@@ -18,10 +33,6 @@ Private Const WS_CAPTION As Long = &HC00000
 Private Const WS_EX_DLGMODALFRAME = &H1&
 
 
-Private Sub Close_Icon_Click()
-  Unload Me    ' 关闭
-End Sub
-
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
   Dim Hwnd As Long
@@ -35,20 +46,57 @@ Private Sub UserForm_Initialize()
   IStyle = GetWindowLong(Hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
   SetWindowLong Hwnd, GWL_EXSTYLE, IStyle
   
+With Me
+  .StartUpPosition = 0
+  .Left = 400    ' 设置工具栏位置
+  .Top = 55
+  .Height = 30
+  .Width = 336
+End With
+
+  OutlineKey = True
+  OptKey = True
+
+  ' 读取角线设置
+  Bleed.Text = API.GetSet("Bleed")
+  Line_len.Text = API.GetSet("Line_len")
+  Outline_Width.Text = API.GetSet("Outline_Width")
+End Sub
+
+Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+    If Button Then
+        mx = x
+        my = y
+    End If
+    
   With Me
-  '  .StartUpPosition = 0
-  '  .Left = 500
-  '  .Top = 200
-    .Width = 378
-    .Height = 228
+    .Height = 30
   End With
-  
+
+End Sub
+
+Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button Then
+    Me.Left = Me.Left - mx + x
+    Me.Top = Me.Top - my + y
+  End If
 End Sub
 
 Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Abs(x - 14) < 14 And Abs(y - 14) < 14 And Button = 2 Then
+    Me.Width = 336
+    OPEN_UI_BIG.Left = 322
+    UI.Visible = True
+    LOGO.Visible = False
+    X_EXIT.Visible = False
+    LEFT_BT.Visible = False
+    TOP_BT.Visible = False
+    Exit Sub
+  End If
+  
   If Button Then
-    mX = x
-    mY = y
+      mx = x
+      my = y
   End If
 End Sub
 
@@ -59,132 +107,178 @@ Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVa
   End If
 End Sub
 
-
-Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  Dim c As New Color
+  ' 定义图标坐标pos
   Dim pos_x As Variant
   Dim pos_y As Variant
-  pos_x = Array(307, 27)
-  pos_y = Array(64, 126, 188, 200)
+  pos_y = Array(14)
+  pos_x = Array(14, 41, 67, 94, 121, 148, 174, 201, 228, 254, 281, 308, 334, 361, 388, 415, 441, 468, 495)
 
-  If Abs(x - pos_x(0)) < 30 And Abs(y - pos_y(0)) < 30 Then
-    Call copy_shape_replace
-  ElseIf Abs(x - pos_x(0)) < 30 And Abs(y - pos_y(1)) < 30 Then
-    Call copy_shape_replace_resize
-  ElseIf Abs(x - pos_x(0)) < 30 And Abs(y - pos_y(2)) < 30 Then
-    Call image_replace
-  ElseIf Abs(x - pos_x(1)) < 30 And Abs(y - pos_y(3)) < 30 Then
-    CorelVBA.WebHelp "https://262235.xyz/index.php/tag/vba/"
+  '//扩展键按钮优先  ①右键收缩工具栏   ②右键居中页面    ③右键尺寸取整数    ④右键单色黑中线标记  ⑤右键单色黑中线标记
+  If Abs(x - pos_x(0)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    Me.Width = 30
+    UI.Visible = False
+    LOGO.Visible = True
+    X_EXIT.Visible = True
+    Exit Sub
+
+  ElseIf Abs(x - pos_x(1)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    Tools.居中页面
+    Exit Sub
+
+  ElseIf Abs(x - pos_x(3)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    Tools.尺寸取整
+    Exit Sub
+  
+  ElseIf Abs(x - pos_x(5)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    自动中线色阶条.Auto_ColorMark_K
+    Exit Sub
+  
+  '//分分合合把几个功能按键合并到一起，定义到右键上
+  ElseIf Abs(x - pos_x(4)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    Tools.分分合合
+    Exit Sub
+  
+  ElseIf Abs(x - pos_x(6)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    调用多页合并工具
+  Exit Sub
+  
+  ElseIf Abs(x - pos_x(8)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    '// 扩展工具栏
+    Me.Height = 30 + 45
+  Exit Sub
+  
   End If
   
-  Replace_UI.Hide
+  '// 鼠标单击按钮  按工具栏上图标正常功能
+  If Abs(x - pos_x(0)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    裁切线.start
+    
+  ElseIf Abs(x - pos_x(1)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    剪贴板尺寸建立矩形.start
+    
+  ElseIf Abs(x - pos_x(2)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    裁切线.SelectLine_to_Cropline
+    
+  ElseIf Abs(x - pos_x(3)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    拼版裁切线.arrange
+    
+  ElseIf Abs(x - pos_x(4)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    拼版裁切线.Cut_lines
+    
+  ElseIf Abs(x - pos_x(5)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    自动中线色阶条.Auto_ColorMark
+    
+  ElseIf Abs(x - pos_x(6)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    智能群组和查找.智能群组
+    
+  ElseIf Abs(x - pos_x(7)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    CQL_FIND_UI.Show 0
+    
+  ElseIf Abs(x - pos_x(8)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    Replace_UI.Show 0
+    
+  ElseIf Abs(x - pos_x(9)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    Tools.TextShape_ConvertToCurves
+    
+  ElseIf Abs(x - pos_x(10)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    LEFT_BT.Visible = True
+    TOP_BT.Visible = True
+    
+  ElseIf Abs(x - pos_x(11)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    Me.Width = 30
+    OPEN_UI_BIG.Left = 61
+    UI.Visible = False
+    LOGO.Visible = True
+    X_EXIT.Visible = True
+  End If
+
 End Sub
 
 
-Private Sub image_replace()
-  On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  Dim image_path As String
-  image_path = API.GetClipBoardString
-  ActiveDocument.ReferencePoint = cdrCenter
-  Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
-  Set shs = ActiveSelection.Shapes
-  cnt = 0
-  For Each sh In shs
-    If cnt = 0 Then
-      ActiveDocument.ClearSelection
-      ActiveLayer.Import image_path
-      Set sc = ActiveSelection
-      cnt = 1
-    Else
-      sc.Duplicate 0, 0
-    End If
-    sh.GetPosition x, y
-    sc.SetPosition x, y
-    
-    sh.GetSize x, y
-    sc.SetSize x, y
-    sh.Delete
-    
-  Next sh
-
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
-ErrorHandler:
-    MsgBox "请先复制图片的完整路径，本工具能自动替换图片!"
-    Application.Optimization = False
-    On Error Resume Next
+Private Sub X_EXIT_Click()
+  Unload Me    ' 关闭
 End Sub
 
-Private Sub copy_shape_replace_resize()
-  On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+Private Sub LEFT_BT_Click()
+  Tools.傻瓜火车排列
+End Sub
 
-  ActiveDocument.ReferencePoint = cdrCenter
-  Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
-  Set shs = ActiveSelection.Shapes
-  cnt = 0
-  For Each sh In shs
-    If cnt = 0 Then
-      Set sc = ActiveDocument.ActiveLayer.Paste
-      cnt = 1
-    Else
-      sc.Duplicate 0, 0
-    End If
-    sh.GetPosition x, y
-    sc.SetPosition x, y
-    
-    sh.GetSize x, y
-    sc.SetSize x, y
-    sh.Delete
-    
-  Next sh
+Private Sub TOP_BT_Click()
+ Tools.傻瓜阶梯排列
+End Sub
 
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
-ErrorHandler:
-    MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
-    Application.Optimization = False
-    On Error Resume Next
+Private Sub 调用多页合并工具()
+  Dim value As Integer
+  value = GMSManager.RunMacro("合并多页工具", "合并多页运行.run")
 End Sub
 
 
-Private Sub copy_shape_replace()
-  On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-
-  ActiveDocument.ReferencePoint = cdrCenter
-  Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
-  Set shs = ActiveSelection.Shapes
-  cnt = 0
-  For Each sh In shs
-    If cnt = 0 Then
-      Set sc = ActiveDocument.ActiveLayer.Paste
-      cnt = 1
-    Else
-      sc.Duplicate 0, 0
-    End If
-    sh.GetPosition x, y
-    sc.SetPosition x, y
-    sh.Delete
-  Next sh
-
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
-ErrorHandler:
-    MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
-    Application.Optimization = False
-    On Error Resume Next
+Private Sub CDR_TO_TSP_Click()
+  TSP.CDR_TO_TSP
 End Sub
 
+Private Sub START_TSP_Click()
+  TSP.START_TSP
+End Sub
+
+Private Sub PATH_TO_TSP_Click()
+  TSP.MAKE_TSP
+End Sub
+
+Private Sub QR2Vector_Click()
+  Tools.QRCode_to_Vector
+End Sub
+
+Private Sub TSP_TO_DRAW_LINE_Click()
+  TSP.TSP_TO_DRAW_LINE
+End Sub
+
+
+Private Sub BITMAP_MAKE_DOTS_Click()
+  TSP.BITMAP_MAKE_DOTS
+End Sub
+
+
+Private Sub CBPY01_Click()
+  Tools.Python脚本整理尺寸
+  Me.Height = 30
+End Sub
+
+Private Sub CBPY02_Click()
+  Tools.Python提取条码数字
+  Me.Height = 30
+End Sub
+
+Private Sub CBPY03_Click()
+  Tools.Python二维码QRCode
+  Tools.QRCode_replace
+End Sub
+
+
+Private Sub OPEN_UI_BIG_Click()
+  Unload Me
+  CorelVBA.Show 0
+End Sub
+
+Private Sub Settings_Click()
+  If 0 < Val(Bleed.Text) * Val(Line_len.Text) < 100 Then
+   SaveSetting "262235.xyz", "Settings", "Bleed", Bleed.Text
+   SaveSetting "262235.xyz", "Settings", "Line_len", Line_len.Text
+   SaveSetting "262235.xyz", "Settings", "Outline_Width", Outline_Width.Text
+  End If
+
+  Me.Height = 30
+End Sub
+
+Private Sub Tools_Icon_Click()
+  ' 调用语句
+  i = GMSManager.RunMacro("CorelDRAW_VBA", "学习CorelVBA.start")
+  Me.Height = 30
+End Sub
+
+Private Sub Split_Segment_Click()
+  Tools.Split_Segment
+  Me.Height = 30
+End Sub
