@@ -32,10 +32,14 @@ Sub Auto_ColorMark()
       put_target_line sh
 
   ElseIf "ColorStrip" = sh.ObjectData("MarkName").value Then
-    ' put_ColorStrip sh   ' 放置彩色色阶条
-
-     sh.Delete  ' 工厂定置不用色阶条
-
+      ColorStrip = Val(GetSetting("262235.xyz", "Settings", "ColorStrip", "1"))
+      
+      If Val(ColorStrip) = 1 Then
+        put_ColorStrip sh   ' 放置彩色色阶条
+      Else
+        sh.Delete  ' 工厂定置不用色阶条
+      End If
+    
   ElseIf "ColorMark" = sh.ObjectData("MarkName").value Then
       ' CMYK四色标记放置咬口
       If (px > py) Then
@@ -269,23 +273,23 @@ Sub Auto_ColorMark_K()
   ActiveDocument.ClearSelection
   sh.CreateSelection
   If "CenterLine" = sh.ObjectData("MarkName").value Then
-      put_center_line sh
+    put_center_line sh
       
   ElseIf "TargetLine" = sh.ObjectData("MarkName").value Then
-      put_target_line sh
+    put_target_line sh
 
   ElseIf "ColorStrip" = sh.ObjectData("MarkName").value Then
-     sh.Delete  ' 工厂定置不用色阶条
+    sh.Delete  ' 工厂定置不用色阶条
 
   ElseIf "ColorMark_K" = sh.ObjectData("MarkName").value Then
-      ' 只放置单色黑
-      If (px > py) Then
+    ' 只放置单色黑
+    If (px > py) Then
       sh.SetPosition px + 25#, 0
-      Else
-      sh.Rotate 270#
-      ActiveDocument.ReferencePoint = cdrBottomLeft
+    Else
+     sh.Rotate 270#
+     ActiveDocument.ReferencePoint = cdrBottomLeft
       sh.SetPosition 0, py - 42#
-      End If
+    End If
       sh.OrderToBack
   Else
       sh.Delete   ' 没找到标记 ColorMark 删除
