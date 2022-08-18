@@ -8,11 +8,12 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Toolbar
    OleObjectBlob   =   "Toolbar.frx":0000
    StartUpPosition =   1  '所有者中心
 End
-Attribute VB_Name = "ToolBar"
+Attribute VB_Name = "Toolbar"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
@@ -31,6 +32,7 @@ Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE = (-20)
 Private Const WS_CAPTION As Long = &HC00000
 Private Const WS_EX_DLGMODALFRAME = &H1&
+
 
 
 Private Sub UserForm_Initialize()
@@ -58,9 +60,9 @@ End With
   OptKey = True
 
   ' 读取角线设置
-  Bleed.Text = API.GetSet("Bleed")
-  Line_len.Text = API.GetSet("Line_len")
-  Outline_Width.Text = API.GetSet("Outline_Width")
+  Bleed.text = API.GetSet("Bleed")
+  Line_len.text = API.GetSet("Line_len")
+  Outline_Width.text = GetSetting("262235.xyz", "Settings", "Outline_Width", "0.2")
 End Sub
 
 Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
@@ -263,14 +265,17 @@ Private Sub OPEN_UI_BIG_Click()
 End Sub
 
 Private Sub Settings_Click()
-  If 0 < Val(Bleed.Text) * Val(Line_len.Text) < 100 Then
-   SaveSetting "262235.xyz", "Settings", "Bleed", Bleed.Text
-   SaveSetting "262235.xyz", "Settings", "Line_len", Line_len.Text
-   SaveSetting "262235.xyz", "Settings", "Outline_Width", Outline_Width.Text
+  If 0 < Val(Bleed.text) * Val(Line_len.text) < 100 Then
+   SaveSetting "262235.xyz", "Settings", "Bleed", Bleed.text
+   SaveSetting "262235.xyz", "Settings", "Line_len", Line_len.text
+   SaveSetting "262235.xyz", "Settings", "Outline_Width", Outline_Width.text
   End If
 
   Me.Height = 30
 End Sub
+
+
+'''/////////  图标鼠标左右点击功能调用   /////////'''
 
 Private Sub Tools_Icon_Click()
   ' 调用语句
@@ -278,7 +283,67 @@ Private Sub Tools_Icon_Click()
   Me.Height = 30
 End Sub
 
-Private Sub Split_Segment_Click()
-  Tools.Split_Segment
+'''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
+Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    MsgBox "鼠标右键，功能待定"
+    Exit Sub
+  End If
+  
+  If Button Then
+      Tools.Split_Segment
   Me.Height = 30
+  End If
 End Sub
+
+Private Sub Split_Segment_Copy_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    MsgBox "鼠标右键，功能待定"
+    Exit Sub
+  End If
+  
+  If Button Then
+      Tools.Split_Segment
+  Me.Height = 30
+  End If
+End Sub
+
+'''////  CorelDRAW 与 Adobe_Illustrator 剪贴板转换差  ////'''
+Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  Dim value As Integer
+  If Button = 2 Then
+    value = GMSManager.RunMacro("AIClipboard", "CopyPaste.PasteAIFormat")
+    Exit Sub
+  End If
+  
+  If Button Then
+    value = GMSManager.RunMacro("AIClipboard", "CopyPaste.CopyAIFormat")
+    MsgBox "CorelDRAW 与 Adobe_Illustrator 剪贴板转换" & vbNewLine & "鼠标左键复制，鼠标右键粘贴"
+  End If
+End Sub
+
+'''////  标记画框 支持容差  ////'''
+Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    Tools.Mark_CreateRectangle True
+  ElseIf Shift = fmCtrlMask Then
+    Tools.Mark_CreateRectangle False
+  Else
+    Tools.Create_Tolerance
+  End If
+End Sub
+
+''////  一键拆开多行组合的文字字符  ////'''
+Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    Tools.Batch_Combine
+    MsgBox "右键暂定功能: 智能群组后的拆开组合"
+    Exit Sub
+  End If
+  
+  If Button Then
+    Tools.Take_Apart_Character
+    Me.Height = 30
+  End If
+End Sub
+

@@ -36,5 +36,5 @@ def ReadDirectoryFile(rootdir):
                            os.path.join(parent, filename))
 
 if __name__ == "__main__":
-    src_path = "R:/corelvba/module"
+    src_path = "R:/zip"
     ReadDirectoryFile(src_path)

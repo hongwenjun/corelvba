@@ -26,11 +26,23 @@ Public Function GetClipBoardString() As String
 End Function
 
 '// 文本字符复制到剪贴板
-Public Function WriteClipBoard(s As String)
+Public Function WriteClipBoard(ByVal s As String)
   On Error Resume Next
+
+' VBA_WIN10(vba7) 使用PutInClipboard乱码解决办法
+#If VBA7 Then
+  With CreateObject("Forms.TextBox.1")
+    .MultiLine = True
+    .text = s
+    .SelStart = 0
+    .SelLength = .TextLength
+    .Copy
+  End With
+#Else
   Dim MyData As New DataObject
   MyData.SetText s
   MyData.PutInClipboard
+#End If
 End Function
 
 
@@ -69,26 +81,26 @@ Private test_ArraySort()
 End Sub
 
 Function FindAllShapes() As ShapeRange
-    Dim s As Shape
-    Dim srPowerClipped As New ShapeRange
-    Dim sr As ShapeRange, srAll As New ShapeRange
-    
-    If ActiveSelection.Shapes.Count > 0 Then
-        Set sr = ActiveSelection.Shapes.FindShapes()
-    Else
-        Set sr = ActivePage.Shapes.FindShapes()
-    End If
-    
-    Do
-        For Each s In sr.Shapes.FindShapes(Query:="!@com.powerclip.IsNull")
-            srPowerClipped.AddRange s.PowerClip.Shapes.FindShapes()
-        Next s
-        srAll.AddRange sr
-        sr.RemoveAll
-        sr.AddRange srPowerClipped
-        srPowerClipped.RemoveAll
-    Loop Until sr.Count = 0
-    
-    Set FindAllShapes = srAll
+  Dim s As Shape
+  Dim srPowerClipped As New ShapeRange
+  Dim sr As ShapeRange, srAll As New ShapeRange
+  
+  If ActiveSelection.Shapes.Count > 0 Then
+    Set sr = ActiveSelection.Shapes.FindShapes()
+  Else
+    Set sr = ActivePage.Shapes.FindShapes()
+  End If
+  
+  Do
+    For Each s In sr.Shapes.FindShapes(Query:="!@com.powerclip.IsNull")
+        srPowerClipped.AddRange s.PowerClip.Shapes.FindShapes()
+    Next s
+    srAll.AddRange sr
+    sr.RemoveAll
+    sr.AddRange srPowerClipped
+    srPowerClipped.RemoveAll
+  Loop Until sr.Count = 0
+  
+  Set FindAllShapes = srAll
 End Function
 

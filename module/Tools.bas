@@ -151,8 +151,9 @@ Public Function 尺寸取整()
     s = s & size & vbNewLine
   Next sh
 
-  MsgBox "物件尺寸信息到剪贴板" & vbNewLine & s
+  MsgBox "物件尺寸信息到剪贴板" & vbNewLine & s & vbNewLine
   API.WriteClipBoard s
+
 End Function
 
 Public Function 居中页面()
@@ -249,7 +250,7 @@ ErrorHandler:
     On Error Resume Next
 End Function
 
-'' 选择多物件，组合然后拆分线段，为角线爬虫准备
+'''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
 Public Function Split_Segment()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -260,7 +261,7 @@ Public Function Split_Segment()
   Dim nr As NodeRange
   Dim nd As Node
   
-  Set s = ssr.Combine
+  Set s = ssr.UngroupAllEx.Combine
   Set nr = s.Curve.Nodes.All
   
   nr.BreakApart
@@ -277,3 +278,166 @@ ErrorHandler:
   Application.Optimization = False
   On Error Resume Next
 End Function
+
+
+'''////  标记画框 支持容差  ////'''
+Public Function Mark_CreateRectangle(expand As Boolean)
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
+  ActiveDocument.Unit = cdrMillimeter
+  ActiveDocument.ReferencePoint = cdrBottomLeft
+  Dim ssr As ShapeRange
+  Set ssr = ActiveSelectionRange
+  Dim sh As Shape
+  Dim tr As Double
+  
+  tr = 0
+  If GlobalUserData.Exists("Tolerance", 1) Then
+    tr = Val(GlobalUserData("Tolerance", 1))
+  End If
+
+  For Each sh In ssr
+    If expand = False Then
+      mark_shape sh
+    Else
+      mark_shape_expand sh, tr
+    End If
+  Next sh
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+Private Function mark_shape_expand(sh As Shape, tr As Double)
+    Dim s As Shape
+    Dim x As Double, y As Double, w As Double, h As Double, r As Double
+    sh.GetBoundingBox x, y, w, h
+    x = x - tr: y = y - tr:   w = w + 2 * tr: h = h + 2 * tr
+    
+    r = Max(w, h) / Min(w, h) / 30 * Math.Sqr(w * h)
+    If w < h Then
+      Set s = ActiveLayer.CreateRectangle2(x - r, y, w + 2 * r, h)
+    Else
+      Set s = ActiveLayer.CreateRectangle2(x, y - r, w, h + 2 * r)
+    End If
+    s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
+End Function
+
+Public Function Create_Tolerance()
+  Dim text As String
+  If GlobalUserData.Exists("Tolerance", 1) Then
+    text = GlobalUserData("Tolerance", 1)
+  End If
+  text = InputBox("请输入容差值 0 --> 99", "容差值(mm)", text)
+  If text = "" Then Exit Function
+  GlobalUserData("Tolerance", 1) = text
+End Function
+
+Private Function mark_shape(sh As Shape)
+  Dim s As Shape
+  Dim x As Double, y As Double, w As Double, h As Double
+  sh.GetBoundingBox x, y, w, h
+  Set s = ActiveLayer.CreateRectangle2(x, y, w, h)
+  s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
+End Function
+
+Private Function Max(ByVal a, ByVal b)
+  If a < b Then
+    a = b
+  End If
+    Max = a
+End Function
+
+Private Function Min(ByVal a, ByVal b)
+  If a > b Then
+    a = b
+  End If
+    Min = a
+End Function
+
+
+'''////  批量组合合并  ////'''
+Public Function Batch_Combine()
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
+  Dim ssr As ShapeRange
+  Set ssr = ActiveSelectionRange
+  Dim sh As Shape
+  For Each sh In ssr
+    sh.UngroupAllEx.Combine
+  Next sh
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+'''////  一键拆开多行组合的文字字符  ////'''
+Public Function Take_Apart_Character()
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
+  ActiveDocument.ReferencePoint = cdrBottomLeft
+  
+  Dim ssr As ShapeRange
+  Set ssr = ActiveSelectionRange
+  Dim s1 As Shape, sh As Shape, s As Shape
+  Dim tr As Double
+  
+  ' 记忆选择范围
+  Dim x As Double, y As Double, w As Double, h As Double
+  ssr.GetBoundingBox x, y, w, h
+' ActiveLayer.CreateRectangle2 x, y, w, h
+  
+  ' 解散群组，先组合，再散开
+  Set s = ssr.UngroupAllEx.Combine
+  Set ssr = s.BreakApartEx
+
+  ' 读取容差值
+  tr = 0
+  If GlobalUserData.Exists("Tolerance", 1) Then
+    tr = Val(GlobalUserData("Tolerance", 1))
+  End If
+
+  ' 标记画框，选择标记框
+  For Each sh In ssr
+    mark_shape_expand sh, tr
+  Next sh
+  
+  Set ssr = ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(0, 255, 0))")
+  ActiveDocument.ClearSelection
+  ssr.AddToSelection
+  
+  ' 调用 智能群组 后删除标记画框
+  智能群组和查找.智能群组
+  ssr.Delete
+  
+  ' 调用 批量组合合并
+  ActiveDocument.ReferencePoint = cdrBottomLeft
+  Set sh = ActivePage.SelectShapesFromRectangle(x - 1, y - 1, w + 2, h + 2, False)
+  sh.Shapes.All.AddToSelection
+
+  Batch_Combine
+
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
