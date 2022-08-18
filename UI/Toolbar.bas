@@ -338,12 +338,11 @@ Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
   If Button = 2 Then
     Tools.Batch_Combine
     MsgBox "右键暂定功能: 智能群组后的拆开组合"
-    Exit Sub
-  End If
-  
-  If Button Then
+  ElseIf Shift = fmCtrlMask Then
     Tools.Take_Apart_Character
     Me.Height = 30
+  Else
+    Tools.Create_Tolerance
   End If
 End Sub
 

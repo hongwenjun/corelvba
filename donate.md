@@ -9,6 +9,11 @@
 
 蘭雅sRGB(蘭公子)
 
+
+| 微信支付 | 支付宝 |
+| ------- | ------- |
+| ![](https://262235.xyz/donate/WXPay.png) | ![](https://262235.xyz/donate/AliPay.jpg) |
+
 ### 捐赠者:
 ```
 山河激光

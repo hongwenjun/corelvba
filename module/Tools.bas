@@ -399,7 +399,7 @@ Public Function Take_Apart_Character()
   ' 记忆选择范围
   Dim x As Double, y As Double, w As Double, h As Double
   ssr.GetBoundingBox x, y, w, h
-' ActiveLayer.CreateRectangle2 x, y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, y, w, h)
   
   ' 解散群组，先组合，再散开
   Set s = ssr.UngroupAllEx.Combine
@@ -424,12 +424,13 @@ Public Function Take_Apart_Character()
   智能群组和查找.智能群组
   ssr.Delete
   
-  ' 调用 批量组合合并
-  ActiveDocument.ReferencePoint = cdrBottomLeft
-  Set sh = ActivePage.SelectShapesFromRectangle(x - 1, y - 1, w + 2, h + 2, False)
-  sh.Shapes.All.AddToSelection
-
-  Batch_Combine
+  Set sh = ActivePage.SelectShapesFromRectangle(s1.LeftX, s1.TopY, s1.RightX, s1.BottomY, False)
+' sh.Shapes.All.Group
+  s1.Delete
+  
+  For Each s In sh.Shapes
+    s.UngroupAllEx.Combine
+  Next s
 
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
