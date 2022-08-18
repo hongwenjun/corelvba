@@ -384,7 +384,7 @@ ErrorHandler:
   On Error Resume Next
 End Function
 
-'''////  一键拆开多行组合的文字字符  ////'''
+'''////  一键拆开多行组合的文字字符   ////'''   ''' 本功能由群友半缘君赞助发行 '''
 Public Function Take_Apart_Character()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -422,12 +422,15 @@ Public Function Take_Apart_Character()
   
   ' 调用 智能群组 后删除标记画框
   智能群组和查找.智能群组
+  
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ssr.Delete
   
   Set sh = ActivePage.SelectShapesFromRectangle(s1.LeftX, s1.TopY, s1.RightX, s1.BottomY, False)
 ' sh.Shapes.All.Group
   s1.Delete
   
+  ' 通过s1矩形范围选择群组后合并组合
   For Each s In sh.Shapes
     s.UngroupAllEx.Combine
   Next s
