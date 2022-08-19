@@ -6,8 +6,10 @@ Public Function 分分合合()
   
   拼版裁切线.Cut_lines
 
-  Dim s As Shape
-  Set s = ActivePage.SelectShapesFromRectangle(ActivePage.LeftX, ActivePage.TopY, ActivePage.RightX, ActivePage.BottomY, True)
+  ' 记忆选择范围
+  Dim x As Double, y As Double, w As Double, h As Double
+  ActiveSelectionRange.GetBoundingBox x, y, w, h
+  Set s = ActivePage.SelectShapesFromRectangle(x, y, w, h, True)
   
   自动中线色阶条.Auto_ColorMark
 
@@ -445,3 +447,63 @@ ErrorHandler:
   On Error Resume Next
 End Function
 
+
+'''////  简单一刀切  识别群组 ////'''   ''' 本功能由群友宏瑞广告赞助发行 '''
+Public Function Single_Line()
+If 0 = ActiveSelectionRange.Count Then Exit Function
+'  On Error GoTo ErrorHandler
+'  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
+  
+  Dim cm(2)  As Color
+  Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
+  Set cm(1) = CreateRGBColor(255, 0, 0) ' RGB 红
+
+  Dim ssr As ShapeRange
+  Dim SrNew As New ShapeRange
+  Dim s As Shape, s1 As Shape, line As Shape
+  Dim cnt As Integer
+  cnt = 1
+  
+  
+  If 1 = ActiveSelectionRange.Count Then
+    Set ssr = ActiveSelectionRange(1).UngroupAllEx
+  Else
+    Set ssr = ActiveSelectionRange
+  End If
+    
+  ' 记忆选择范围
+  Dim x As Double, y As Double, w As Double, h As Double
+
+  ssr.GetBoundingBox x, y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, y, w, h)
+  s1.Outline.SetProperties Color:=cm(0)
+  SrNew.Add s1
+  
+#If VBA7 Then
+'  ssr.sort " @shape1.top>@shape2.top"
+  ssr.Sort " @shape1.left<@shape2.left"
+#Else
+' X4 不支持 ShapeRange.sort
+#End If
+
+  For Each s In ssr
+    If cnt > 1 Then
+      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.LeftX, s.TopY - h)
+      line.Outline.SetProperties Color:=cm(1)
+      SrNew.Add line
+    End If
+    cnt = cnt + 1
+  Next s
+  
+  SrNew.Group
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
