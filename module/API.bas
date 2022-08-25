@@ -15,6 +15,27 @@ Public Function GetSet(s As String)
   
 End Function
 
+Public Function Create_Tolerance()
+  Dim text As String
+  If GlobalUserData.Exists("Tolerance", 1) Then
+    text = GlobalUserData("Tolerance", 1)
+  End If
+  text = InputBox("请输入容差值 0.1 --> 9.9", "容差值(mm)", text)
+  If text = "" Then Exit Function
+  GlobalUserData("Tolerance", 1) = text
+End Function
+
+Public Function Set_Space_Width() As Double
+  Dim text As String
+  If GlobalUserData.Exists("SpaceWidth", 1) Then
+    text = GlobalUserData("SpaceWidth", 1)
+  End If
+  text = InputBox("请输入间隔宽度值 0 --> 99", "设置间隔宽度(mm)", text)
+  If text = "" Then Exit Function
+  GlobalUserData("SpaceWidth", 1) = text
+  Set_Space_Width = Val(text)
+End Function
+
 '// 获得剪贴板文本字符
 Public Function GetClipBoardString() As String
   On Error Resume Next
@@ -104,3 +125,15 @@ Function FindAllShapes() As ShapeRange
   Set FindAllShapes = srAll
 End Function
 
+' ************* 函数模块 ************* '
+Function ExistsFile_UseFso(ByVal strPath As String) As Boolean
+
+     Dim fso
+
+     Set fso = CreateObject("Scripting.FileSystemObject")
+
+     ExistsFile_UseFso = fso.FileExists(strPath)
+
+     Set fso = Nothing
+
+End Function

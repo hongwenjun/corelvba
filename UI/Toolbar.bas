@@ -91,8 +91,8 @@ Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVa
     UI.Visible = True
     LOGO.Visible = False
     X_EXIT.Visible = False
-    LEFT_BT.Visible = False
-    TOP_BT.Visible = False
+    TOP_ALIGN_BT.Visible = False
+    LEFT_ALIGN_BT.Visible = False
     Exit Sub
   End If
   
@@ -144,13 +144,24 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   
   ElseIf Abs(x - pos_x(6)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
     调用多页合并工具
-  Exit Sub
+    Exit Sub
   
   ElseIf Abs(x - pos_x(8)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
-    '// 扩展工具栏
+    '// 右键扩展工具栏
     Me.Height = 30 + 45
-  Exit Sub
+    Exit Sub
   
+  ElseIf Abs(x - pos_x(10)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    '// 右键排列工具
+    TOP_ALIGN_BT.Visible = True
+    LEFT_ALIGN_BT.Visible = True
+    Exit Sub
+
+  ElseIf Abs(x - pos_x(11)) < 14 And Abs(y - pos_y(0)) < 14 And Button = 2 Then
+    '// 右键扩展工具栏收缩
+    Me.Height = 30
+    Exit Sub
+
   End If
   
   '// 鼠标单击按钮  按工具栏上图标正常功能
@@ -185,11 +196,13 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     Tools.TextShape_ConvertToCurves
     
   ElseIf Abs(x - pos_x(10)) < 14 And Abs(y - pos_y(0)) < 14 Then
-    LEFT_BT.Visible = True
-    TOP_BT.Visible = True
+    '// 扩展工具栏
+    Me.Height = 30 + 45
     
   ElseIf Abs(x - pos_x(11)) < 14 And Abs(y - pos_y(0)) < 14 Then
+    '// 最小化
     Me.Width = 30
+    Me.Height = 30
     OPEN_UI_BIG.Left = 61
     UI.Visible = False
     LOGO.Visible = True
@@ -203,13 +216,6 @@ Private Sub X_EXIT_Click()
   Unload Me    ' 关闭
 End Sub
 
-Private Sub LEFT_BT_Click()
-  Tools.傻瓜火车排列
-End Sub
-
-Private Sub TOP_BT_Click()
- Tools.傻瓜阶梯排列
-End Sub
 
 Private Sub 调用多页合并工具()
   Dim value As Integer
@@ -329,11 +335,11 @@ Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift 
   ElseIf Shift = fmCtrlMask Then
     Tools.Mark_CreateRectangle False
   Else
-    Tools.Create_Tolerance
+    Create_Tolerance
   End If
 End Sub
 
-''////  一键拆开多行组合的文字字符  ////'''
+'''////  一键拆开多行组合的文字字符  ////'''
 Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
   If Button = 2 Then
     Tools.Batch_Combine
@@ -342,7 +348,41 @@ Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
     Tools.Take_Apart_Character
     Me.Height = 30
   Else
-    Tools.Create_Tolerance
+    Create_Tolerance
+  End If
+End Sub
+
+'''////  一键拆开多行组合的文字字符  ////'''
+Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    MsgBox "简单一刀切，右键隐藏"
+    Me.Height = 30
+  ElseIf Shift = fmCtrlMask Then
+    Tools.Single_Line
+  Else
+    ' Ctrl + 鼠标  空
+  End If
+End Sub
+
+'''////  傻瓜火车排列  ////'''
+Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    Tools.傻瓜火车排列 3#
+  ElseIf Shift = fmCtrlMask Then
+    Tools.傻瓜火车排列 0#
+  Else
+    Tools.傻瓜火车排列 Set_Space_Width
+  End If
+End Sub
+
+'''////  傻瓜阶梯排列  ////'''
+Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+  If Button = 2 Then
+    Tools.傻瓜阶梯排列 3#
+  ElseIf Shift = fmCtrlMask Then
+    Tools.傻瓜阶梯排列 0#
+  Else
+    Tools.傻瓜阶梯排列 Set_Space_Width
   End If
 End Sub
 

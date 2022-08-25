@@ -1,7 +1,7 @@
 Attribute VB_Name = "拼版裁切线"
 Type Coordinate
-    x As Double
-    y As Double
+  x As Double
+  y As Double
 End Type
 
 Sub Cut_lines()
@@ -72,127 +72,125 @@ End Sub
 
 '范围边界 border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius, Bleed, Line_len)
 Private Function draw_line(dot As Coordinate, border As Variant)
-    radius = border(6): Bleed = border(7):  Line_len = border(8)
-    Dim line As Shape
+  radius = border(6): Bleed = border(7):  Line_len = border(8)
+  Dim line As Shape
 
-    If Abs(dot.y - border(3)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, border(3) + Bleed, dot.x, border(3) + (Line_len + Bleed))
-        set_line_color line
-    ElseIf Abs(dot.y - border(2)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, border(2) - Bleed, dot.x, border(2) - (Line_len + Bleed))
-        set_line_color line
-    End If
-    
-    If Abs(dot.x - border(1)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.y, border(1) + (Line_len + Bleed), dot.y)
-        set_line_color line
-    ElseIf Abs(dot.x - border(0)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.y, border(0) - (Line_len + Bleed), dot.y)
-        set_line_color line
-    End If
+  If Abs(dot.y - border(3)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x, border(3) + Bleed, dot.x, border(3) + (Line_len + Bleed))
+    set_line_color line
+  ElseIf Abs(dot.y - border(2)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x, border(2) - Bleed, dot.x, border(2) - (Line_len + Bleed))
+    set_line_color line
+  End If
+  
+  If Abs(dot.x - border(1)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.y, border(1) + (Line_len + Bleed), dot.y)
+    set_line_color line
+  ElseIf Abs(dot.x - border(0)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.y, border(0) - (Line_len + Bleed), dot.y)
+    set_line_color line
+  End If
 
 End Function
 
 '// 旧版本
 Private Function draw_line_按点基准(dot As Coordinate, border As Variant)
-    Bleed = 2:  Line_len = 3:  radius = border(6)
-    Dim line As Shape
+  Bleed = 2:  Line_len = 3:  radius = border(6)
+  Dim line As Shape
 
-    If Abs(dot.y - border(3)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y + Bleed, dot.x, dot.y + (Line_len + Bleed))
-        set_line_color line
-    ElseIf Abs(dot.y - border(2)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y - Bleed, dot.x, dot.y - (Line_len + Bleed))
-        set_line_color line
-    End If
-    
-    If Abs(dot.x - border(1)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x + Bleed, dot.y, dot.x + (Line_len + Bleed), dot.y)
-        set_line_color line
-    ElseIf Abs(dot.x - border(0)) < radius Then
-        Set line = ActiveLayer.CreateLineSegment(dot.x - Bleed, dot.y, dot.x - (Line_len + Bleed), dot.y)
-        set_line_color line
-    End If
+  If Abs(dot.y - border(3)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y + Bleed, dot.x, dot.y + (Line_len + Bleed))
+    set_line_color line
+  ElseIf Abs(dot.y - border(2)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x, dot.y - Bleed, dot.x, dot.y - (Line_len + Bleed))
+    set_line_color line
+  End If
+  
+  If Abs(dot.x - border(1)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x + Bleed, dot.y, dot.x + (Line_len + Bleed), dot.y)
+    set_line_color line
+  ElseIf Abs(dot.x - border(0)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.x - Bleed, dot.y, dot.x - (Line_len + Bleed), dot.y)
+    set_line_color line
+  End If
 
 End Function
 
 Private Function set_line_color(line As Shape)
-    '// 设置轮廓线注册色
-   line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
+   '// 设置轮廓线注册色
+  line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
 End Function
 
 '// CorelDRAW 物件排列拼版简单代码
 Sub arrange()
-    On Error GoTo ErrorHandler
-    ActiveDocument.Unit = cdrMillimeter
-    row = 3     ' 拼版 3 x 4
-    List = 4
-    sp = 0       '间隔 0mm
+  On Error GoTo ErrorHandler
+  ActiveDocument.Unit = cdrMillimeter
+  row = 3     ' 拼版 3 x 4
+  List = 4
+  sp = 0       '间隔 0mm
 
-    Dim Str, arr, n
-    Str = API.GetClipBoardString
+  Dim Str, arr, n
+  Str = API.GetClipBoardString
 
-    ' 替换 mm x * 换行 TAB 为空格
-    Str = VBA.replace(Str, "mm", " ")
-    Str = VBA.replace(Str, "x", " ")
-    Str = VBA.replace(Str, "*", " ")
-    Str = VBA.replace(Str, Chr(13), " ")
-    Str = VBA.replace(Str, Chr(9), " ")
-    
-    Do While InStr(Str, "  ")    '多个空格换成一个空格
-        Str = VBA.replace(Str, "  ", " ")
-    Loop
-    
-    arr = Split(Str)
-
-    Dim s1 As Shape
-    Dim x As Double, y As Double
-    
-    If 0 = ActiveSelectionRange.Count Then
-      x = Val(arr(0)):    y = Val(arr(1))
-      row = Int(ActiveDocument.Pages.First.SizeWidth / x)
-      List = Int(ActiveDocument.Pages.First.SizeHeight / y)
+  ' 替换 mm x * 换行 TAB 为空格
+  Str = VBA.replace(Str, "mm", " ")
+  Str = VBA.replace(Str, "x", " ")
+  Str = VBA.replace(Str, "X", " ")
+  Str = VBA.replace(Str, "*", " ")
+  Str = VBA.replace(Str, Chr(13), " ")
+  Str = VBA.replace(Str, Chr(9), " ")
   
-      If UBound(arr) > 2 Then
-      row = Val(arr(2)):  List = Val(arr(3))
-          If row * List > 800 Then
-            GoTo ErrorHandler
-          ElseIf UBound(arr) > 3 Then
-              sp = Val(arr(4))       '间隔
-          End If
+  Do While InStr(Str, "  ")    '多个空格换成一个空格
+      Str = VBA.replace(Str, "  ", " ")
+  Loop
+  
+  arr = Split(Str)
+
+  Dim s1 As Shape
+  Dim x As Double, y As Double
+  
+  If 0 = ActiveSelectionRange.Count Then
+    x = Val(arr(0)):    y = Val(arr(1))
+    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    List = Int(ActiveDocument.Pages.First.SizeHeight / y)
+
+    If UBound(arr) > 2 Then
+    row = Val(arr(2)):  List = Val(arr(3))
+      If row * List > 800 Then
+        GoTo ErrorHandler
+      ElseIf UBound(arr) > 3 Then
+          sp = Val(arr(4))       '间隔
       End If
-      
-      
-      '// 建立矩形 Width  x Height 单位 mm
-      Set s1 = ActiveLayer.CreateRectangle(0, 0, x, y)
-      
-      '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
-      s1.Fill.ApplyNoFill
-      s1.Outline.SetProperties 0.3, OutlineStyles(0), CreateCMYKColor(0, 100, 0, 0), ArrowHeads(0), _
-          ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
-
-    '// 如果当前选择物件，按当前物件拼版
-    ElseIf 1 = ActiveSelectionRange.Count Then
-      Set s1 = ActiveSelection
-      x = s1.SizeWidth:    y = s1.SizeHeight
-      row = Int(ActiveDocument.Pages.First.SizeWidth / x)
-      List = Int(ActiveDocument.Pages.First.SizeHeight / y)
     End If
+     
+    '// 建立矩形 Width  x Height 单位 mm
+    Set s1 = ActiveLayer.CreateRectangle(0, 0, x, y)
     
+    '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
+    s1.Fill.ApplyNoFill
+    s1.Outline.SetProperties 0.3, OutlineStyles(0), CreateCMYKColor(0, 100, 0, 0), ArrowHeads(0), _
+      ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
 
-    sw = x:  sh = y
+  '// 如果当前选择物件，按当前物件拼版
+  ElseIf 1 = ActiveSelectionRange.Count Then
+    Set s1 = ActiveSelection
+    x = s1.SizeWidth:    y = s1.SizeHeight
+    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    List = Int(ActiveDocument.Pages.First.SizeHeight / y)
+  End If
+  
+  sw = x:  sh = y
 
-    '// StepAndRepeat 方法在范围内创建多个形状副本
-    Dim dup1 As ShapeRange
-    Set dup1 = s1.StepAndRepeat(row - 1, sw + sp, 0#)
-    Dim dup2 As ShapeRange
-    Set dup2 = ActiveDocument.CreateShapeRangeFromArray _
-         (dup1, s1).StepAndRepeat(List - 1, 0#, (sh + sp))
-         
-    Exit Sub
+  '// StepAndRepeat 方法在范围内创建多个形状副本
+  Dim dup1 As ShapeRange
+  Set dup1 = s1.StepAndRepeat(row - 1, sw + sp, 0#)
+  Dim dup2 As ShapeRange
+  Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(List - 1, 0#, (sh + sp))
+       
+  Exit Sub
 ErrorHandler:
-     MsgBox "记事本输入数字,示例: 50x50 4x3 ,复制到剪贴板再运行工具!"
-    On Error Resume Next
+  MsgBox "记事本输入数字,示例: 50x50 4x3 ,复制到剪贴板再运行工具!"
+  On Error Resume Next
 End Sub
 
 

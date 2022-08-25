@@ -4,9 +4,10 @@ Sub 剪贴板物件替换()
 End Sub
 
 Public Sub 智能群组()
-If 0 = ActiveSelectionRange.Count Then Exit Sub
+  If 0 = ActiveSelectionRange.Count Then Exit Sub
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
   ActiveDocument.ReferencePoint = cdrBottomLeft
   ActiveDocument.Unit = cdrMillimeter
   
@@ -27,7 +28,8 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
     '// 轴线 创建轮廓处理
     ElseIf w * h < 0.3 Then
     ' Debug.Print w * h
-      Set eff1 = sh.CreateContour(cdrContourOutside, 0.5, 1, cdrDirectFountainFillBlend, CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), 0, 0, cdrContourSquareCap, cdrContourCornerMiteredOffsetBevel, 15#)
+      Set eff1 = sh.CreateContour(cdrContourOutside, 0.5, 1, cdrDirectFountainFillBlend, _
+          CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), 0, 0, cdrContourSquareCap, cdrContourCornerMiteredOffsetBevel, 15#)
       eff1.Separate
     End If
   Next sh
@@ -53,7 +55,7 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
 
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  ActiveWindow.Refresh:   Application.Refresh
 Exit Sub
 
 ErrorHandler:
@@ -63,38 +65,39 @@ ErrorHandler:
 
 End Sub
 
-
+' 智能群组_V1 第一版，储备示例代码
 Function 智能群组_V1()
-    On Error GoTo ErrorHandler
-    ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-    ActiveDocument.Unit = cdrMillimeter
-    Dim OrigSelection As ShapeRange, brk1 As ShapeRange
-    Set OrigSelection = ActiveSelectionRange
-    Dim s1 As Shape, sh As Shape, s As Shape
-    
-    Set s1 = OrigSelection.CustomCommand("Boundary", "CreateBoundary")
-'   s1.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
-    Set brk1 = s1.BreakApartEx
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
+  
+  Dim OrigSelection As ShapeRange, brk1 As ShapeRange
+  Set OrigSelection = ActiveSelectionRange
+  Dim s1 As Shape, sh As Shape, s As Shape
+  
+  Set s1 = OrigSelection.CustomCommand("Boundary", "CreateBoundary")
+' s1.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
+  Set brk1 = s1.BreakApartEx
 
-    For Each s In brk1
-      If s.SizeHeight > 10 Then
-        Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-        sh.Shapes.All.Group
-      End If
-      s.Delete
-    Next
-    
-'    ActiveDocument.ClearSelection
-'    ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelections
+  For Each s In brk1
+    If s.SizeHeight > 10 Then
+      Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
+      sh.Shapes.All.Group
+    End If
+    s.Delete
+  Next
+  
+' ActiveDocument.ClearSelection
+' ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelections
 
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
+  '// 代码操作结束恢复窗口刷新
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
 Exit Function
 ErrorHandler:
-    Application.Optimization = False
-    MsgBox "请先选择一些物件来确定群组范围!"
-    On Error Resume Next
+  Application.Optimization = False
+  MsgBox "请先选择一些物件来确定群组范围!"
+  On Error Resume Next
 End Function
 

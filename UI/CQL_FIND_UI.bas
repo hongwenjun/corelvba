@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
@@ -35,6 +36,7 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 Private Sub Close_Icon_Click()
   Unload Me    ' 关闭
 End Sub
+
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long

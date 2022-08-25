@@ -102,44 +102,44 @@ Private Function set_line_color(line As Shape)
 End Function
 
 Private Function put_page_line()
-    ' 添加页面框线
-    Dim s1 As Shape
-    Set s1 = ActiveLayer.CreateRectangle2(0, 0, ActivePage.SizeWidth, ActivePage.SizeHeight)
-    s1.Fill.ApplyNoFill:    s1.OrderToBack
-    s1.Outline.SetProperties 0.01, Color:=CreateCMYKColor(100, 0, 0, 0)
+  ' 添加页面框线
+  Dim s1 As Shape
+  Set s1 = ActiveLayer.CreateRectangle2(0, 0, ActivePage.SizeWidth, ActivePage.SizeHeight)
+  s1.Fill.ApplyNoFill:    s1.OrderToBack
+  s1.Outline.SetProperties 0.01, Color:=CreateCMYKColor(100, 0, 0, 0)
 End Function
 
 '''---------  CorelDRAW X4 和 高版本 对齐页面API不同 ------------------'''
 #If VBA7 Then
 
 Private Function put_center_line(sh As Shape)
-    ' 在页面四边放置中线
-    set_line_color sh
-    sh.AlignAndDistribute 3, 1, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignAndDistribute 3, 2, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Rotate 90
-    sh.AlignAndDistribute 1, 3, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignAndDistribute 2, 3, 1, 0, False, 2
+  ' 在页面四边放置中线
+  set_line_color sh
+  sh.AlignAndDistribute 3, 1, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignAndDistribute 3, 2, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Rotate 90
+  sh.AlignAndDistribute 1, 3, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignAndDistribute 2, 3, 1, 0, False, 2
 End Function
 
 Private Function put_target_line(sh As Shape)
-    ' 在页面四角放置套准标记线
-    set_line_color sh
-    sh.AlignAndDistribute 2, 1, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignAndDistribute 1, 2, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Flip cdrFlipHorizontal   ' 物件镜像
-    sh.AlignAndDistribute 2, 2, 1, 0, False, 2
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignAndDistribute 1, 1, 1, 0, False, 2
+  ' 在页面四角放置套准标记线
+  set_line_color sh
+  sh.AlignAndDistribute 2, 1, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignAndDistribute 1, 2, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Flip cdrFlipHorizontal   ' 物件镜像
+  sh.AlignAndDistribute 2, 2, 1, 0, False, 2
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignAndDistribute 1, 1, 1, 0, False, 2
 End Function
 
 Private Function put_ColorStrip(sh As Shape)
@@ -169,44 +169,44 @@ Private Function put_ColorStrip(sh As Shape)
 End Function
 
 Private Function put_page_size()
-    ' 添加文字 页面大小和文件名
-    Dim st As Shape
-    size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
-    size = size & " " & ActiveDocument.FileName & " " & Date '   & vbNewLine & "Https://262235.xyz 需要您的支持!"
-    Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
+  ' 添加文字 页面大小和文件名
+  Dim st As Shape
+  size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
+  size = size & " " & ActiveDocument.FileName & " " & Date '   & vbNewLine & "Https://262235.xyz 需要您的支持!"
+  Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
 End Function
 
 #Else
 '''---------  CorelDRAW X4 对齐页面API ------------------'''
 
 Private Function put_target_line(sh As Shape)
-    ' 在页面四角放置套准标记线  Set sh = ActiveDocument.Selection
-    set_line_color sh
-    sh.AlignToPage cdrAlignLeft + cdrAlignTop
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignToPage cdrAlignRight + cdrAlignBottom
-    sh.Duplicate 0, 0
-    sh.Flip cdrFlipHorizontal   ' 物件镜像
-    sh.AlignToPage cdrAlignLeft + cdrAlignBottom
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignToPage cdrAlignRight + cdrAlignTop
+  ' 在页面四角放置套准标记线  Set sh = ActiveDocument.Selection
+  set_line_color sh
+  sh.AlignToPage cdrAlignLeft + cdrAlignTop
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignToPage cdrAlignRight + cdrAlignBottom
+  sh.Duplicate 0, 0
+  sh.Flip cdrFlipHorizontal   ' 物件镜像
+  sh.AlignToPage cdrAlignLeft + cdrAlignBottom
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignToPage cdrAlignRight + cdrAlignTop
 End Function
 
 Private Function put_center_line(sh As Shape)
-    ' 在页面四边放置中线 Set sh = ActiveDocument.Selection
-    set_line_color sh
-    sh.AlignToPage cdrAlignHCenter + cdrAlignTop
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignToPage cdrAlignHCenter + cdrAlignBottom
-    sh.Duplicate 0, 0
-    sh.Rotate 90
-    sh.AlignToPage cdrAlignVCenter + cdrAlignRight
-    sh.Duplicate 0, 0
-    sh.Rotate 180
-    sh.AlignToPage cdrAlignVCenter + cdrAlignLeft
+  ' 在页面四边放置中线 Set sh = ActiveDocument.Selection
+  set_line_color sh
+  sh.AlignToPage cdrAlignHCenter + cdrAlignTop
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignToPage cdrAlignHCenter + cdrAlignBottom
+  sh.Duplicate 0, 0
+  sh.Rotate 90
+  sh.AlignToPage cdrAlignVCenter + cdrAlignRight
+  sh.Duplicate 0, 0
+  sh.Rotate 180
+  sh.AlignToPage cdrAlignVCenter + cdrAlignLeft
 End Function
 
 Private Function put_ColorStrip(sh As Shape)
@@ -236,18 +236,18 @@ Private Function put_ColorStrip(sh As Shape)
 End Function
 
 Private Function put_page_size()
-    ' 添加文字 页面大小
-    Dim st As Shape
-    size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
-    Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
-    st.AlignToPage cdrAlignRight + cdrAlignTop
-    st.Move -3, -0.6
+  ' 添加文字 页面大小
+  Dim st As Shape
+  size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
+  Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
+  st.AlignToPage cdrAlignRight + cdrAlignTop
+  st.Move -3, -0.6
 End Function
 
 #End If
 
 
-
+' 自动中线 For 黑白产品版
 Sub Auto_ColorMark_K()
   If 0 = ActiveSelectionRange.Count Then Exit Sub
   On Error GoTo ErrorHandler

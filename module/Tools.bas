@@ -16,8 +16,9 @@ Public Function 分分合合()
 End Function
 
 
-Public Function 傻瓜火车排列()
+Public Function 傻瓜火车排列(space_width As Double)
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
   Set ssr = ActiveSelectionRange
@@ -35,7 +36,7 @@ Public Function 傻瓜火车排列()
     '' 底对齐 If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
     '' 改成顶对齐 2022-08-10
     ActiveDocument.ReferencePoint = cdrTopLeft + cdrBottomTop
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).TopY
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX + space_width, ssr(cnt - 1).TopY
     cnt = cnt + 1
   Next s
 
@@ -45,7 +46,7 @@ Public Function 傻瓜火车排列()
 End Function
 
 
-Public Function 傻瓜阶梯排列()
+Public Function 傻瓜阶梯排列(space_width As Double)
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
@@ -61,7 +62,7 @@ Public Function 傻瓜阶梯排列()
 
   ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY - space_width
     cnt = cnt + 1
   Next s
 
@@ -331,16 +332,6 @@ Private Function mark_shape_expand(sh As Shape, tr As Double)
     s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
-Public Function Create_Tolerance()
-  Dim text As String
-  If GlobalUserData.Exists("Tolerance", 1) Then
-    text = GlobalUserData("Tolerance", 1)
-  End If
-  text = InputBox("请输入容差值 0 --> 99", "容差值(mm)", text)
-  If text = "" Then Exit Function
-  GlobalUserData("Tolerance", 1) = text
-End Function
-
 Private Function mark_shape(sh As Shape)
   Dim s As Shape
   Dim x As Double, y As Double, w As Double, h As Double
@@ -448,9 +439,9 @@ ErrorHandler:
 End Function
 
 
-'''////  简单一刀切  识别群组 ////'''   ''' 本功能由群友宏瑞广告赞助发行 '''
+'''//// 简单一刀切 识别群组 ////''' ''' 本功能由群友宏瑞广告赞助发行 '''
 Public Function Single_Line()
-If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.Count Then Exit Function
 '  On Error GoTo ErrorHandler
 '  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
@@ -461,11 +452,11 @@ If 0 = ActiveSelectionRange.Count Then Exit Function
 
   Dim ssr As ShapeRange
   Dim SrNew As New ShapeRange
-  Dim s As Shape, s1 As Shape, line As Shape
+  Dim s As Shape, s1 As Shape, line As Shape, line2 As Shape
   Dim cnt As Integer
   cnt = 1
   
-  
+
   If 1 = ActiveSelectionRange.Count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
@@ -487,9 +478,13 @@ If 0 = ActiveSelectionRange.Count Then Exit Function
 ' X4 不支持 ShapeRange.sort
 #End If
 
+'''  相交 Set line2 = line.Intersect(s, True, True)
+'''  判断相交  line.Curve.IntersectsWith(s.Curve)
+
   For Each s In ssr
     If cnt > 1 Then
-      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.LeftX, s.TopY - h)
+      s.ConvertToCurves
+      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.LeftX, s.TopY - s.SizeHeight)
       line.Outline.SetProperties Color:=cm(1)
       SrNew.Add line
     End If
@@ -507,3 +502,5 @@ ErrorHandler:
   Application.Optimization = False
   On Error Resume Next
 End Function
+
+

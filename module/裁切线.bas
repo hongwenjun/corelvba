@@ -19,31 +19,31 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
   Dim s1 As Shape
 
   For Each Target In OrigSelection
-      Set s1 = Target
-      lx = s1.LeftX:      rx = s1.RightX
-      by = s1.BottomY:    ty = s1.TopY
-      cx = s1.CenterX:    cy = s1.CenterY
-      sw = s1.SizeWidth:  sh = s1.SizeHeight
-      
-      '//  添加裁切线，分别左下-右下-左上-右上
-      Dim s2, s3, s4, s5, s6, s7, s8, s9 As Shape
-      Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
-      Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + Line_len))
+    Set s1 = Target
+    lx = s1.LeftX:      rx = s1.RightX
+    by = s1.BottomY:    ty = s1.TopY
+    cx = s1.CenterX:    cy = s1.CenterY
+    sw = s1.SizeWidth:  sh = s1.SizeHeight
+    
+    '//  添加裁切线，分别左下-右下-左上-右上
+    Dim s2, s3, s4, s5, s6, s7, s8, s9 As Shape
+    Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
+    Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + Line_len))
 
-      Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + Line_len), by)
-      Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + Line_len))
+    Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + Line_len), by)
+    Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + Line_len))
 
-      Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
-      Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + Line_len))
+    Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
+    Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + Line_len))
 
-      Set s8 = ActiveLayer.CreateLineSegment(rx + Bleed, ty, rx + (Bleed + Line_len), ty)
-      Set s9 = ActiveLayer.CreateLineSegment(rx, ty + Bleed, rx, ty + (Bleed + Line_len))
+    Set s8 = ActiveLayer.CreateLineSegment(rx + Bleed, ty, rx + (Bleed + Line_len), ty)
+    Set s9 = ActiveLayer.CreateLineSegment(rx, ty + Bleed, rx, ty + (Bleed + Line_len))
 
-      '// 选中裁切线 群组 设置线宽和注册色
-      ActiveDocument.AddToSelection s2, s3, s4, s5, s6, s7, s8, s9
-      ActiveSelection.Group
-      ActiveSelection.Outline.SetProperties Outline_Width
-      ActiveSelection.Outline.SetProperties Color:=CreateRegistrationColor
+    '// 选中裁切线 群组 设置线宽和注册色
+    ActiveDocument.AddToSelection s2, s3, s4, s5, s6, s7, s8, s9
+    ActiveSelection.Group
+    ActiveSelection.Outline.SetProperties Outline_Width
+    ActiveSelection.Outline.SetProperties Color:=CreateRegistrationColor
   
   Next Target
 
@@ -78,38 +78,38 @@ Sub SelectLine_to_Cropline()
   '// 遍历选择的线条
   For Each s In ActiveSelection.Shapes
   
-      lx = s.LeftX
-      rx = s.RightX
-      by = s.BottomY
-      ty = s.TopY
-      
-      cx = s.CenterX
-      cy = s.CenterY
-      sw = s.SizeWidth
-      sh = s.SizeHeight
-     
-     '// 判断横线(高度小于宽度)，在页面左边还是右边
-     If sh <= sw Then
-      s.Delete
-      If cx < px Then
-          Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + Line_len, cy)
-      Else
-          Set line = ActiveLayer.CreateLineSegment(px * 2, cy, px * 2 - Line_len, cy)
-      End If
-     End If
+    lx = s.LeftX
+    rx = s.RightX
+    by = s.BottomY
+    ty = s.TopY
+    
+    cx = s.CenterX
+    cy = s.CenterY
+    sw = s.SizeWidth
+    sh = s.SizeHeight
    
-     '// 判断竖线(高度大于宽度)，在页面下边还是上边
-     If sh > sw Then
-      s.Delete
-      If cy < py Then
-          Set line = ActiveLayer.CreateLineSegment(cx, 0, cx, 0 + Line_len)
-      Else
-          Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - Line_len)
-      End If
-     End If
-  
-      line.Outline.SetProperties Outline_Width
-      line.Outline.SetProperties Color:=CreateRegistrationColor
+   '// 判断横线(高度小于宽度)，在页面左边还是右边
+   If sh <= sw Then
+    s.Delete
+    If cx < px Then
+        Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + Line_len, cy)
+    Else
+        Set line = ActiveLayer.CreateLineSegment(px * 2, cy, px * 2 - Line_len, cy)
+    End If
+   End If
+ 
+   '// 判断竖线(高度大于宽度)，在页面下边还是上边
+   If sh > sw Then
+    s.Delete
+    If cy < py Then
+        Set line = ActiveLayer.CreateLineSegment(cx, 0, cx, 0 + Line_len)
+    Else
+        Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - Line_len)
+    End If
+   End If
+
+    line.Outline.SetProperties Outline_Width
+    line.Outline.SetProperties Color:=CreateRegistrationColor
   Next s
   
   ActiveDocument.EndCommandGroup

@@ -16,13 +16,13 @@ Sub start()
     O_O.y = ost.BottomY - 50    '选择物件 下移动 50mm
 
     '// 建立矩形 Width  x Height 单位 mm
-    ' Rectangle 101, 151
     Dim Str, arr, n
     Str = API.GetClipBoardString
 
     ' 替换 mm x * 换行 TAB 为空格
     Str = VBA.replace(Str, "m", " ")
     Str = VBA.replace(Str, "x", " ")
+    Str = VBA.replace(Str, "X", " ")
     Str = VBA.replace(Str, "*", " ")
     Str = VBA.replace(Str, vbNewLine, " ")
 
@@ -47,41 +47,43 @@ Sub start()
     ActiveDocument.EndCommandGroup
 End Sub
 
+'// 建立矩形 Width  x Height 单位 mm
 Private Function Rectangle(Width As Double, Height As Double)
-    ActiveDocument.Unit = cdrMillimeter
-    Dim size As Shape
-    Dim d As Document
-    Dim s1 As Shape
+  ActiveDocument.Unit = cdrMillimeter
+  Dim size As Shape
+  Dim d As Document
+  Dim s1 As Shape
 
-    '// 建立矩形 Width  x Height 单位 mm
-    Set s1 = ActiveLayer.CreateRectangle(O_O.x, O_O.y, O_O.x + Width, O_O.y - Height)
-    
-    '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
-    s1.Fill.ApplyNoFill
-    s1.Outline.SetProperties 0.3, OutlineStyles(0), CreateCMYKColor(0, 100, 0, 0), ArrowHeads(0), ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
-        
-    sw = s1.SizeWidth
-    sh = s1.SizeHeight
+  '// 建立矩形 Width  x Height 单位 mm
+  Set s1 = ActiveLayer.CreateRectangle(O_O.x, O_O.y, O_O.x + Width, O_O.y - Height)
+  
+  '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
+  s1.Fill.ApplyNoFill
+  s1.Outline.SetProperties 0.3, OutlineStyles(0), CreateCMYKColor(0, 100, 0, 0), ArrowHeads(0), ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
+      
+  sw = s1.SizeWidth
+  sh = s1.SizeHeight
 
-    Text = Trim(Str(sw)) + "x" + Trim(Str(sh)) + "mm"
-    Set d = ActiveDocument
-    Set size = d.ActiveLayer.CreateArtisticText(O_O.x + sw / 2 - 25, O_O.y + 10, Text, Font:="Tahoma")  '// O_O.y + 10  标注尺寸上移 10mm
-    size.Fill.UniformColor.CMYKAssign 0, 100, 100, 0
+  text = Trim(Str(sw)) + "x" + Trim(Str(sh)) + "mm"
+  Set d = ActiveDocument
+  Set size = d.ActiveLayer.CreateArtisticText(O_O.x + sw / 2 - 25, O_O.y + 10, text, Font:="Tahoma")  '// O_O.y + 10  标注尺寸上移 10mm
+  size.Fill.UniformColor.CMYKAssign 0, 100, 100, 0
 End Function
 
+' 测试矩形变形
 Private Function setRectangle(Width As Double, Height As Double)
 
-    Dim s1 As Shape
-    Set s1 = ActiveSelection
-    ActiveDocument.Unit = cdrMillimeter
-    '// 物件中心基准, 先把宽度设定为
-    ActiveDocument.ReferencePoint = cdrCenter
-    s1.SetSize Height, Height
+  Dim s1 As Shape
+  Set s1 = ActiveSelection
+  ActiveDocument.Unit = cdrMillimeter
+  '// 物件中心基准, 先把宽度设定为
+  ActiveDocument.ReferencePoint = cdrCenter
+  s1.SetSize Height, Height
 
-    '// 物件旋转 30度，轮廓线1mm ,轮廓颜色 M100Y100
-    s1.Rotate 30#
-    s1.Outline.SetProperties 1#
-    s1.Outline.SetProperties Color:=CreateCMYKColor(0, 100, 100, 0)
+  '// 物件旋转 30度，轮廓线1mm ,轮廓颜色 M100Y100
+  s1.Rotate 30#
+  s1.Outline.SetProperties 1#
+  s1.Outline.SetProperties Color:=CreateCMYKColor(0, 100, 100, 0)
 
 End Function
 

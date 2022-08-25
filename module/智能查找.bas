@@ -1,22 +1,22 @@
 Attribute VB_Name = "智能查找"
 Sub 一键加点工具()
-    Dim OrigSelection As ShapeRange
-    Set OrigSelection = ActiveSelectionRange
-    If OrigSelection.Count <> 0 Then
-      OrigSelection.Copy
-    Else
-      MsgBox "选择水洗标要加点部分，然后点击【加点工具】按钮!"
-      Exit Sub
-    End If
-    
-    ' 新建文件粘贴
-    Dim doc1 As Document
-    Set doc1 = CreateDocument
-    ActiveLayer.Paste
-    
-    ' 转曲线，一键加粗小红点
-    ActiveSelection.ConvertToCurves
-    Call get_little_points
+  Dim OrigSelection As ShapeRange
+  Set OrigSelection = ActiveSelectionRange
+  If OrigSelection.Count <> 0 Then
+    OrigSelection.Copy
+  Else
+    MsgBox "选择水洗标要加点部分，然后点击【加点工具】按钮!"
+    Exit Sub
+  End If
+  
+  ' 新建文件粘贴
+  Dim doc1 As Document
+  Set doc1 = CreateDocument
+  ActiveLayer.Paste
+  
+  ' 转曲线，一键加粗小红点
+  ActiveSelection.ConvertToCurves
+  Call get_little_points
 End Sub
 
 
@@ -60,9 +60,9 @@ Private Sub get_little_points()
   Application.Refresh
   Exit Sub
 ErrorHandler:
-     MsgBox "选择水洗标要加点部分，然后点击【加点工具】按钮!"
-     Application.Optimization = False
-    On Error Resume Next
+  MsgBox "选择水洗标要加点部分，然后点击【加点工具】按钮!"
+  Application.Optimization = False
+  On Error Resume Next
 End Sub
 
 Sub 文字转曲()

@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CorelVBA 
-   Caption         =   "CorelVBA 青年节 By 蘭雅sRGB 2022"
+   Caption         =   "CorelVBA 中秋节版 By 蘭雅sRGB 2022"
    ClientHeight    =   5415
    ClientLeft      =   45
    ClientTop       =   330
@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 #If VBA7 Then
     Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal Hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
@@ -42,7 +44,7 @@ End Sub
 
 Private Sub ToolBar_show_Click()
   Unload Me
-  ToolBar.Show 0
+  Toolbar.Show 0
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -66,6 +68,10 @@ Private Sub UserForm_Initialize()
     .Height = 271.45
   End With
   
+  UIFile = Path & "GMS\262235.xyz\UI.jpg"
+  If API.ExistsFile_UseFso(UIFile) Then
+    UI.Picture = LoadPicture(UIFile)   '换UI图
+  End If
 End Sub
 
 Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
@@ -82,8 +88,8 @@ Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVa
   End If
 End Sub
 
-Private Sub CommandButton1_Click()
-  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA青年节版公测" & vbNewLine & "coreldrawvba插件交流群  8531411"
+Private Sub About_Cmd_Click()
+  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA中秋节版" & vbNewLine & "coreldrawvba插件交流群  8531411"
 End Sub
 
 Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
@@ -133,10 +139,10 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   ElseIf Abs(x - pos_x(3)) < 30 And Abs(y - pos_y(2)) < 30 Then
     If switch Then
       switch = Not switch
-      Tools.傻瓜火车排列
+      Tools.傻瓜火车排列 0#
     Else
       switch = Not switch
-      Tools.傻瓜阶梯排列
+      Tools.傻瓜阶梯排列 0#
     End If
     
   ElseIf Abs(x - pos_x(4)) < 30 And Abs(y - pos_y(2)) < 30 Then
