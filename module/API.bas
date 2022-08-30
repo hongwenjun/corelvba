@@ -1,4 +1,17 @@
 Attribute VB_Name = "API"
+Public Function Speak_Msg(message As String)
+Speak_Help = Val(GetSetting("262235.xyz", "Settings", "SpeakHelp", "1"))
+
+If Val(Speak_Help) = 1 Then
+  Dim sapi
+  Set sapi = CreateObject("sapi.spvoice")
+  sapi.Speak message
+Else
+  ' 不说话
+End If
+
+End Function
+
 Public Function GetSet(s As String)
   Bleed = Val(GetSetting("262235.xyz", "Settings", "Bleed", "2.0"))
   Line_len = Val(GetSetting("262235.xyz", "Settings", "Line_len", "3.0"))
@@ -15,7 +28,7 @@ Public Function GetSet(s As String)
   
 End Function
 
-Public Function Create_Tolerance()
+Public Function Create_Tolerance() As Double
   Dim text As String
   If GlobalUserData.Exists("Tolerance", 1) Then
     text = GlobalUserData("Tolerance", 1)
@@ -23,6 +36,7 @@ Public Function Create_Tolerance()
   text = InputBox("请输入容差值 0.1 --> 9.9", "容差值(mm)", text)
   If text = "" Then Exit Function
   GlobalUserData("Tolerance", 1) = text
+  Create_Tolerance = Val(text)
 End Function
 
 Public Function Set_Space_Width() As Double
@@ -136,4 +150,12 @@ Function ExistsFile_UseFso(ByVal strPath As String) As Boolean
 
      Set fso = Nothing
 
+End Function
+
+Function test()
+  Dim message, sapi
+  MsgBox ("Please use the headset and listen to what I have to say...")
+  message = "This is a simple voice test on your Microsoft Windows."
+  Set sapi = CreateObject("sapi.spvoice")
+  sapi.Speak message
 End Function

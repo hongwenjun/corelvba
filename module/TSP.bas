@@ -5,15 +5,15 @@ Public Function CDR_TO_TSP()
   
   ActiveDocument.Unit = cdrMillimeter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   
   Dim TSP As String
   TSP = shs.Count & " " & 0 & vbNewLine
   For Each sh In shs
-    x = sh.CenterX
-    y = sh.CenterY
-    TSP = TSP & x & " " & y & vbNewLine
+    X = sh.CenterX
+    Y = sh.CenterY
+    TSP = TSP & X & " " & Y & vbNewLine
   Next sh
   
   f.WriteLine TSP
@@ -28,15 +28,15 @@ Public Function PATH_TO_TSP()
   
   ActiveDocument.Unit = cdrMillimeter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   
   Dim TSP As String
   TSP = shs.Count & " " & 0 & vbNewLine
   For Each sh In shs
-    x = sh.CenterX
-    y = sh.CenterY
-    TSP = TSP & x & " " & y & vbNewLine
+    X = sh.CenterX
+    Y = sh.CenterY
+    TSP = TSP & X & " " & Y & vbNewLine
   Next sh
   
   f.WriteLine TSP
@@ -51,7 +51,7 @@ Public Function START_TSP()
 End Function
 
 Public Function TSP_TO_DRAW_LINE()
- ' On Error GoTo ErrorHandler
+  On Error GoTo ErrorHandler
   ActiveDocument.Unit = cdrMillimeter
   
   Set fs = CreateObject("Scripting.FileSystemObject")
@@ -74,15 +74,15 @@ Public Function TSP_TO_DRAW_LINE()
   ce(0).PositionX = 0
   ce(0).PositionY = 0
   
-  Dim x As Double
-  Dim y As Double
+  Dim X As Double
+  Dim Y As Double
   For n = 2 To UBound(arr) - 1 Step 2
-    x = Val(arr(n))
-    y = Val(arr(n + 1))
+    X = Val(arr(n))
+    Y = Val(arr(n + 1))
   
     ce(n / 2).ElementType = cdrElementLine
-    ce(n / 2).PositionX = x
-    ce(n / 2).PositionY = y
+    ce(n / 2).PositionX = X
+    ce(n / 2).PositionY = Y
   
   Next
   
@@ -115,15 +115,15 @@ Public Function TSP_TO_DRAW_LINE_BAK()
   ce(0).PositionX = 0
   ce(0).PositionY = 0
   
-  Dim x As Double
-  Dim y As Double
+  Dim X As Double
+  Dim Y As Double
   For n = 2 To UBound(arr) - 1 Step 2
-    x = Val(arr(n))
-    y = Val(arr(n + 1))
+    X = Val(arr(n))
+    Y = Val(arr(n + 1))
   
     ce(n / 2).ElementType = cdrElementLine
-    ce(n / 2).PositionX = x
-    ce(n / 2).PositionY = y
+    ce(n / 2).PositionX = X
+    ce(n / 2).PositionY = Y
   
   Next
   
@@ -147,8 +147,8 @@ Public Function BITMAP_MAKE_DOTS()
   ActiveDocument.BeginCommandGroup: Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
   Dim line, art, n, h, w
-  Dim x As Double
-  Dim y As Double
+  Dim X As Double
+  Dim Y As Double
   Dim s As Shape
   flag = 0
   
@@ -172,11 +172,11 @@ Public Function BITMAP_MAKE_DOTS()
     arr = Split(line)
     For n = LBound(arr) To UBound(arr)
       If arr(n) > 0 Then
-        x = n: y = -i
+        X = n: Y = -i
         If flag = 1 Then
-          Set s = ActiveLayer.CreateRectangle2(x, y, 0.6, 0.6)
+          Set s = ActiveLayer.CreateRectangle2(X, Y, 0.6, 0.6)
         Else
-          make_dots x, y
+          make_dots X, Y
         End If
       End If
     Next n
@@ -190,11 +190,11 @@ ErrorHandler:
     On Error Resume Next
 End Function
 
-Private Function make_dots(x As Double, y As Double)
+Private Function make_dots(X As Double, Y As Double)
   Dim s As Shape
   Dim c As Variant
   c = Array(0, 255, 0)
-  Set s = ActiveLayer.CreateEllipse2(x, y, 0.5, 0.5)
+  Set s = ActiveLayer.CreateEllipse2(X, Y, 0.5, 0.5)
   s.Fill.UniformColor.RGBAssign c(Int(Rnd() * 2)), c(Int(Rnd() * 2)), c(Int(Rnd() * 2))
   s.Outline.Width = 0#
 End Function

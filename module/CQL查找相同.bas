@@ -1,6 +1,6 @@
 Attribute VB_Name = "CQL查找相同"
 Sub 属性选择()
-  CQL_FIND_UI.Show 0
+  CQL_FIND_UI.show 0
 End Sub
 
 Public Function CQLline_CM100()

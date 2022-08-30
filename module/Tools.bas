@@ -7,9 +7,9 @@ Public Function 分分合合()
   拼版裁切线.Cut_lines
 
   ' 记忆选择范围
-  Dim x As Double, y As Double, w As Double, h As Double
-  ActiveSelectionRange.GetBoundingBox x, y, w, h
-  Set s = ActivePage.SelectShapesFromRectangle(x, y, w, h, True)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  ActiveSelectionRange.GetBoundingBox X, Y, w, h
+  Set s = ActivePage.SelectShapesFromRectangle(X, Y, w, h, True)
   
   自动中线色阶条.Auto_ColorMark
 
@@ -204,7 +204,7 @@ Public Function QRCode_replace()
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -216,11 +216,11 @@ Public Function QRCode_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition x, y
-    sc.SetPosition x, y
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
     
-    sh.GetSize x, y
-    sc.SetSize x, y
+    sh.GetSize X, Y
+    sc.SetSize X, Y
     sh.Delete
     
   Next sh
@@ -319,24 +319,24 @@ End Function
 
 Private Function mark_shape_expand(sh As Shape, tr As Double)
     Dim s As Shape
-    Dim x As Double, y As Double, w As Double, h As Double, r As Double
-    sh.GetBoundingBox x, y, w, h
-    x = x - tr: y = y - tr:   w = w + 2 * tr: h = h + 2 * tr
+    Dim X As Double, Y As Double, w As Double, h As Double, r As Double
+    sh.GetBoundingBox X, Y, w, h
+    X = X - tr: Y = Y - tr:   w = w + 2 * tr: h = h + 2 * tr
     
     r = Max(w, h) / Min(w, h) / 30 * Math.Sqr(w * h)
     If w < h Then
-      Set s = ActiveLayer.CreateRectangle2(x - r, y, w + 2 * r, h)
+      Set s = ActiveLayer.CreateRectangle2(X - r, Y, w + 2 * r, h)
     Else
-      Set s = ActiveLayer.CreateRectangle2(x, y - r, w, h + 2 * r)
+      Set s = ActiveLayer.CreateRectangle2(X, Y - r, w, h + 2 * r)
     End If
     s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
 Private Function mark_shape(sh As Shape)
   Dim s As Shape
-  Dim x As Double, y As Double, w As Double, h As Double
-  sh.GetBoundingBox x, y, w, h
-  Set s = ActiveLayer.CreateRectangle2(x, y, w, h)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  sh.GetBoundingBox X, Y, w, h
+  Set s = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
@@ -390,9 +390,9 @@ Public Function Take_Apart_Character()
   Dim tr As Double
   
   ' 记忆选择范围
-  Dim x As Double, y As Double, w As Double, h As Double
-  ssr.GetBoundingBox x, y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, y, w, h)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   
   ' 解散群组，先组合，再散开
   Set s = ssr.UngroupAllEx.Combine
@@ -464,10 +464,10 @@ Public Function Single_Line()
   End If
     
   ' 记忆选择范围
-  Dim x As Double, y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox x, y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, y, w, h)
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
