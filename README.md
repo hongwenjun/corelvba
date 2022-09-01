@@ -1,33 +1,72 @@
+### [捐赠 蘭雅CorelVBA工具 开源软件](https://github.com/hongwenjun/corelvba/blob/main/donate.md)
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
+
+# [蘭雅CorelVBA工具-中秋版 将奉送价值上千多款定置插件](https://262235.xyz/index.php/archives/1124/)
+
+## 蘭雅CorelVBA工具中秋版 修复更新和添加的主要功能
+
+```
+* 8215267 (HEAD -> main, origin/main, origin/HEAD) 蘭雅CorelVBA工具 UI独立图片 添加语音功能提示
+* 1457811 蘭雅CorelVBA工具-中秋版 更换UI图
+* 0f35182 简单一刀切_识别群组由群友宏瑞广告赞助发行
+* b2eb2c4 一键智能群组--功能由群友半缘君赞助发行
+* ae14f4f 一键智能拆字功能更新
+* 71bc9a1 添加功能: Adobe_Illustrator复制粘贴互转  标记画框  一键智能拆字 拆分线段
+* aeb8074 Create donate.md
+* 32649bf 修改颜色条注册表控制
+* c568449 2022-08更新添加设置保存注册表
+* 177b9d6 更新完整功能
+* bdce822 Create Export_JPEG_Link.bas
+* b1cd302 CorelDRAW X6 64位 支持移动窗口
+* 17cb37e 蘭雅CorelVBA工具箱 0520完整版源码更新
+
+```
+
+## 蘭雅CorelVBA工具 UI独立图片，工具栏三个皮肤，鼠标悬停五彩斑斓的黑
+
+![](https://262235.xyz/usr/uploads/2022/09/3673480311.webp)
+
+## 新合并工具: 多页合并一页工具
+
+![](https://262235.xyz/CorelVBA/UniteOne.gif)
+
+## 批量排序升级,自由设置间隔
+
+![](https://262235.xyz/CorelVBA/left_top_align.gif)
+
+## 自用拼版角线功能完善，欢迎大家白嫖
+
+![](https://262235.xyz/CorelVBA/jxpb.gif)
+
+## 修复更新 `CorelDRAW和Adobe Illustrator剪贴板交换数据` 支持 CorelDRAW X4-2022 版本
+
+  * 网友评价，文字复制不会乱码，比其他同类插件强，可以当收费插件  
+![](https://262235.xyz/CorelVBA/Adobe_Illustrator.gif)
+
+## 一键智能拆字功能由群友半缘君赞助发行
+
+![](https://262235.xyz/CorelVBA/onekey_cai.gif)
+
+## 简单一刀切_识别群组由群友宏瑞广告赞助发行
+
+![](https://262235.xyz/CorelVBA/dollar_cut.gif)
+
+## 蘭雅CorelVBA工具-中秋版 奉送价值上千元多款定置插件
+
+![CorelVBA_Moon.webp](https://262235.xyz/usr/uploads/2022/08/77746067.webp)
+
+本原创文章自由转载,转载请注明本博来源及网址 | 当前页面：[蘭雅sRGB 个人笔记](https://262235.xyz/) 
+[蘭雅CorelVBA工具-中秋版 将奉送价值上千多款定置插件](https://262235.xyz/index.php/archives/1124/)
+
+标签：[vba](https://262235.xyz/index.php/tag/vba/)
+
 
 ## 蘭雅CorelVBA工具箱  0520完整版下载
 ### https://262235.xyz/262235_GMS_0520.7z
 
 ## 蘭雅CorelVBA工具箱工具栏UI功能导图 
 ![](https://262235.xyz/usr/uploads/2022/05/756737974.jpg)
-
-
-## 蘭雅CorelVBA工具箱 安装方法
-------------------------------------------------
-```
-├─Addons
-│  └─Draw
-│      └─262235.xyz
-└─GMS
-    └─262235.xyz
-```
--------------------------------------------
-
-## GMS 文件夹的文件 复制到 
-- C:\\Program Files (x86)\\Corel\\CorelDRAW Graphics Suite X4\\Draw\\GMS
-
-## Addons 文件夹的文件 复制到 
-- C:\\Program Files (x86)\\Corel\\CorelDRAW Graphics Suite X4\\Programs\\Addons
-
---------------------------------------------
-
-## VBA工具支持 CorelDRAW X4 和 以上版本，安装方法可能有稍微不同
 
 --------------------------------------------
 

@@ -46,7 +46,7 @@ End Sub
 
 Private Sub ToolBar_show_Click()
   Unload Me
-  Toolbar.show 0
+  Toolbar.Show 0
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -179,7 +179,7 @@ End Sub
 
 Private Sub 批量替换()
   CorelVBA.Hide
-  Replace_UI.show 0
+  Replace_UI.Show 0
 End Sub
 
 Private Sub 拼版标记()
@@ -200,7 +200,7 @@ End Sub
 
 Private Sub CQL选择()
   CorelVBA.Hide
-  CQL_FIND_UI.show 0
+  CQL_FIND_UI.Show 0
 End Sub
 
 

@@ -504,3 +504,15 @@ ErrorHandler:
 End Function
 
 
+Public Function Mark_Range_Box()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  ActiveDocument.Unit = cdrMillimeter
+  Dim s1 As Shape, ssr As ShapeRange
+  
+  Set ssr = ActiveSelectionRange
+  Dim X As Double, Y As Double, w As Double, h As Double
+
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0) ' RGB 绿
+End Function

@@ -6,15 +6,12 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Toolbar
    ClientTop       =   330
    ClientWidth     =   6750
    OleObjectBlob   =   "Toolbar.frx":0000
-   StartUpPosition =   1  '所有者中心
 End
 Attribute VB_Name = "Toolbar"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
@@ -34,6 +31,8 @@ Private Const GWL_EXSTYLE = (-20)
 Private Const WS_CAPTION As Long = &HC00000
 Private Const WS_EX_DLGMODALFRAME = &H1&
 
+Public UIL_Key As Boolean
+Public pic1, pic2
 
 Private Sub CommandButton3_Click()
   Speak_Msg "修改UI图片更换界面  注册表关闭语音 详QQ群"
@@ -55,8 +54,8 @@ Private Sub UserForm_Initialize()
   
 With Me
   .StartUpPosition = 0
-  .Left = 400    ' 设置工具栏位置
-  .Top = 55
+  .Left = Val(GetSetting("262235.xyz", "Settings", "Left", "400"))  ' 设置工具栏位置
+  .Top = Val(GetSetting("262235.xyz", "Settings", "Top", "55"))
   .Height = 30
   .Width = 336
 End With
@@ -69,12 +68,30 @@ End With
   Line_len.text = API.GetSet("Line_len")
   Outline_Width.text = GetSetting("262235.xyz", "Settings", "Outline_Width", "0.2")
   
-  
   UIFile = Path & "GMS\262235.xyz\ToolBar.jpg"
   If API.ExistsFile_UseFso(UIFile) Then
     UI.Picture = LoadPicture(UIFile)   '换UI图
+    Set pic1 = LoadPicture(UIFile)
   End If
-  
+
+  UIL = Path & "GMS\262235.xyz\ToolBar1.jpg"
+  If API.ExistsFile_UseFso(UIL) Then
+    Set pic2 = LoadPicture(UIL)
+    UIL_Key = True
+  End If
+
+End Sub
+
+Private Sub UI_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  UI.Visible = False
+  If Y > 1 And Y < 16 And UIL_Key Then
+    UI.Picture = pic2
+  ElseIf Y > 16 And UIL_Key Then
+    UI.Picture = pic1
+  End If
+    UI.Visible = True
+
+  ' Debug.Print X & " , " & Y
 End Sub
 
 Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -129,7 +146,7 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   pos_y = Array(14)
   pos_x = Array(14, 41, 67, 94, 121, 148, 174, 201, 228, 254, 281, 308, 334, 361, 388, 415, 441, 468, 495)
 
-  '//扩展键按钮优先  ①右键收缩工具栏   ②右键居中页面    ③右键尺寸取整数    ④右键单色黑中线标记  ⑤右键单色黑中线标记
+  '// 鼠标右键 扩展键按钮优先  收缩工具栏  标记范围框  居中页面 尺寸取整数  单色黑中线标记 扩展工具栏  排列工具  扩展工具栏收缩
   If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 And Button = 2 Then
     Me.Width = 30
     UI.Visible = False
@@ -139,6 +156,10 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 And Button = 2 Then
     Tools.居中页面
+    Exit Sub
+
+  ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 And Button = 2 Then
+    Tools.Mark_Range_Box
     Exit Sub
 
   ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 And Button = 2 Then
@@ -176,7 +197,7 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   End If
   
-  '// 鼠标单击按钮  按工具栏上图标正常功能
+  '// 鼠标左键 单击按钮功能  按工具栏上图标正常功能
   If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     裁切线.start
     
@@ -199,10 +220,10 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     智能群组和查找.智能群组
     
   ElseIf Abs(X - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    CQL_FIND_UI.show 0
+    CQL_FIND_UI.Show 0
     
   ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    Replace_UI.show 0
+    Replace_UI.Show 0
     
   ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     Tools.TextShape_ConvertToCurves
@@ -222,12 +243,15 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     LOGO.Visible = True
     X_EXIT.Visible = True
     
+    ' 保存工具条位置 Left 和 Top
+    SaveSetting "262235.xyz", "Settings", "Left", Me.Left
+    SaveSetting "262235.xyz", "Settings", "Top", Me.Top
+  
     Speak_Msg "左键缩小 右键收缩"
   End If
 
 
 End Sub
-
 
 Private Sub X_EXIT_Click()
   Unload Me    ' 关闭
@@ -284,7 +308,7 @@ End Sub
 
 Private Sub OPEN_UI_BIG_Click()
   Unload Me
-  CorelVBA.show 0
+  CorelVBA.Show 0
 End Sub
 
 Private Sub Settings_Click()
@@ -294,6 +318,10 @@ Private Sub Settings_Click()
    SaveSetting "262235.xyz", "Settings", "Outline_Width", Outline_Width.text
   End If
 
+  ' 保存工具条位置 Left 和 Top
+  SaveSetting "262235.xyz", "Settings", "Left", Me.Left
+  SaveSetting "262235.xyz", "Settings", "Top", Me.Top
+  
   Me.Height = 30
 End Sub
 
@@ -409,7 +437,7 @@ Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
   If Button = 2 Then
     ' 右键
   ElseIf Shift = fmCtrlMask Then
-    UniteOne.show 0
+    UniteOne.Show 0
     Speak_Msg "多页合并一页"
   Else
     ' Ctrl + 鼠标  空
