@@ -2,6 +2,19 @@
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
+## 蘭雅CorelVBA工具中秋预览版 [安装视频点击](https://262235.xyz/CorelVBA/install.mp4)
+- 以 CorelDRAW X6 举例
+### 1. 解压压缩包 蘭雅CorelVBA工具中秋预览版.7z
+### 2. 找到 X6的 GMS目录，把GMS目录下文件 复制粘贴替换
+### 3. 开启CorelDRAW软件，导入 蘭雅CorelVBA工具栏
+   X6     选  蘭雅sRGB工具_导入CorelDRAW_X6.xslt
+   高版本 选  蘭雅sRGB工具_导入CorelDRAW_2018_2022.cdws
+   X4     选  蘭雅sRGB工具_导入CorelDRAW_X4.xslt
+
+### 4. 导入后，右键打开工具栏，点击 `蘭` 图标 开始
+
+使用相关文章   https://262235.xyz/index.php/tag/vba/
+
 # [蘭雅CorelVBA工具-中秋版 将奉送价值上千多款定置插件](https://262235.xyz/index.php/archives/1124/)
 
 ## 蘭雅CorelVBA工具中秋版 修复更新和添加的主要功能

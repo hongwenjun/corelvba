@@ -12,6 +12,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
@@ -20,9 +22,9 @@ Attribute VB_Exposed = False
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -34,7 +36,7 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 Public UIL_Key As Boolean
 Public pic1, pic2
 
-Private Sub CommandButton3_Click()
+Private Sub Change_UI_Close_Voice_Click()
   Speak_Msg "修改UI图片更换界面  注册表关闭语音 详QQ群"
   MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA中秋节版" & vbNewLine & "coreldrawvba插件交流群  8531411"
 End Sub
@@ -89,7 +91,7 @@ Private Sub UI_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   ElseIf Y > 16 And UIL_Key Then
     UI.Picture = pic1
   End If
-    UI.Visible = True
+  UI.Visible = True
 
   ' Debug.Print X & " , " & Y
 End Sub
@@ -286,22 +288,23 @@ End Sub
 
 
 Private Sub BITMAP_MAKE_DOTS_Click()
+  Tools.Python_BITMAP
   TSP.BITMAP_MAKE_DOTS
 End Sub
 
 
 Private Sub CBPY01_Click()
-  Tools.Python脚本整理尺寸
+  Tools.Python_Organize_Size
   Me.Height = 30
 End Sub
 
 Private Sub CBPY02_Click()
-  Tools.Python提取条码数字
+  Tools.Python_Get_Barcode_Number
   Me.Height = 30
 End Sub
 
 Private Sub CBPY03_Click()
-  Tools.Python二维码QRCode
+  Tools.Python_Make_QRCode
   Tools.QRCode_replace
 End Sub
 
@@ -399,11 +402,11 @@ End Sub
 '''////  简单一刀切  ////'''
 Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Me.Height = 30
+    Tools.Single_Line_Vertical
   ElseIf Shift = fmCtrlMask Then
     Tools.Single_Line
   Else
-    ' Ctrl + 鼠标  空
+    Tools.Single_Line_LastNode
   End If
   
   Speak_Msg "简单一刀切"

@@ -178,20 +178,27 @@ Public Function 居中页面()
 End Function
 
 
-Public Function Python脚本整理尺寸()
-    mypy = Path & "GMS\262235.xyz\整理尺寸.py"
+'''///  使用Python脚本 整理尺寸 提取条码数字 建立二维码 位图转文本 ///'''
+Public Function Python_Organize_Size()
+    mypy = Path & "GMS\262235.xyz\Organize_Size.py"
     cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
     Shell cmd_line
 End Function
 
-Public Function Python提取条码数字()
-    mypy = Path & "GMS\262235.xyz\提取条码数字.py"
+Public Function Python_Get_Barcode_Number()
+    mypy = Path & "GMS\262235.xyz\Get_Barcode_Number.py"
     cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
     Shell cmd_line
 End Function
 
-Public Function Python二维码QRCode()
-    mypy = Path & "GMS\262235.xyz\二维码QRCode.py"
+Public Function Python_BITMAP()
+    mypy = Path & "GMS\262235.xyz\BITMAP.py"
+    cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
+    Shell cmd_line
+End Function
+
+Public Function Python_Make_QRCode()
+    mypy = Path & "GMS\262235.xyz\Make_QRCode.py.py"
     cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
     Shell cmd_line
 End Function
@@ -442,8 +449,8 @@ End Function
 '''//// 简单一刀切 识别群组 ////''' ''' 本功能由群友宏瑞广告赞助发行 '''
 Public Function Single_Line()
   If 0 = ActiveSelectionRange.Count Then Exit Function
-'  On Error GoTo ErrorHandler
-'  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
   
   Dim cm(2)  As Color
@@ -503,7 +510,127 @@ ErrorHandler:
   On Error Resume Next
 End Function
 
+Public Function Single_Line_Vertical()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
+  
+  Dim cm(2)  As Color
+  Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
+  Set cm(1) = CreateRGBColor(255, 0, 0) ' RGB 红
 
+  Dim ssr As ShapeRange
+  Dim SrNew As New ShapeRange
+  Dim s As Shape, s1 As Shape, line As Shape, line2 As Shape
+  Dim cnt As Integer
+  cnt = 1
+  
+
+  If 1 = ActiveSelectionRange.Count Then
+    Set ssr = ActiveSelectionRange(1).UngroupAllEx
+  Else
+    Set ssr = ActiveSelectionRange
+  End If
+    
+  ' 记忆选择范围
+  Dim X As Double, Y As Double, w As Double, h As Double
+
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  s1.Outline.SetProperties Color:=cm(0)
+  SrNew.Add s1
+  
+#If VBA7 Then
+  ssr.Sort " @shape1.top>@shape2.top"
+#Else
+' X4 不支持 ShapeRange.sort
+#End If
+
+  For Each s In ssr
+    If cnt > 1 Then
+      s.ConvertToCurves
+      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.RightX, s.TopY)
+      line.Outline.SetProperties Color:=cm(1)
+      SrNew.Add line
+    End If
+    cnt = cnt + 1
+  Next s
+  
+  SrNew.Group
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+Public Function Single_Line_LastNode()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+'  On Error GoTo ErrorHandler
+'  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  ActiveDocument.Unit = cdrMillimeter
+  
+  Dim cm(2)  As Color
+  Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
+  Set cm(1) = CreateRGBColor(255, 0, 0) ' RGB 红
+
+  Dim ssr As ShapeRange
+  Dim SrNew As New ShapeRange
+  Dim s As Shape, s1 As Shape, line As Shape, line2 As Shape
+  Dim cnt As Integer
+  cnt = 1
+  
+
+  If 1 = ActiveSelectionRange.Count Then
+    Set ssr = ActiveSelectionRange(1).UngroupAllEx
+  Else
+    Set ssr = ActiveSelectionRange
+  End If
+    
+  ' 记忆选择范围
+  Dim X As Double, Y As Double, w As Double, h As Double
+
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  s1.Outline.SetProperties Color:=cm(0)
+  SrNew.Add s1
+  
+#If VBA7 Then
+  ssr.Sort " @shape1.left<@shape2.left"
+#Else
+' X4 不支持 ShapeRange.sort
+#End If
+
+  Dim nr As NodeRange
+  For Each s In ssr
+    If cnt > 1 Then
+      Set nr = s.DisplayCurve.Nodes.All
+      Set line = ActiveLayer.CreateLineSegment(nr.FirstNode.PositionX, nr.FirstNode.PositionY, nr.LastNode.PositionX, nr.LastNode.PositionY)
+      line.Outline.SetProperties Color:=cm(1)
+      SrNew.Add line
+    End If
+    cnt = cnt + 1
+  Next s
+  
+  SrNew.Group
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+
+'''//// 选择范围画框 ////'''
 Public Function Mark_Range_Box()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
