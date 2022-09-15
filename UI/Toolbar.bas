@@ -12,9 +12,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
 #If VBA7 Then
+    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
     Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
@@ -22,6 +21,7 @@ Attribute VB_Exposed = False
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
+    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
     Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
@@ -35,6 +35,7 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 
 Public UIL_Key As Boolean
 Public pic1, pic2
+
 
 Private Sub Change_UI_Close_Voice_Click()
   Speak_Msg "修改UI图片更换界面  注册表关闭语音 详QQ群"
@@ -266,9 +267,42 @@ Private Sub 调用多页合并工具()
 End Sub
 
 
-Private Sub CDR_TO_TSP_Click()
-  TSP.CDR_TO_TSP
+Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button = 2 Then
+    TSP.Nodes_To_TSP
+  ElseIf Shift = fmCtrlMask Then
+    TSP.CDR_TO_TSP
+  Else
+    ' Ctrl + 鼠标  空
+  End If
 End Sub
+
+Private Sub Cdr_Nodes_BT_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  TSP_L1.ForeColor = RGB(0, 150, 255)
+End Sub
+
+Private Sub START_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  TSP_L2.ForeColor = RGB(0, 150, 255)
+End Sub
+
+Private Sub PATH_TO_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  TSP_L3.ForeColor = RGB(0, 150, 255)
+End Sub
+
+Private Sub TSP2DRAW_LINE_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  TSP_L4.ForeColor = RGB(0, 150, 255)
+End Sub
+
+Private Sub TSP2DRAW_LINE_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button = 2 Then
+    TSP.TSP_TO_DRAW_LINE
+  ElseIf Shift = fmCtrlMask Then
+    TSP.TSP_TO_DRAW_LINES
+  Else
+    ' Ctrl + 鼠标  空
+  End If
+End Sub
+
 
 Private Sub START_TSP_Click()
   TSP.START_TSP
@@ -280,10 +314,6 @@ End Sub
 
 Private Sub QR2Vector_Click()
   Tools.QRCode_to_Vector
-End Sub
-
-Private Sub TSP_TO_DRAW_LINE_Click()
-  TSP.TSP_TO_DRAW_LINE
 End Sub
 
 
@@ -445,4 +475,18 @@ Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
   Else
     ' Ctrl + 鼠标  空
   End If
+End Sub
+
+'''////  Adobe AI EPS INDD PDF和CorelDRAW 缩略图工具  ////'''
+Private Sub AdobeThumbnail_Click()
+    Dim h As Long, r As Long
+    mypath = Path & "GMS\262235.xyz\"
+    App = mypath & "GuiAdobeThumbnail.exe"
+    
+    h = FindWindow(vbNullString, "CorelVBA 青年节 By 蘭雅sRGB")
+    i = ShellExecute(h, "", App, "", mypath, 1)
+End Sub
+
+Private Sub Quick_Color_Select_Click()
+  Tools.quickColorSelect
 End Sub

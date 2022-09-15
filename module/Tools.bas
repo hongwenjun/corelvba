@@ -198,7 +198,7 @@ Public Function Python_BITMAP()
 End Function
 
 Public Function Python_Make_QRCode()
-    mypy = Path & "GMS\262235.xyz\Make_QRCode.py.py"
+    mypy = Path & "GMS\262235.xyz\Make_QRCode.py"
     cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
     Shell cmd_line
 End Function
@@ -643,3 +643,40 @@ Public Function Mark_Range_Box()
   Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0) ' RGB 绿
 End Function
+
+
+'''//// 快速颜色选择 ////'''
+Sub quickColorSelect()
+    Dim X As Double, Y As Double
+    Dim s As Shape, s1 As Shape
+    Dim sr As ShapeRange, sr2 As ShapeRange
+    Dim Shift As Long, bClick As Boolean
+    Dim c As New Color, c2 As New Color
+
+    EventsEnabled = False
+    
+    Set sr = ActivePage.Shapes.FindShapes(Query:="@fill.type = 'uniform'")
+    ActiveDocument.ClearSelection
+    bClick = False
+    While Not bClick
+    On Error Resume Next
+        bClick = ActiveDocument.GetUserClick(X, Y, Shift, 10, False, cdrCursorPickNone)
+        If Not bClick Then
+            Set s = ActivePage.SelectShapesAtPoint(X, Y, False)
+            Set s = s.Shapes.Last
+            c2.CopyAssign s.Fill.UniformColor
+            Set sr2 = New ShapeRange
+            For Each s1 In sr.Shapes
+                c.CopyAssign s1.Fill.UniformColor
+                If c.IsSame(c2) Then
+                    sr2.Add s1
+                End If
+            Next s1
+            sr2.CreateSelection
+            ActiveWindow.Refresh
+        End If
+    Wend
+    
+    EventsEnabled = True
+End Sub
+
