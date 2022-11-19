@@ -2,6 +2,9 @@
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
+## 蘭雅CorelVBA 中秋版0909 免费下载
+### https://262235.xyz/262235_GMS_0909.7z
+
 ## 蘭雅CorelVBA工具中秋预览版 [安装视频点击](https://262235.xyz/CorelVBA/install.mp4)
 - 以 CorelDRAW X6 举例
 ### 1. 解压压缩包 蘭雅CorelVBA工具中秋预览版.7z
@@ -73,10 +76,6 @@
 [蘭雅CorelVBA工具-中秋版 将奉送价值上千多款定置插件](https://262235.xyz/index.php/archives/1124/)
 
 标签：[vba](https://262235.xyz/index.php/tag/vba/)
-
-
-## 蘭雅CorelVBA工具箱  0520完整版下载
-### https://262235.xyz/262235_GMS_0520.7z
 
 ## 蘭雅CorelVBA工具箱工具栏UI功能导图 
 ![](https://262235.xyz/usr/uploads/2022/05/756737974.jpg)
