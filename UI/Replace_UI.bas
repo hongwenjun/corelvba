@@ -15,17 +15,18 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 #If VBA7 Then
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -41,16 +42,16 @@ End Sub
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
-  Dim hwnd As Long
+  Dim hWnd As Long
   
-  hwnd = FindWindow("ThunderDFrame", Me.Caption)
+  hWnd = FindWindow("ThunderDFrame", Me.Caption)
 
-  IStyle = GetWindowLong(hwnd, GWL_STYLE)
+  IStyle = GetWindowLong(hWnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hwnd, GWL_STYLE, IStyle
-  DrawMenuBar hwnd
-  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hWnd, GWL_STYLE, IStyle
+  DrawMenuBar hWnd
+  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
   
   With Me
   '  .StartUpPosition = 0
@@ -62,34 +63,34 @@ Private Sub UserForm_Initialize()
   
 End Sub
 
-Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-    mx = X
+    mx = x
     my = Y
   End If
 End Sub
 
-Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-    Me.Left = Me.Left - mx + X
+    Me.Left = Me.Left - mx + x
     Me.Top = Me.Top - my + Y
   End If
 End Sub
 
 
-Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   Dim pos_x As Variant
   Dim pos_y As Variant
   pos_x = Array(307, 27)
   pos_y = Array(64, 126, 188, 200)
 
-  If Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
+  If Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
     Call copy_shape_replace
-  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
+  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
     Call copy_shape_replace_resize
-  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
+  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
     Call image_replace
-  ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
+  ElseIf Abs(x - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
     CorelVBA.WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
@@ -104,7 +105,7 @@ Private Sub image_replace()
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
+  Dim x As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -116,11 +117,11 @@ Private Sub image_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
+    sh.GetPosition x, Y
+    sc.SetPosition x, Y
     
-    sh.GetSize X, Y
-    sc.SetSize X, Y
+    sh.GetSize x, Y
+    sc.SetSize x, Y
     sh.Delete
     
   Next sh
@@ -142,7 +143,7 @@ Private Sub copy_shape_replace_resize()
 
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
+  Dim x As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -152,11 +153,11 @@ Private Sub copy_shape_replace_resize()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
+    sh.GetPosition x, Y
+    sc.SetPosition x, Y
     
-    sh.GetSize X, Y
-    sc.SetSize X, Y
+    sh.GetSize x, Y
+    sc.SetSize x, Y
     sh.Delete
     
   Next sh
@@ -179,7 +180,7 @@ Private Sub copy_shape_replace()
 
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
+  Dim x As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -189,8 +190,8 @@ Private Sub copy_shape_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
+    sh.GetPosition x, Y
+    sc.SetPosition x, Y
     sh.Delete
   Next sh
 

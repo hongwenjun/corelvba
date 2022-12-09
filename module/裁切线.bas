@@ -21,17 +21,17 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
   For Each Target In OrigSelection
     Set s1 = Target
     lx = s1.LeftX:      rx = s1.RightX
-    by = s1.BottomY:    ty = s1.TopY
+    By = s1.BottomY:    ty = s1.TopY
     cx = s1.CenterX:    cy = s1.CenterY
     sw = s1.SizeWidth:  sh = s1.SizeHeight
     
     '//  添加裁切线，分别左下-右下-左上-右上
     Dim s2, s3, s4, s5, s6, s7, s8, s9 As Shape
-    Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
-    Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + Line_len))
+    Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, By, lx - (Bleed + Line_len), By)
+    Set s3 = ActiveLayer.CreateLineSegment(lx, By - Bleed, lx, By - (Bleed + Line_len))
 
-    Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + Line_len), by)
-    Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + Line_len))
+    Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, By, rx + (Bleed + Line_len), By)
+    Set s5 = ActiveLayer.CreateLineSegment(rx, By - Bleed, rx, By - (Bleed + Line_len))
 
     Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
     Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + Line_len))
@@ -80,7 +80,7 @@ Sub SelectLine_to_Cropline()
   
     lx = s.LeftX
     rx = s.RightX
-    by = s.BottomY
+    By = s.BottomY
     ty = s.TopY
     
     cx = s.CenterX

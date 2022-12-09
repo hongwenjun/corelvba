@@ -13,18 +13,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-#If VBA7 Then
-    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
-
-#Else
-    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
-
-#End If
 Option Explicit
-
+#If VBA7 Then
+    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+#Else
+    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+#End If
 
  Dim iHang, iLie, iPages As Integer     '定义行数(Y) 列数(X)
  Dim iYouyi, iXiayi As Single   '右移(R) 下移(B)
@@ -48,7 +44,7 @@ Private Sub cmdRun_Click()
  For Each p In ActiveDocument.Pages
     p.Activate                    '激活每页
     p.Shapes.All.CreateSelection          '每页全选
-    Set s(p.Index) = ActiveSelection.Group    '存放每页的群组
+    Set s(p.index) = ActiveSelection.Group    '存放每页的群组
  Next p
  
  ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
@@ -58,8 +54,8 @@ Private Sub cmdRun_Click()
   For Each p In ActiveDocument.Pages
     p.Activate
        
-    s(p.Index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(p.Index).Move (iYouyi * x_M), -(300 + iXiayi * y_M) '排列对象  右偏移，下偏移
+    s(p.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
+    s(p.index).Move (iYouyi * x_M), -(300 + iXiayi * y_M) '排列对象  右偏移，下偏移
   
   y_M = y_M + 1
   
@@ -91,7 +87,7 @@ Private Sub cmdRunX_Click()
  For Each p In ActiveDocument.Pages
     p.Activate                    '激活每页
     p.Shapes.All.CreateSelection          '每页全选
-    Set s(p.Index) = ActiveSelection.Group    '存放每页的群组
+    Set s(p.index) = ActiveSelection.Group    '存放每页的群组
  Next p
  
  ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
@@ -101,8 +97,8 @@ Private Sub cmdRunX_Click()
   For Each p In ActiveDocument.Pages
     p.Activate
        
-    s(p.Index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(p.Index).Move (iYouyi * y_M), -(600 + iXiayi * x_M) '排列对象  右偏移，下偏移
+    s(p.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
+    s(p.index).Move (iYouyi * y_M), -(600 + iXiayi * x_M) '排列对象  右偏移，下偏移
   
   y_M = y_M + 1
   
@@ -129,7 +125,7 @@ Private Sub UserForm_Initialize()
 ActiveDocument.Unit = cdrMillimeter '本文档单位为mm
 
  For Each p In ActiveDocument.Pages
- iPages = p.Index
+ iPages = p.index
  If iPages = 1 Then
   p.Activate
   p.Shapes.All.CreateSelection

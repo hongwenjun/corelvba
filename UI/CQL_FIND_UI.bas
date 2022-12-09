@@ -15,17 +15,18 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 #If VBA7 Then
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -41,16 +42,16 @@ End Sub
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
-  Dim hwnd As Long
+  Dim hWnd As Long
   
-  hwnd = FindWindow("ThunderDFrame", Me.Caption)
+  hWnd = FindWindow("ThunderDFrame", Me.Caption)
 
-  IStyle = GetWindowLong(hwnd, GWL_STYLE)
+  IStyle = GetWindowLong(hWnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hwnd, GWL_STYLE, IStyle
-  DrawMenuBar hwnd
-  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hWnd, GWL_STYLE, IStyle
+  DrawMenuBar hWnd
+  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
 
   With Me
   '  .StartUpPosition = 0
@@ -62,41 +63,41 @@ Private Sub UserForm_Initialize()
   
 End Sub
 
-Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-    mx = X
+    mx = x
     my = Y
 
   End If
 End Sub
 
-Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-  Debug.Print X, Y
-    Me.Left = Me.Left - mx + X
+  Debug.Print x, Y
+    Me.Left = Me.Left - mx + x
     Me.Top = Me.Top - my + Y
   End If
 End Sub
 
-Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   Dim pos_x As Variant
   Dim pos_y As Variant
   pos_x = Array(307, 27)
   pos_y = Array(64, 126, 188, 200)
 
-  If Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
+  If Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
     Call CQLSameUniformColor
-  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
+  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
     Call CQLSameOutlineColor
-  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
+  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
     Call CQLSameSize
-  ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
+  ElseIf Abs(x - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
     CorelVBA.WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
   '// 预置颜色轮廓选择
-  If Abs(X - 178) < 30 And Abs(Y - 118) < 30 Then
-    Debug.Print "选择图标: " & X & "  , " & Y
+  If Abs(x - 178) < 30 And Abs(Y - 118) < 30 Then
+    Debug.Print "选择图标: " & x & "  , " & Y
     CQL查找相同.CQLline_CM100
   End If
   
@@ -118,7 +119,7 @@ Private Sub CQLSameSize()
     Dim Shift As Long
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
-    If Not b Then
+    If Not B Then
       ' MsgBox "选区范围: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@width = {" & s.SizeWidth & " mm} and @height ={" & s.SizeHeight & "mm}").CreateSelection
@@ -138,7 +139,7 @@ Private Sub CQLSameOutlineColor()
   ' 查找对象
   r = colr.RGBRed
   G = colr.RGBGreen
-  b = colr.RGBBlue
+  B = colr.RGBBlue
   
   If OptBt.value = True Then
     ActiveDocument.ClearSelection
@@ -149,13 +150,13 @@ Private Sub CQLSameOutlineColor()
     Dim Shift As Long
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
-    If Not b Then
+    If Not B Then
       ' MsgBox "选区范围: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
-      sh.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
+      sh.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & B & "']").CreateSelection
     End If
   Else
-    ActivePage.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
+    ActivePage.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & B & "']").CreateSelection
   End If
   
   Exit Sub
@@ -174,7 +175,7 @@ Private Sub CQLSameUniformColor()
   ' 查找对象
   r = colr.RGBRed
   G = colr.RGBGreen
-  b = colr.RGBBlue
+  B = colr.RGBBlue
   
   If OptBt.value = True Then
     ActiveDocument.ClearSelection
@@ -185,13 +186,13 @@ Private Sub CQLSameUniformColor()
     Dim Shift As Long
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
-    If Not b Then
+    If Not B Then
       ' MsgBox "选区范围: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
-      sh.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
+      sh.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & B & "']").CreateSelection
     End If
   Else
-    ActivePage.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
+    ActivePage.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & B & "']").CreateSelection
   End If
   Exit Sub
 err:

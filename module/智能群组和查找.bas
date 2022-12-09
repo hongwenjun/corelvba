@@ -1,6 +1,6 @@
 Attribute VB_Name = "智能群组和查找"
 Sub 剪贴板物件替换()
-  Replace_UI.show 0
+  Replace_UI.Show 0
 End Sub
 
 Public Sub 智能群组(Optional ByVal tr As Double = 0)
@@ -13,16 +13,16 @@ Public Sub 智能群组(Optional ByVal tr As Double = 0)
   
   Dim OrigSelection As ShapeRange, sr As New ShapeRange
   Dim s1 As Shape, sh As Shape, s As Shape
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
   Dim eff1 As Effect
   
   Set OrigSelection = ActiveSelectionRange
 
   '// 遍历物件画矩形
   For Each sh In OrigSelection
-    sh.GetBoundingBox X, Y, w, h
+    sh.GetBoundingBox x, Y, w, h
     If w * h > 4 Then
-      Set s = ActiveLayer.CreateRectangle2(X - tr, Y - tr, w + 2 * tr, h + 2 * tr)
+      Set s = ActiveLayer.CreateRectangle2(x - tr, Y - tr, w + 2 * tr, h + 2 * tr)
       sr.Add s
 
     '// 轴线 创建轮廓处理

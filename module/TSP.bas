@@ -1,33 +1,34 @@
 Attribute VB_Name = "TSP"
+'// 导出节点信息到数据文件
 Public Function CDR_TO_TSP()
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
+  Set F = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
   
   ActiveDocument.Unit = cdrMillimeter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
+  Dim x As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   
   Dim TSP As String
   TSP = shs.Count & " " & 0 & vbNewLine
   For Each sh In shs
-    X = sh.CenterX
+    x = sh.CenterX
     Y = sh.CenterY
-    TSP = TSP & X & " " & Y & vbNewLine
+    TSP = TSP & x & " " & Y & vbNewLine
   Next sh
   
-  f.WriteLine TSP
-  f.Close
+  F.WriteLine TSP
+  F.Close
   MsgBox "小圆点导出节点信息到数据文件!" & vbNewLine
 End Function
 
-
+'// 导出节点信息到数据文件
 Public Function Nodes_To_TSP()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
+  Set F = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
   ActiveDocument.Unit = cdrMillimeter
   
   Dim ssr As ShapeRange
@@ -36,7 +37,7 @@ Public Function Nodes_To_TSP()
   Dim nr As NodeRange
   Dim nd As Node
   
-  Dim X As String, Y As String
+  Dim x As String, Y As String
   Dim TSP As String
   
   Set s = ssr.UngroupAllEx.Combine
@@ -44,13 +45,13 @@ Public Function Nodes_To_TSP()
   
   TSP = nr.Count & " " & 0 & vbNewLine
   For Each n In nr
-      X = Round(n.PositionX, 3) & " "
+      x = Round(n.PositionX, 3) & " "
       Y = Round(n.PositionY, 3) & vbNewLine
-      TSP = TSP & X & Y
+      TSP = TSP & x & Y
   Next n
   
-  f.WriteLine TSP
-  f.Close
+  F.WriteLine TSP
+  F.Close
   s.Delete
   MsgBox "选择物件导出节点信息到数据文件!" & vbNewLine
   
@@ -63,21 +64,21 @@ ErrorHandler:
   On Error Resume Next
 End Function
 
-
+'// 运行CDR2TSP.exe
 Public Function START_TSP()
     cmd_line = "C:\TSP\CDR2TSP.exe C:\TSP\CDR_TO_TSP"
     Shell cmd_line
 End Function
 
-
+'//  TSP功能画线-连贯线
 Public Function TSP_TO_DRAW_LINE()
   On Error GoTo ErrorHandler
   ActiveDocument.Unit = cdrMillimeter
   
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set f = fs.OpenTextFile("C:\TSP\TSP.txt", 1, False)
+  Set F = fs.OpenTextFile("C:\TSP\TSP.txt", 1, False)
   Dim Str, arr, n
-  Str = f.ReadAll()
+  Str = F.ReadAll()
   
   Str = VBA.replace(Str, vbNewLine, " ")
   Do While InStr(Str, "  ")
@@ -91,17 +92,17 @@ Public Function TSP_TO_DRAW_LINE()
   Dim crv As Curve
   
   ce(0).ElementType = cdrElementStart
-  ce(0).PositionX = 0
-  ce(0).PositionY = 0
+  ce(0).PositionX = Val(arr(2)) - 3    '// 线条起始坐标，偏移3mm方向指示
+  ce(0).PositionY = Val(arr(3)) - 3
   
-  Dim X As Double
+  Dim x As Double
   Dim Y As Double
   For n = 2 To UBound(arr) - 1 Step 2
-    X = Val(arr(n))
+    x = Val(arr(n))
     Y = Val(arr(n + 1))
   
     ce(n / 2).ElementType = cdrElementLine
-    ce(n / 2).PositionX = X
+    ce(n / 2).PositionX = x
     ce(n / 2).PositionY = Y
   
   Next
@@ -114,22 +115,23 @@ ErrorHandler:
   On Error Resume Next
 End Function
 
-
+'// 设置线条标记(颜色)
 Private Function set_line_color(line As Shape)
-   '// 设置线条标记
   line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
 End Function
 
+
+'//  TSP功能画线-多线段
 Public Function TSP_TO_DRAW_LINES()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup: Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
   
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set f = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
+  Set F = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
   Dim Str, arr, n
   Dim line As Shape
-  Str = f.ReadAll()
+  Str = F.ReadAll()
   
   Str = VBA.replace(Str, vbNewLine, " ")
   Do While InStr(Str, "  ")
@@ -138,12 +140,12 @@ Public Function TSP_TO_DRAW_LINES()
   
   arr = Split(Str)
   For n = 2 To UBound(arr) - 1 Step 4
-    X = Val(arr(n))
+    x = Val(arr(n))
     Y = Val(arr(n + 1))
     x1 = Val(arr(n + 2))
     y1 = Val(arr(n + 3))
 
-    Set line = ActiveLayer.CreateLineSegment(X, Y, x1, y1)
+    Set line = ActiveLayer.CreateLineSegment(x, Y, x1, y1)
     set_line_color line
   Next
   
@@ -159,26 +161,27 @@ ErrorHandler:
     On Error Resume Next
 End Function
 
+'// 运行 TSP.exe
 Public Function MAKE_TSP()
     cmd_line = "C:\TSP\TSP.exe"
     Shell cmd_line
 End Function
 
-' 位图制作小圆点
+'// 位图制作小圆点
 Public Function BITMAP_MAKE_DOTS()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup: Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
   Dim line, art, n, h, w
-  Dim X As Double
+  Dim x As Double
   Dim Y As Double
   Dim s As Shape
   flag = 0
   
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set f = fs.OpenTextFile("C:\TSP\BITMAP", 1, False)
+  Set F = fs.OpenTextFile("C:\TSP\BITMAP", 1, False)
 
-  line = f.ReadLine()
+  line = F.ReadLine()
   Debug.Print line
 
   ' 读取第一行，位图 h高度 和 w宽度
@@ -190,20 +193,20 @@ Public Function BITMAP_MAKE_DOTS()
       flag = 1
   End If
 
-  For i = 1 To h
-    line = f.ReadLine()
+  For I = 1 To h
+    line = F.ReadLine()
     arr = Split(line)
     For n = LBound(arr) To UBound(arr)
       If arr(n) > 0 Then
-        X = n: Y = -i
+        x = n: Y = -I
         If flag = 1 Then
-          Set s = ActiveLayer.CreateRectangle2(X, Y, 0.6, 0.6)
+          Set s = ActiveLayer.CreateRectangle2(x, Y, 0.6, 0.6)
         Else
-          make_dots X, Y
+          make_dots x, Y
         End If
       End If
     Next n
-  Next i
+  Next I
 
   ActiveDocument.EndCommandGroup: Application.Optimization = False
   ActiveWindow.Refresh: Application.Refresh
@@ -213,11 +216,12 @@ ErrorHandler:
     On Error Resume Next
 End Function
 
-Private Function make_dots(X As Double, Y As Double)
+'// 坐标绘制圆点
+Private Function make_dots(x As Double, Y As Double)
   Dim s As Shape
   Dim c As Variant
   c = Array(0, 255, 0)
-  Set s = ActiveLayer.CreateEllipse2(X, Y, 0.5, 0.5)
+  Set s = ActiveLayer.CreateEllipse2(x, Y, 0.5, 0.5)
   s.Fill.UniformColor.RGBAssign c(Int(Rnd() * 2)), c(Int(Rnd() * 2)), c(Int(Rnd() * 2))
   s.Outline.Width = 0#
 End Function

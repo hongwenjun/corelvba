@@ -1,14 +1,14 @@
 Attribute VB_Name = "API"
 Public Function Speak_Msg(message As String)
-Speak_Help = Val(GetSetting("262235.xyz", "Settings", "SpeakHelp", "1"))
-
-If Val(Speak_Help) = 1 Then
-  Dim sapi
-  Set sapi = CreateObject("sapi.spvoice")
-  sapi.Speak message
-Else
-  ' 不说话
-End If
+  Speak_Help = Val(GetSetting("262235.xyz", "Settings", "SpeakHelp", "1"))
+  
+  If Val(Speak_Help) = 1 Then
+    Dim sapi
+    Set sapi = CreateObject("sapi.spvoice")
+    sapi.Speak message
+  Else
+    ' 不说话
+  End If
 
 End Function
 
@@ -44,7 +44,7 @@ Public Function Set_Space_Width() As Double
   If GlobalUserData.Exists("SpaceWidth", 1) Then
     text = GlobalUserData("SpaceWidth", 1)
   End If
-  text = InputBox("请输入间隔宽度值 0 --> 99", "设置间隔宽度(mm)", text)
+  text = InputBox("请输入间隔宽度值 -99 --> 99", "设置间隔宽度(mm)", text)
   If text = "" Then Exit Function
   GlobalUserData("SpaceWidth", 1) = text
   Set_Space_Width = Val(text)
@@ -89,31 +89,88 @@ End Function
 
 '// 对数组进行排序[单维]
 Public Function ArraySort(src As Variant) As Variant
-  Dim out As Long, i As Long, tmp As Variant
+  Dim out As Long, I As Long, tmp As Variant
   For out = LBound(src) To UBound(src) - 1
-    For i = out + 1 To UBound(src)
-      If src(out) > src(i) Then
-        tmp = src(i): src(i) = src(out): src(out) = tmp
+    For I = out + 1 To UBound(src)
+      If src(out) > src(I) Then
+        tmp = src(I): src(I) = src(out): src(out) = tmp
       End If
-    Next i
+    Next I
   Next out
   
   ArraySort = src
 End Function
 
+'//  把一个数组倒序
+Public Function ArrayReverse(arr)
+    Dim I As Integer, n As Integer
+    n = UBound(arr)
+    Dim p(): ReDim p(n)
+    For I = 0 To n
+        p(I) = arr(n - I)
+    Next
+    ArrayReverse = p
+End Function
+
 '// 测试数组排序
-Private test_ArraySort()
-  Dim arr As Variant, i As Integer
+Private Function test_ArraySort()
+  Dim arr As Variant, I As Integer
   arr = Array(5, 4, 3, 2, 1, 9, 999, 33)
-  For i = 0 To arrlen(arr) - 1
-    Debug.Print arr(i);
-  Next i
+  For I = 0 To arrlen(arr) - 1
+    Debug.Print arr(I);
+  Next I
   Debug.Print arrlen(arr)
   ArraySort arr
-  For i = 0 To arrlen(arr) - 1
-    Debug.Print arr(i);
-  Next i
-End Sub
+  For I = 0 To arrlen(arr) - 1
+    Debug.Print arr(I);
+  Next I
+End Function
+
+'// 两点连线的角度：返回角度(相对于X轴的角度)
+'// p为末点，O为始点
+Public Function alfaPP(p, o)
+    Dim pi As Double: pi = 4 * Atn(1)
+    Dim beta As Double
+    If p(0) = o(0) And p(1) = o(1) Then '二点重合
+        alfaPP = 0
+        Exit Function
+    ElseIf p(0) = o(0) And p(1) > o(1) Then
+        beta = pi / 2
+    ElseIf p(0) = o(0) And p(1) < o(1) Then
+        beta = -pi / 2
+    ElseIf p(1) = o(1) And p(0) < o(0) Then
+        beta = pi
+    ElseIf p(1) = o(1) And p(0) > o(0) Then
+        beta = 0
+    Else
+        beta = Atn((p(1) - o(1)) / VBA.Abs(p(0) - o(0)))
+        If p(1) > o(1) And p(0) < o(0) Then
+            beta = pi - beta
+        ElseIf p(1) < o(1) And p(0) < o(0) Then
+            beta = -(pi + beta)
+        End If
+    End If
+    alfaPP = beta * 180 / pi
+End Function
+
+'// 求过P点到线段AB上的垂足点(XY平面内的二维计算)
+Public Function pFootInXY(p, a, B)
+    If a(0) = B(0) Then
+        pFootInXY = Array(a(0), p(1), 0#): Exit Function
+    End If
+    If a(1) = B(1) Then
+        pFootInXY = Array(p(0), a(1), 0#): Exit Function
+    End If
+    Dim aa, bb, c, d, x, Y
+    aa = (a(1) - B(1)) / (a(0) - B(0))
+    bb = a(1) - aa * a(0)
+    c = -(a(0) - B(0)) / (a(1) - B(1))
+    d = p(1) - c * p(0)
+    x = (d - bb) / (aa - c)
+    Y = aa * x + bb
+    pFootInXY = Array(x, Y, 0#)
+End Function
+
 
 Function FindAllShapes() As ShapeRange
   Dim s As Shape

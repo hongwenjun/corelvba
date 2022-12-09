@@ -12,7 +12,7 @@
 
 | 微信支付 | 支付宝 | TRX 数字货币 |
 | ------- | ------- | ------- |
-| ![](https://262235.xyz/donate/WXPay.png) | ![](https://262235.xyz/donate/AliPay.jpg) | ![](https://262235.xyz/donate/TRX.png) |
+| ![](https://262235.xyz/donate/WXPay.png) | ![](https://262235.xyz/donate/AliPay.jpg) |
 
 ### 捐赠者:
 ```
@@ -32,6 +32,9 @@ A
 哈哈
 深蓝*浅蓝
 壹方-渐变牙刷
+zdj168
+99彩印
+JZ捷众广告
 ```
 
 ### 会员群福利: 

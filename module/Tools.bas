@@ -7,9 +7,9 @@ Public Function 分分合合()
   拼版裁切线.Cut_lines
 
   ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
-  ActiveSelectionRange.GetBoundingBox X, Y, w, h
-  Set s = ActivePage.SelectShapesFromRectangle(X, Y, w, h, True)
+  Dim x As Double, Y As Double, w As Double, h As Double
+  ActiveSelectionRange.GetBoundingBox x, Y, w, h
+  Set s = ActivePage.SelectShapesFromRectangle(x, Y, w, h, True)
   
   自动中线色阶条.Auto_ColorMark
 
@@ -73,6 +73,7 @@ End Function
 
 '// 文本转曲线
 Public Function TextShape_ConvertToCurves()
+  On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   Dim s As Shape, cnt As Long
   For Each s In API.FindAllShapes.Shapes.FindShapes(, cdrTextShape)
@@ -84,6 +85,10 @@ Public Function TextShape_ConvertToCurves()
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
   ActiveWindow.Refresh:    Application.Refresh
+  Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
 End Function
 
 '' 复制物件
@@ -144,6 +149,8 @@ End Function
 Public Function 尺寸取整()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
+  ' 修改变形尺寸基准
+  ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes
   Set shs = ActiveSelection.Shapes
   Dim s As String, size As String
@@ -197,6 +204,12 @@ Public Function Python_BITMAP()
     Shell cmd_line
 End Function
 
+Public Function Python_BITMAP2()
+    Bitmap = "C:\TSP\BITMAP.exe"
+    Shell Bitmap
+End Function
+
+
 Public Function Python_Make_QRCode()
     mypy = Path & "GMS\262235.xyz\Make_QRCode.py"
     cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
@@ -211,7 +224,7 @@ Public Function QRCode_replace()
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
+  Dim x As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -223,11 +236,11 @@ Public Function QRCode_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
+    sh.GetPosition x, Y
+    sc.SetPosition x, Y
     
-    sh.GetSize X, Y
-    sc.SetSize X, Y
+    sh.GetSize x, Y
+    sc.SetSize x, Y
     sh.Delete
     
   Next sh
@@ -326,37 +339,37 @@ End Function
 
 Private Function mark_shape_expand(sh As Shape, tr As Double)
     Dim s As Shape
-    Dim X As Double, Y As Double, w As Double, h As Double, r As Double
-    sh.GetBoundingBox X, Y, w, h
-    X = X - tr: Y = Y - tr:   w = w + 2 * tr: h = h + 2 * tr
+    Dim x As Double, Y As Double, w As Double, h As Double, r As Double
+    sh.GetBoundingBox x, Y, w, h
+    x = x - tr: Y = Y - tr:   w = w + 2 * tr: h = h + 2 * tr
     
     r = Max(w, h) / Min(w, h) / 30 * Math.Sqr(w * h)
     If w < h Then
-      Set s = ActiveLayer.CreateRectangle2(X - r, Y, w + 2 * r, h)
+      Set s = ActiveLayer.CreateRectangle2(x - r, Y, w + 2 * r, h)
     Else
-      Set s = ActiveLayer.CreateRectangle2(X, Y - r, w, h + 2 * r)
+      Set s = ActiveLayer.CreateRectangle2(x, Y - r, w, h + 2 * r)
     End If
     s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
 Private Function mark_shape(sh As Shape)
   Dim s As Shape
-  Dim X As Double, Y As Double, w As Double, h As Double
-  sh.GetBoundingBox X, Y, w, h
-  Set s = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  Dim x As Double, Y As Double, w As Double, h As Double
+  sh.GetBoundingBox x, Y, w, h, True
+  Set s = ActiveLayer.CreateRectangle2(x, Y, w, h)
   s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
-Private Function Max(ByVal a, ByVal b)
-  If a < b Then
-    a = b
+Private Function Max(ByVal a, ByVal B)
+  If a < B Then
+    a = B
   End If
     Max = a
 End Function
 
-Private Function Min(ByVal a, ByVal b)
-  If a > b Then
-    a = b
+Private Function Min(ByVal a, ByVal B)
+  If a > B Then
+    a = B
   End If
     Min = a
 End Function
@@ -397,9 +410,9 @@ Public Function Take_Apart_Character()
   Dim tr As Double
   
   ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
-  ssr.GetBoundingBox X, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  Dim x As Double, Y As Double, w As Double, h As Double
+  ssr.GetBoundingBox x, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
   
   ' 解散群组，先组合，再散开
   Set s = ssr.UngroupAllEx.Combine
@@ -471,10 +484,10 @@ Public Function Single_Line()
   End If
     
   ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox X, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  ssr.GetBoundingBox x, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -534,10 +547,10 @@ Public Function Single_Line_Vertical()
   End If
     
   ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox X, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  ssr.GetBoundingBox x, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -571,8 +584,8 @@ End Function
 
 Public Function Single_Line_LastNode()
   If 0 = ActiveSelectionRange.Count Then Exit Function
-'  On Error GoTo ErrorHandler
-'  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
   
   Dim cm(2)  As Color
@@ -593,10 +606,10 @@ Public Function Single_Line_LastNode()
   End If
     
   ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox X, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  ssr.GetBoundingBox x, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -637,17 +650,17 @@ Public Function Mark_Range_Box()
   Dim s1 As Shape, ssr As ShapeRange
   
   Set ssr = ActiveSelectionRange
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox X, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
+  ssr.GetBoundingBox x, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
   s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0) ' RGB 绿
 End Function
 
 
 '''//// 快速颜色选择 ////'''
-Sub quickColorSelect()
-    Dim X As Double, Y As Double
+Function quickColorSelect()
+    Dim x As Double, Y As Double
     Dim s As Shape, s1 As Shape
     Dim sr As ShapeRange, sr2 As ShapeRange
     Dim Shift As Long, bClick As Boolean
@@ -660,9 +673,9 @@ Sub quickColorSelect()
     bClick = False
     While Not bClick
     On Error Resume Next
-        bClick = ActiveDocument.GetUserClick(X, Y, Shift, 10, False, cdrCursorPickNone)
+        bClick = ActiveDocument.GetUserClick(x, Y, Shift, 10, False, cdrCursorPickNone)
         If Not bClick Then
-            Set s = ActivePage.SelectShapesAtPoint(X, Y, False)
+            Set s = ActivePage.SelectShapesAtPoint(x, Y, False)
             Set s = s.Shapes.Last
             c2.CopyAssign s.Fill.UniformColor
             Set sr2 = New ShapeRange
@@ -678,5 +691,159 @@ Sub quickColorSelect()
     Wend
     
     EventsEnabled = True
-End Sub
+End Function
+
+
+'''//// 切割图形-垂直分割-水平分割 ////'''
+Function divideVertically()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
+  cutInHalf 1
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+Function divideHorizontally()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  
+  cutInHalf 2
+  
+  ActiveDocument.EndCommandGroup
+  Application.Optimization = False
+  ActiveWindow.Refresh:    Application.Refresh
+  
+Exit Function
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+Private Function cutInHalf(Optional method As Integer)
+    Dim s As Shape, rect As Shape, rect2 As Shape
+    Dim trimmed1 As Shape, trimmed2 As Shape
+    Dim x As Double, Y As Double, w As Double, h As Double
+    Dim vBool As Boolean
+    Dim leeway As Double
+    Dim sr As ShapeRange, sr2 As New ShapeRange
+    
+    vBool = True
+    If method = 2 Then
+        vBool = False
+    End If
+    leeway = 0.1
+    Set sr = ActiveSelectionRange
+    ActiveDocument.BeginCommandGroup "Cut in half"
+    For Each s In sr
+        s.GetBoundingBox x, Y, w, h
+        
+        If (vBool) Then
+            'vertical slice
+            Set rect = ActiveLayer.CreateRectangle2(x - leeway, Y - leeway, (w / 2) + leeway, h + (leeway * 2))
+            Set rect2 = ActiveLayer.CreateRectangle2(x + (w / 2), Y - leeway, (w / 2) + leeway, h + (leeway * 2))
+        Else
+            Set rect = ActiveLayer.CreateRectangle2(x - leeway, Y - leeway, w + (leeway * 2), (h / 2) + leeway)
+            Set rect2 = ActiveLayer.CreateRectangle2(x - leeway, Y + (h / 2), w + (leeway * 2), (h / 2) + leeway)
+        End If
+        
+        Set trimmed1 = rect.Intersect(s, True, True)
+        rect.Delete
+        Set trimmed2 = rect2.Intersect(s, True, True)
+        s.Delete
+        rect2.Delete
+        sr2.Add trimmed1
+        sr2.Add trimmed2
+    Next s
+    ActiveDocument.EndCommandGroup
+    
+    sr2.CreateSelection
+End Function
+
+
+'// 批量多页居中-遍历批量物件，放置物件到页面
+Public Function 批量多页居中()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  On Error GoTo ErrorHandler
+  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+
+  ActiveDocument.Unit = cdrMillimeter
+  Set sr = ActiveSelectionRange
+  total = sr.Count
+
+  '// 建立多页面
+  Set doc = ActiveDocument
+  doc.AddPages (total - 1)
+
+
+#If VBA7 Then
+  sr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
+#Else
+' X4 不支持 ShapeRange.sort
+#End If
+
+
+  Dim sh As Shape
+  
+  '// 遍历批量物件，放置物件到页面
+  For I = 1 To sr.Count
+    doc.Pages(I).Activate
+    Set sh = sr.Shapes(I)
+    ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
+ 
+   '// 物件居中页面
+#If VBA7 Then
+  ActiveDocument.ClearSelection
+  sh.AddToSelection
+  ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
+#Else
+  sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
+#End If
+
+  Next I
+
+  ActiveDocument.EndCommandGroup: Application.Optimization = False
+  ActiveWindow.Refresh:   Application.Refresh
+Exit Function
+
+ErrorHandler:
+  Application.Optimization = False
+  MsgBox "请先选择一些物件"
+  On Error Resume Next
+End Function
+
+
+'// 安全线: 点击一次建立辅助线，再调用清除参考线
+Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
+  Dim sr As ShapeRange
+  Set sr = ActiveDocument.MasterPage.GuidesLayer.FindShapes(Type:=cdrGuidelineShape)
+  If sr.Count <> 0 Then
+    sr.Delete
+    Exit Function
+  End If
+  
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  ActiveDocument.Unit = cdrMillimeter
+
+
+
+  With actnumber
+    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .TopY - cardblood, 0#)
+    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .BottomY + cardblood, 0#)
+    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(.LeftX + cardblood, 0, 90#)
+    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(.RightX - cardblood, 0, 90#)
+  End With
+  
+
+
+End Function
 
