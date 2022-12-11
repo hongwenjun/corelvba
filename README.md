@@ -1,4 +1,6 @@
 ### [捐赠 蘭雅CorelVBA工具 开源软件](https://github.com/hongwenjun/corelvba/blob/main/donate.md)
+- [![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/youtube.png)频道](https://www.youtube.com/sRGB18/videos) &nbsp;&nbsp;www.youtube.com/sRGB18 &nbsp;&nbsp;[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)赞赏支持!](https://paypal.me/sRGB18)&nbsp;&nbsp;https://paypal.me/sRGB18
+
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
