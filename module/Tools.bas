@@ -834,8 +834,6 @@ Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
   If 0 = ActiveSelectionRange.Count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
 
-
-
   With actnumber
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .TopY - cardblood, 0#)
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .BottomY + cardblood, 0#)
@@ -843,7 +841,5 @@ Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(.RightX - cardblood, 0, 90#)
   End With
   
-
-
 End Function
 
