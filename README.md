@@ -4,8 +4,11 @@
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
-## 蘭雅CorelVBA 中秋版0909 免费下载
+## [蘭雅CorelVBA 中秋版0909 免费下载](https://262235.xyz/262235_GMS_0909.7z)
 ### https://262235.xyz/262235_GMS_0909.7z
+
+## [蘭雅CorelVBA--基本工具栏导览演示](https://www.bilibili.com/video/BV1ZV4y1w7Lj)
+### https://www.bilibili.com/video/BV1ZV4y1w7Lj
 
 ## 蘭雅CorelVBA工具中秋预览版 [安装视频点击](https://262235.xyz/CorelVBA/install.mp4)
 - 以 CorelDRAW X6 举例
@@ -25,7 +28,13 @@
 ## 蘭雅CorelVBA工具中秋版 修复更新和添加的主要功能
 
 ```
-* 8215267 (HEAD -> main, origin/main, origin/HEAD) 蘭雅CorelVBA工具 UI独立图片 添加语音功能提示
+* 2022.12.23 更新尺寸标注统一长宽节点合并
+* 92a90b0 2022.12.09更新,增加安全辅助线和批量多页居中功能
+* 93670b7 贪心商人TSP升级
+* e1c342c 一刀切升级，Python工具源码加入
+* 2a8eb82 UI独立图片，工具栏三个皮肤，鼠标悬停五彩斑斓的黑
+* 8215267 蘭雅CorelVBA工具 UI独立图片 添加语音功能提示
+* 8215267 蘭雅CorelVBA工具 UI独立图片 添加语音功能提示
 * 1457811 蘭雅CorelVBA工具-中秋版 更换UI图
 * 0f35182 简单一刀切_识别群组由群友宏瑞广告赞助发行
 * b2eb2c4 一键智能群组--功能由群友半缘君赞助发行

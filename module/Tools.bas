@@ -7,9 +7,9 @@ Public Function 分分合合()
   拼版裁切线.Cut_lines
 
   ' 记忆选择范围
-  Dim x As Double, Y As Double, w As Double, h As Double
-  ActiveSelectionRange.GetBoundingBox x, Y, w, h
-  Set s = ActivePage.SelectShapesFromRectangle(x, Y, w, h, True)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  ActiveSelectionRange.GetBoundingBox X, Y, w, h
+  Set s = ActivePage.SelectShapesFromRectangle(X, Y, w, h, True)
   
   自动中线色阶条.Auto_ColorMark
 
@@ -224,7 +224,7 @@ Public Function QRCode_replace()
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -236,11 +236,11 @@ Public Function QRCode_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition x, Y
-    sc.SetPosition x, Y
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
     
-    sh.GetSize x, Y
-    sc.SetSize x, Y
+    sh.GetSize X, Y
+    sc.SetSize X, Y
     sh.Delete
     
   Next sh
@@ -339,24 +339,24 @@ End Function
 
 Private Function mark_shape_expand(sh As Shape, tr As Double)
     Dim s As Shape
-    Dim x As Double, Y As Double, w As Double, h As Double, r As Double
-    sh.GetBoundingBox x, Y, w, h
-    x = x - tr: Y = Y - tr:   w = w + 2 * tr: h = h + 2 * tr
+    Dim X As Double, Y As Double, w As Double, h As Double, r As Double
+    sh.GetBoundingBox X, Y, w, h
+    X = X - tr: Y = Y - tr:   w = w + 2 * tr: h = h + 2 * tr
     
     r = Max(w, h) / Min(w, h) / 30 * Math.Sqr(w * h)
     If w < h Then
-      Set s = ActiveLayer.CreateRectangle2(x - r, Y, w + 2 * r, h)
+      Set s = ActiveLayer.CreateRectangle2(X - r, Y, w + 2 * r, h)
     Else
-      Set s = ActiveLayer.CreateRectangle2(x, Y - r, w, h + 2 * r)
+      Set s = ActiveLayer.CreateRectangle2(X, Y - r, w, h + 2 * r)
     End If
     s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
 Private Function mark_shape(sh As Shape)
   Dim s As Shape
-  Dim x As Double, Y As Double, w As Double, h As Double
-  sh.GetBoundingBox x, Y, w, h, True
-  Set s = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  sh.GetBoundingBox X, Y, w, h, True
+  Set s = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)
 End Function
 
@@ -410,9 +410,9 @@ Public Function Take_Apart_Character()
   Dim tr As Double
   
   ' 记忆选择范围
-  Dim x As Double, Y As Double, w As Double, h As Double
-  ssr.GetBoundingBox x, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  Dim X As Double, Y As Double, w As Double, h As Double
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   
   ' 解散群组，先组合，再散开
   Set s = ssr.UngroupAllEx.Combine
@@ -429,7 +429,7 @@ Public Function Take_Apart_Character()
     mark_shape_expand sh, tr
   Next sh
   
-  Set ssr = ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(0, 255, 0))")
+  Set ssr = ActivePage.Shapes.FindShapes(query:="@colors.find(RGB(0, 255, 0))")
   ActiveDocument.ClearSelection
   ssr.AddToSelection
   
@@ -484,10 +484,10 @@ Public Function Single_Line()
   End If
     
   ' 记忆选择范围
-  Dim x As Double, Y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox x, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -547,10 +547,10 @@ Public Function Single_Line_Vertical()
   End If
     
   ' 记忆选择范围
-  Dim x As Double, Y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox x, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -606,10 +606,10 @@ Public Function Single_Line_LastNode()
   End If
     
   ' 记忆选择范围
-  Dim x As Double, Y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox x, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=cm(0)
   SrNew.Add s1
   
@@ -650,17 +650,17 @@ Public Function Mark_Range_Box()
   Dim s1 As Shape, ssr As ShapeRange
   
   Set ssr = ActiveSelectionRange
-  Dim x As Double, Y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
 
-  ssr.GetBoundingBox x, Y, w, h
-  Set s1 = ActiveLayer.CreateRectangle2(x, Y, w, h)
+  ssr.GetBoundingBox X, Y, w, h
+  Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0) ' RGB 绿
 End Function
 
 
 '''//// 快速颜色选择 ////'''
 Function quickColorSelect()
-    Dim x As Double, Y As Double
+    Dim X As Double, Y As Double
     Dim s As Shape, s1 As Shape
     Dim sr As ShapeRange, sr2 As ShapeRange
     Dim Shift As Long, bClick As Boolean
@@ -668,14 +668,14 @@ Function quickColorSelect()
 
     EventsEnabled = False
     
-    Set sr = ActivePage.Shapes.FindShapes(Query:="@fill.type = 'uniform'")
+    Set sr = ActivePage.Shapes.FindShapes(query:="@fill.type = 'uniform'")
     ActiveDocument.ClearSelection
     bClick = False
     While Not bClick
     On Error Resume Next
-        bClick = ActiveDocument.GetUserClick(x, Y, Shift, 10, False, cdrCursorPickNone)
+        bClick = ActiveDocument.GetUserClick(X, Y, Shift, 10, False, cdrCursorPickNone)
         If Not bClick Then
-            Set s = ActivePage.SelectShapesAtPoint(x, Y, False)
+            Set s = ActivePage.SelectShapesAtPoint(X, Y, False)
             Set s = s.Shapes.Last
             c2.CopyAssign s.Fill.UniformColor
             Set sr2 = New ShapeRange
@@ -732,7 +732,7 @@ End Function
 Private Function cutInHalf(Optional method As Integer)
     Dim s As Shape, rect As Shape, rect2 As Shape
     Dim trimmed1 As Shape, trimmed2 As Shape
-    Dim x As Double, Y As Double, w As Double, h As Double
+    Dim X As Double, Y As Double, w As Double, h As Double
     Dim vBool As Boolean
     Dim leeway As Double
     Dim sr As ShapeRange, sr2 As New ShapeRange
@@ -745,15 +745,15 @@ Private Function cutInHalf(Optional method As Integer)
     Set sr = ActiveSelectionRange
     ActiveDocument.BeginCommandGroup "Cut in half"
     For Each s In sr
-        s.GetBoundingBox x, Y, w, h
+        s.GetBoundingBox X, Y, w, h
         
         If (vBool) Then
             'vertical slice
-            Set rect = ActiveLayer.CreateRectangle2(x - leeway, Y - leeway, (w / 2) + leeway, h + (leeway * 2))
-            Set rect2 = ActiveLayer.CreateRectangle2(x + (w / 2), Y - leeway, (w / 2) + leeway, h + (leeway * 2))
+            Set rect = ActiveLayer.CreateRectangle2(X - leeway, Y - leeway, (w / 2) + leeway, h + (leeway * 2))
+            Set rect2 = ActiveLayer.CreateRectangle2(X + (w / 2), Y - leeway, (w / 2) + leeway, h + (leeway * 2))
         Else
-            Set rect = ActiveLayer.CreateRectangle2(x - leeway, Y - leeway, w + (leeway * 2), (h / 2) + leeway)
-            Set rect2 = ActiveLayer.CreateRectangle2(x - leeway, Y + (h / 2), w + (leeway * 2), (h / 2) + leeway)
+            Set rect = ActiveLayer.CreateRectangle2(X - leeway, Y - leeway, w + (leeway * 2), (h / 2) + leeway)
+            Set rect2 = ActiveLayer.CreateRectangle2(X - leeway, Y + (h / 2), w + (leeway * 2), (h / 2) + leeway)
         End If
         
         Set trimmed1 = rect.Intersect(s, True, True)
@@ -843,3 +843,17 @@ Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
   
 End Function
 
+'// 标注尺寸 批量简单标注数字
+Public Function Simple_Label_Numbers()
+  ActiveDocument.Unit = cdrMillimeter
+  Set sr = ActiveSelectionRange
+  
+  For Each s In sr.Shapes
+    X = s.CenterX: Y = s.TopY
+    sw = s.SizeWidth: sh = s.SizeHeight
+          
+    text = Int(sw + 0.5) & "x" & Int(sh + 0.5) & "mm"
+    Set s = ActiveLayer.CreateArtisticText(0, 0, text)
+    s.CenterX = X: s.BottomY = Y + 5
+  Next
+End Function
