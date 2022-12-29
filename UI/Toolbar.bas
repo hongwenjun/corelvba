@@ -13,6 +13,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 #If VBA7 Then
     Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
@@ -129,11 +130,7 @@ End Sub
 
 Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     If Button Then
-<<<<<<< HEAD
         mx = X: my = Y
-=======
-        mx = x: my = Y
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
     End If
     
   With Me
@@ -159,11 +156,7 @@ Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVa
     LEFT_ALIGN_BT.Visible = False
     Exit Sub
   ElseIf Shift = fmCtrlMask Then
-<<<<<<< HEAD
       mx = X: my = Y
-=======
-      mx = x: my = Y
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
   Else
     Unload Me   ' Ctrl + 鼠标 关闭工具
   End If
@@ -185,7 +178,6 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   '// 按下Ctrl键，最优先处理工具功能
   If Shift = 2 Then
-<<<<<<< HEAD
     If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 安全线，清除辅助线
       Tools.guideangle CorelDRAW.ActiveSelectionRange, 3    ' 左键 3mm 出血
@@ -212,34 +204,6 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       '// 暂时空
       
     ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-=======
-    If Abs(x - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 安全线，清除辅助线
-      Tools.guideangle CorelDRAW.ActiveSelectionRange, 3    ' 左键 3mm 出血
-      
-    ElseIf Abs(x - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// Adobe AI EPS INDD PDF和CorelDRAW 缩略图工具
-      AdobeThumbnail_Click
-      
-    ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 多物件拆分线段
-      Tools.Split_Segment
-      
-    ElseIf Abs(x - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 智能拆字
-      Tools.Take_Apart_Character
-      
-    ElseIf Abs(x - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 暂时空
-      
-    ElseIf Abs(x - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 暂时空
-      
-    ElseIf Abs(x - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 暂时空
-      
-    ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
       '// CTRL扩展工具栏
       Me.Height = 30 + 45
       
@@ -249,7 +213,6 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   '// 鼠标右键 扩展键按钮优先  收缩工具栏  标记范围框  居中页面 尺寸取整数  单色黑中线标记 扩展工具栏  排列工具  扩展工具栏收缩
   If Button = 2 Then
-<<<<<<< HEAD
     If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       Me.Width = 30: Me.Height = 30
       UI.Visible = False: LOGO.Visible = True
@@ -282,49 +245,11 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       Tools.Split_Segment
 
     ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-=======
-    If Abs(x - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Me.Width = 30: Me.Height = 30
-      UI.Visible = False: LOGO.Visible = True
-
-    ElseIf Abs(x - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.居中页面
-
-    ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.Mark_Range_Box
-
-    ElseIf Abs(x - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.尺寸取整
-    
-    ElseIf Abs(x - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      自动中线色阶条.Auto_ColorMark_K
-
-    '//分分合合把几个功能按键合并到一起，定义到右键上
-    ElseIf Abs(x - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.分分合合
-
-    ElseIf Abs(x - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      智能群组和查找.智能群组 API.Create_Tolerance
-
-    ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 右键扩展工具栏
-      Me.Height = 30 + 45
-      
-    ElseIf Abs(x - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 右键拆分线段
-      Tools.Split_Segment
-
-    ElseIf Abs(x - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
       '// 右键排列工具
       TOP_ALIGN_BT.Visible = True
       LEFT_ALIGN_BT.Visible = True
 
-<<<<<<< HEAD
     ElseIf Abs(X - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-=======
-    ElseIf Abs(x - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
       '// 右键扩展工具栏收缩
       Me.Height = 30
       
@@ -401,11 +326,7 @@ End Sub
 ' End Sub
 
 '''///  贪心商人和好玩工具等  ///'''
-<<<<<<< HEAD
 Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-=======
-Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
   If Button = 2 Then
     TSP.Nodes_To_TSP
   ElseIf Shift = fmCtrlMask Then
@@ -504,7 +425,7 @@ End Sub
 
 Private Sub Tools_Icon_Click()
   ' 调用语句
-  I = GMSManager.RunMacro("CorelDRAW_VBA", "学习CorelVBA.start")
+  i = GMSManager.RunMacro("CorelDRAW_VBA", "学习CorelVBA.start")
 End Sub
 
 '''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
@@ -626,7 +547,7 @@ Private Sub AdobeThumbnail_Click()
     App = mypath & "GuiAdobeThumbnail.exe"
     
     h = FindWindow(vbNullString, "CorelVBA 青年节 By 蘭雅sRGB")
-    I = ShellExecute(h, "", App, "", mypath, 1)
+    i = ShellExecute(h, "", App, "", mypath, 1)
 End Sub
 
 '''////  快速颜色选择  ////'''
@@ -647,30 +568,57 @@ End Sub
 '// 安全辅助线功能，三键控制，讨厌辅助线的也可以用来删除辅助线
 Private Sub Safe_Guideangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Tools.guideangle CorelDRAW.ActiveSelectionRange, 0#   ' 右键0距离贴紧
+    Tools.guideangle ActiveSelectionRange, 0#   ' 右键0距离贴紧
   ElseIf Shift = fmCtrlMask Then
-    Tools.guideangle CorelDRAW.ActiveSelectionRange, 3    ' 左键 3mm 出血
+    Tools.guideangle ActiveSelectionRange, 3    ' 左键 3mm 出血
   Else
-    Tools.guideangle CorelDRAW.ActiveSelectionRange, -Set_Space_Width     ' Ctrl + 鼠标左键 自定义间隔
-<<<<<<< HEAD
+    Tools.guideangle ActiveSelectionRange, -Set_Space_Width     ' Ctrl + 鼠标左键 自定义间隔
   End If
 End Sub
 
-
+'// 标准尺寸，左键右键Ctrl三键控制，调用三种样式
 Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Make_SIZE.Show 0   ' 右键
   ElseIf Shift = fmCtrlMask Then
     #If VBA7 Then
-      woodman.Show 0
+      Woodman.Show 0
     #Else  ' X4 使用
       Make_SIZE.Show 0
     #End If
   Else
     Tools.Simple_Label_Numbers  ' Ctrl + 鼠标  批量简单数字标注
-=======
->>>>>>> 0d7a93841c2ece54be5b9b16995c7a3e4d8c3296
   End If
+End Sub
+
+'// 批量转图片和导出图片文件
+Private Sub Photo_Form_Click()
+  PhotoForm.Show 0
+End Sub
+
+'// 修复圆角缺角到直角
+Private Sub btn_corners_off_Click()
+  Tools.corner_off
+End Sub
+
+Private Sub SortCount_Click()
+  Tools.按面积排列 30
+End Sub
+
+Private Sub LevelRuler_Click()
+  Tools.角度转平
+End Sub
+
+Private Sub MirrorLine_Click()
+  Tools.参考线镜像
+End Sub
+
+Private Sub AutoRotate_Click()
+  Tools.自动旋转角度
+End Sub
+
+Private Sub SwapShape_Click()
+  Tools.交换对象
 End Sub
 
 
