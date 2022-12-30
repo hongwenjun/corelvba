@@ -4,8 +4,8 @@
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
-## [蘭雅CorelVBA 中秋版0909 免费下载](https://262235.xyz/262235_GMS_0909.7z)
-### https://262235.xyz/262235_GMS_0909.7z
+## [蘭雅CorelVBA 2023.1.1版 免费开源开放下载](https://262235.xyz/262235_GMS_0101.7z)
+### https://262235.xyz/262235_GMS_0101.7z
 
 ## [蘭雅CorelVBA--基本工具栏导览演示](https://www.bilibili.com/video/BV1ZV4y1w7Lj)
 ### https://www.bilibili.com/video/BV1ZV4y1w7Lj
