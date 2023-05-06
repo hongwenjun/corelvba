@@ -1,6 +1,6 @@
 Attribute VB_Name = "Batch_Center"
-Public Sub 智能群组()
-If 0 = ActiveSelectionRange.Count Then Exit Sub
+Private Function Smart_Group() As ShapeRange
+If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.ReferencePoint = cdrBottomLeft
@@ -41,29 +41,32 @@ If 0 = ActiveSelectionRange.Count Then Exit Sub
   sr.Delete
 
   '// 矩形边界智能群组，删除矩形
+  Dim retsr As New ShapeRange
   For Each s In brk1
     Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-    sh.Shapes.All.Group
+    retsr.Add sh.Shapes.All.Group
     s.Delete
   Next
+
+  Set Smart_Group = retsr
 
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
   ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
+Exit Function
 
 ErrorHandler:
   Application.Optimization = False
   MsgBox "请先选择一些物件来确定群组范围!"
   On Error Resume Next
 
-End Sub
+End Function
 
 
 ' 这个子程序遍历对象，调用解散物件和居中
 Public Sub start_Center()
     Dim s As Shape, ssr As ShapeRange
-    Set ssr = ActiveSelectionRange
+    Set ssr = Smart_Group
     For Each s In ssr
       Ungroup_Center s
     Next s
