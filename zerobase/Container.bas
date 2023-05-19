@@ -1,144 +1,32 @@
 Attribute VB_Name = "Container"
 ' ① 标记容器盒子
 Public Function SetBoxName()
-  Dim box As ShapeRange, s As Shape
+  API.BeginOpt "标记容器盒子"
+  
+  Dim box As ShapeRange, S As Shape
   Set box = ActiveSelectionRange
   
-  Application.Optimization = True
   ' 设置物件名字，以供CQL查询
-  For Each s In box
-    s.Name = "Container"
-  Next s
+  For Each S In box
+    S.Name = "Container"
+  Next S
   
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
   MsgBox "标记容器盒子" & vbNewLine & "名字: Container"
-  
 End Function
-
-
-' ② 删除容器盒子边界外面的物件    ③④
-Public Function Remove_OutsideBox()
-  Dim s As Shape
-  Dim ssr As ShapeRange, box As ShapeRange
-  Dim rmsr As New ShapeRange
-  Dim x As Double, y As Double
-  
-  Set ssr = ActiveSelectionRange
-  ' CQL查找容器盒物件
-  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
-  ssr.RemoveRange box
-  
-  If box.Count = 0 Then Exit Function
-  
-  ActiveDocument.Unit = cdrMillimeter
-  For Each s In ssr
-    x = s.CenterX: y = s.CenterY
-    If box(1).IsOnShape(x, y) = cdrOutsideShape Then rmsr.Add s
-  Next s
-
-  rmsr.Delete
-End Function
-
-
-Public Function Remove_OnMargin()
-  Dim s As Shape
-  Dim ssr As ShapeRange, box As ShapeRange
-  Dim rmsr As New ShapeRange
-  Dim x As Double, y As Double
-  
-  Set ssr = ActiveSelectionRange
-  ' CQL查找容器盒物件
-  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
-  ssr.RemoveRange box
-  
-  If box.Count = 0 Then Exit Function
-  
-  ActiveDocument.Unit = cdrMillimeter
-  For Each s In ssr
-    x = s.CenterX: y = s.CenterY
-    If box(1).IsOnShape(x, y) = cdrOnMarginOfShape Then rmsr.Add s
-  Next s
-
-  rmsr.Delete
-End Function
-
-
-Public Function Select_OutsideBox()
-  Dim s As Shape
-  Dim ssr As ShapeRange, box As ShapeRange
-  Dim SelSr As New ShapeRange
-  Dim x As Double, y As Double, radius
-  
-  Set ssr = ActiveSelectionRange
-  ' CQL查找容器盒物件
-  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
-  ssr.RemoveRange box
-  
-  If box.Count = 0 Then Exit Function
-  
-  ActiveDocument.Unit = cdrMillimeter
-  For Each s In ssr
-    x = s.CenterX: y = s.CenterY
-    radius = s.SizeWidth / 2
-    If box(1).IsOnShape(x, y, radius) = cdrOutsideShape Then SelSr.Add s
-  Next s
-  
-  ActiveDocument.ClearSelection
-  SelSr.AddToSelection
-
-End Function
-
-
-Public Function Select_OnMargin()
-  Dim s As Shape
-  Dim ssr As ShapeRange, box As ShapeRange
-  Dim SelSr As New ShapeRange
-  Dim x As Double, y As Double, radius
-  
-  Set ssr = ActiveSelectionRange
-  ' CQL查找容器盒物件
-  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
-  ssr.RemoveRange box
-  
-  If box.Count = 0 Then Exit Function
-  
-  ActiveDocument.Unit = cdrMillimeter
-  For Each s In ssr
-    x = s.CenterX: y = s.CenterY
-    radius = s.SizeWidth / 2
-    If box(1).IsOnShape(x, y, radius) = cdrOnMarginOfShape Then SelSr.Add s
-  Next s
-  
-  ActiveDocument.ClearSelection
-  SelSr.AddToSelection
-
-End Function
-
-
 
 ' 图片批量置入容器
 Public Sub Batch_ToPowerClip()
-  ActiveDocument.BeginCommandGroup ' 一键撤销返回
-  Dim s As Shape, ssr As ShapeRange, box As ShapeRange
-  
-  ' 标记容器，请酌情取消注释
-  ' Set box = ActiveSelectionRange
-  ' For Each s In box
-  '   If s.Type <> cdrBitmapShape Then s.Name = "Container"
-  ' Next s
-  
+  API.BeginOpt "批量置入容器"
+  Dim S As Shape, ssr As ShapeRange, box As ShapeRange
   Set ssr = Smart_Group(0.5) ' 智能群组容差 0.5mm
   
-  Application.Optimization = True
-  For Each s In ssr
-    Image_ToPowerClip s
-  Next s
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:  Application.Refresh
-End Sub
+  For Each S In ssr
+    Image_ToPowerClip S
+  Next S
 
+  API.EndOpt
+End Sub
 
 ' 图片置入容器，基本函数
 Public Function Image_ToPowerClip(arg As Shape)
@@ -151,30 +39,187 @@ Public Function Image_ToPowerClip(arg As Shape)
   
   If box.Count = 0 Then Exit Function
   
+  box.SetOutlineProperties Width:=0, Color:=Nothing
   ssr.AddToPowerClip box(1), 0
+  box(1).Name = "powerclip_ok"
 
 End Function
+
+' 图片OneKey置入容器
+Public Sub OneKey_ToPowerClip()
+  API.BeginOpt "图片OneKey置入容器"
+  Dim S As Shape, ssr As ShapeRange, box As ShapeRange
+  
+  ' 标记容器，设置透明
+  Set box = ActiveSelectionRange
+  For Each S In box
+    If S.Type <> cdrBitmapShape Then S.Name = "Container"
+  Next S
+  
+  Set ssr = Smart_Group(0.5) ' 智能群组容差 0.5mm
+  
+  Application.Optimization = True
+  For Each S In ssr
+    Image_ToPowerClip S
+  Next S
+
+  API.EndOpt
+End Sub
+
+' ② 删除容器盒子边界外面的物件    ③④
+Public Function Remove_OutsideBox(radius As Double)
+  API.BeginOpt "删除容器盒子边界外面的物"
+  On Error GoTo ErrorHandler
+  Dim S As Shape, bc As Shape
+  Dim ssr As ShapeRange, box As ShapeRange
+  Dim rmsr As New ShapeRange
+  Dim x As Double, Y As Double
+  
+  Set ssr = ActiveSelectionRange
+  ' CQL查找容器盒物件
+  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
+  ssr.RemoveRange box
+  
+  If box.Count = 0 Then GoTo ErrorHandler
+  Set bc = box(1).Duplicate(0, 0)
+  If bc.Type = cdrTextShape Then bc.ConvertToCurves
+  
+  For Each S In ssr
+    x = S.CenterX: Y = S.CenterY
+    If bc.IsOnShape(x, Y, radius) = cdrOutsideShape Then rmsr.Add S
+  Next S
+  
+  rmsr.Add bc: rmsr.Delete: API.EndOpt
+  
+Exit Function
+
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+
+End Function
+
+Public Function Select_OutsideBox(radius As Double)
+  On Error GoTo ErrorHandler
+  API.BeginOpt "选择容器外面对象"
+  Dim S As Shape, bc As Shape
+  Dim ssr As ShapeRange, box As ShapeRange
+  Dim SelSr As New ShapeRange
+  Dim x As Double, Y As Double
+  
+  Set ssr = ActiveSelectionRange
+  ' CQL查找容器盒物件
+  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
+  ssr.RemoveRange box
+  
+  If box.Count = 0 Then GoTo ErrorHandler
+  Set bc = box(1).Duplicate(0, 0)
+  If bc.Type = cdrTextShape Then bc.ConvertToCurves
+  
+  ActiveDocument.unit = cdrMillimeter
+  For Each S In ssr
+    x = S.CenterX: Y = S.CenterY
+    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOutsideShape Then SelSr.Add S
+  Next S
+  
+  ActiveDocument.ClearSelection
+  bc.Delete: SelSr.AddToSelection: API.EndOpt
+  
+Exit Function
+
+ErrorHandler:
+  Application.Optimization = False
+End Function
+
+Public Function Select_by_BlendGroup(radius As Double)
+  On Error GoTo ErrorHandler
+  API.BeginOpt "使用调和群组选择"
+  Dim S As Shape, bc As Shape
+  Dim ssr As ShapeRange, box As ShapeRange, gp As ShapeRange
+  Dim SelSr As New ShapeRange
+  Dim x As Double, Y As Double
+  
+  Set ssr = ActiveSelectionRange
+  ' CQL查找容器盒物件
+  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
+  ssr.RemoveRange box
+  
+  If box.Count = 0 Then GoTo ErrorHandler
+  Set gp = box.Duplicate(0, 0).UngroupAllEx
+  Set bc = gp.BreakApartEx.UngroupAllEx.Combine
+
+  ActiveDocument.unit = cdrMillimeter
+  For Each S In ssr
+    x = S.CenterX: Y = S.CenterY
+    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOnMarginOfShape Then SelSr.Add S
+  Next S
+  
+  ActiveDocument.ClearSelection
+  bc.Delete: SelSr.AddToSelection: API.EndOpt
+  
+Exit Function
+
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+End Function
+
+Public Function Select_OnMargin(radius As Double)
+  On Error GoTo ErrorHandler
+  API.BeginOpt "选择容器边界对象"
+  Dim S As Shape, bc As Shape
+  Dim ssr As ShapeRange, box As ShapeRange
+  Dim SelSr As New ShapeRange
+  Dim x As Double, Y As Double
+  
+  Set ssr = ActiveSelectionRange
+  ' CQL查找容器盒物件
+  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
+  ssr.RemoveRange box
+  
+  If box.Count = 0 Then GoTo ErrorHandler
+  Set bc = box(1).Duplicate(0, 0)
+  If bc.Type = cdrTextShape Then bc.ConvertToCurves  ' 如果是文本转曲
+
+  
+  ActiveDocument.unit = cdrMillimeter
+  For Each S In ssr
+    x = S.CenterX: Y = S.CenterY
+    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOnMarginOfShape Then SelSr.Add S
+  Next S
+  
+  ActiveDocument.ClearSelection
+  bc.Delete: SelSr.AddToSelection: API.EndOpt
+  
+Exit Function
+
+ErrorHandler:
+  Application.Optimization = False
+  On Error Resume Next
+  
+End Function
+
 
 Private Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
 If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
   Application.Optimization = True
   ActiveDocument.ReferencePoint = cdrBottomLeft
-  ActiveDocument.Unit = cdrMillimeter
+  ActiveDocument.unit = cdrMillimeter
   
   Dim OrigSelection As ShapeRange, sr As New ShapeRange
-  Dim s1 As Shape, sh As Shape, s As Shape
-  Dim x As Double, y As Double, w As Double, h As Double
+  Dim s1 As Shape, sh As Shape, S As Shape
+  Dim x As Double, Y As Double, w As Double, h As Double
   Dim eff1 As Effect
   
   Set OrigSelection = ActiveSelectionRange
 
   '// 遍历物件画矩形
   For Each sh In OrigSelection
-    sh.GetBoundingBox x, y, w, h
+    sh.GetBoundingBox x, Y, w, h
     If w * h > 4 Then
-      Set s = ActiveLayer.CreateRectangle2(x - tr, y - tr, w + 2 * tr, h + 2 * tr)
-      sr.Add s
+      Set S = ActiveLayer.CreateRectangle2(x - tr, Y - tr, w + 2 * tr, h + 2 * tr)
+      sr.Add S
 
     '// 轴线 创建轮廓处理
     ElseIf w * h < 0.3 Then
@@ -198,9 +243,9 @@ If 0 = ActiveSelectionRange.Count Then Exit Function
 
   '// 矩形边界智能群组, retsr 返回群组 和 删除矩形s
   Dim retsr As New ShapeRange, rmsr As New ShapeRange
-  For Each s In brk1
-    Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-    s.Delete
+  For Each S In brk1
+    Set sh = ActivePage.SelectShapesFromRectangle(S.LeftX, S.TopY, S.RightX, S.BottomY, False)
+    S.Delete
     retsr.Add sh.Shapes.All.group
   Next
 
@@ -216,3 +261,4 @@ ErrorHandler:
   On Error Resume Next
 
 End Function
+

@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} VBA_FORM 
    Caption         =   "Hello_VBA"
-   ClientHeight    =   7995
+   ClientHeight    =   10080
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   6180
@@ -31,7 +31,7 @@ Private Sub CommandButton1_Click()
 End Sub
 
 
-Private Sub CB_AQX_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub CB_AQX_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.guideangle ActiveSelectionRange, 0#   ' 右键 0距离贴紧
   ElseIf Shift = fmCtrlMask Then
@@ -87,7 +87,7 @@ Private Sub CB_VBA_Click()
   MsgBox "你好 CorelVBA!"
 End Sub
 
-Private Sub CB_VBA_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub CB_VBA_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   CB_VBA.BackColor = RGB(255, 0, 0)
 End Sub
 
@@ -124,15 +124,50 @@ Private Sub ExportNodePot_Click()
   Tools.ExportNodePositions
 End Sub
 
+Private Sub OneKeyToPowerClip_Click()
+  Container.OneKey_ToPowerClip
+End Sub
+
 Private Sub Photo_Form_Click()
   PhotoForm.Show 0
+End Sub
+
+Private Sub BatchToPowerClip_Click()
+  Container.Batch_ToPowerClip
+End Sub
+
+Private Sub RemoveShapes_OutsideBox_Click()
+  Container.Remove_OutsideBox Create_Tolerance
+End Sub
+
+Private Sub SelectOnMargin_Click()
+  Container.Select_OnMargin Create_Tolerance
+End Sub
+
+
+Private Sub cmd_Select_by_BlendGroup_Click()
+  If GlobalUserData.Exists("Tolerance", 1) Then text = GlobalUserData("Tolerance", 1)
+  Container.Select_by_BlendGroup Val(text)
+End Sub
+
+Private Sub SelectOnMargin_Q_Click()
+  If GlobalUserData.Exists("Tolerance", 1) Then text = GlobalUserData("Tolerance", 1)
+  Container.Select_OnMargin Val(text)
+End Sub
+
+Private Sub SelectOutsideBox_Click()
+  Container.Select_OutsideBox Create_Tolerance
+End Sub
+
+Private Sub Set_BoxName_Click()
+  Container.SetBoxName
 End Sub
 
 Private Sub SetNames_Click()
   Tools.SetNames
 End Sub
 
-Private Sub SplitSegment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub SplitSegment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     MsgBox "左键拆分线段，Ctrl合并线段"
   ElseIf Shift = fmCtrlMask Then
