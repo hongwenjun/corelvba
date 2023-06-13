@@ -1,18 +1,20 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Woodman 
-   Caption         =   "Woodman标注尺寸节点"
-   ClientHeight    =   1935
+   Caption         =   "批量标注尺寸节点"
+   ClientHeight    =   1980
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   3765
+   ClientWidth     =   3960
    OleObjectBlob   =   "Woodman.frx":0000
    StartUpPosition =   1  '所有者中心
 End
-Attribute VB_Name = "woodman"
+Attribute VB_Name = "Woodman"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ActiveDocument.BeginCommandGroup:  Application.Optimization = True
     Set os = ActiveSelectionRange
@@ -117,36 +119,67 @@ Sub make_sizes_sep(dr, Optional shft = 0)
     doc.BeginCommandGroup "make sizes"
     
     Set os = ActiveSelectionRange
+    
+    Dim border As Variant
+    Dim Line_len As Double
+    Line_len = API.GetSet("Line_len")
+    
+    border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + 10, os.TopY + 20 + Line_len, _
+                    cdrBottomRight, cdrTopRight, os.LeftX - 10, os.LeftX - 20 - Line_len)
+                    
+    If chkOpposite.value Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - 10, os.BottomY - 20 - Line_len, _
+                            cdrBottomLeft, cdrTopLeft, os.RightX + 10, os.RightX + 20 + Line_len)
+   
         
-    If dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
-    If dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then os.Sort "@shape1.top > @shape2.top"
+    If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
+    If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then os.Sort "@shape1.top > @shape2.top"
     
     If os.Count > 0 Then
         If os.Count > 1 And Len(dr) > 2 Then
-            For I = 1 To os.Shapes.Count - 1
+            For i = 1 To os.Shapes.Count - 1
                 Select Case dr
+                    Case "upbx":
+                          Set pts = os.Shapes(i).SnapPoints.BBox(border(0))
+                          Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(1))
+                          ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, 0, border(2), cdrDimensionStyleEngineering
+                          If shft > 0 And i = 1 Then
+                            Set pts = os.FirstShape.SnapPoints.BBox(border(0))
+                            Set pte = os.LastShape.SnapPoints.BBox(border(1))
+                            ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, 0, border(3), cdrDimensionStyleEngineering
+                          End If
+                          
+                    Case "lfbx":
+                          Set pts = os.Shapes(i).SnapPoints.BBox(border(4))
+                          Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(5))
+                          ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, pte, True, border(6), 0, cdrDimensionStyleEngineering
+                          If shft > 0 And i = 1 Then
+                            Set pts = os.FirstShape.SnapPoints.BBox(border(4))
+                            Set pte = os.LastShape.SnapPoints.BBox(border(5))
+                           ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, pte, True, border(7), 0, cdrDimensionStyleEngineering
+                          End If
+                          
                     Case "upb":
-                            Set pts = os.Shapes(I).SnapPoints.BBox(cdrTopRight)
-                            Set pte = os.Shapes(I + 1).SnapPoints.BBox(cdrTopLeft)
+                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrTopRight)
+                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
                             ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering
 
                     Case "dnb":
-                            Set pts = os.Shapes(I).SnapPoints.BBox(cdrBottomRight)
-                            Set pte = os.Shapes(I + 1).SnapPoints.BBox(cdrBottomLeft)
+                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
+                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrBottomLeft)
                             ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.BottomY - os.SizeHeight / 10, cdrDimensionStyleEngineering
                     
                     Case "lfb":
-                            Set pts = os.Shapes(I).SnapPoints.BBox(cdrBottomLeft)
-                            Set pte = os.Shapes(I + 1).SnapPoints.BBox(cdrTopLeft)
+                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomLeft)
+                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
                             ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, pte, True, os.LeftX - os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering
                     
                     Case "rib":
-                            Set pts = os.Shapes(I).SnapPoints.BBox(cdrBottomRight)
-                            Set pte = os.Shapes(I + 1).SnapPoints.BBox(cdrTopRight)
+                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
+                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopRight)
                             ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering
                 End Select
                 'ActiveDocument.ClearSelection
-            Next I
+            Next i
         Else
             If shft > 0 Then
                 Select Case dr
@@ -322,4 +355,72 @@ ErrorHandler:
   MsgBox "s.Curve.AutoReduceNodes 只有高版本才支持本API"
 End Sub
 
+
+Private Sub MarkLines_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button = 2 Then
+    CutLines.Dimension_MarkLines cdrAlignLeft, chkOpposite.value
+    make_sizes_sep "lfbx", Shift
+  Else
+    CutLines.Dimension_MarkLines cdrAlignTop, chkOpposite.value
+    Label_Makesizes.Caption = "试试右键"
+    make_sizes_sep "upbx", Shift
+  End If
+End Sub
+
+Private Sub chkOpposite_Click()
+'  Debug.Print chkOpposite.value
+End Sub
+
+Private Sub manual_makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button = 2 Then
+      '// 右键
+  ElseIf Shift = fmCtrlMask Then
+      Slanted_Makesize  '// 手动标注倾斜尺寸
+  Else
+      Untie_MarkLines   '// 解绑尺寸，分离尺寸
+  End If
+End Sub
+
+
+
+'// 解绑尺寸，分离尺寸
+Private Function Untie_MarkLines()
+  Dim os As ShapeRange, dss As New ShapeRange
+  Set os = ActiveSelectionRange
+  For Each s In os.Shapes
+      If s.Type = cdrLinearDimensionShape Then
+        dss.Add s
+      End If
+  Next s
+  If dss.Count > 0 Then
+    dss.BreakApartEx
+    os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
+    ActiveSelectionRange.Delete
+  End If
+End Function
+
+
+'// 手动标注倾斜尺寸
+Private Function Slanted_Makesize()
+  On Error GoTo ErrorHandler
+  ActiveDocument.Unit = cdrMillimeter
+  Dim nr As NodeRange, cnt As Integer
+  Dim x1 As Double, y1 As Double
+  Dim x2 As Double, y2 As Double
+  Set nr = ActiveShape.Curve.Selection
+  If nr.Count < 2 Then Exit Function
+  cnt = nr.Count
+  While cnt > 1
+    x1 = nr(cnt).PositionX
+    y1 = nr(cnt).PositionY
+    x2 = nr(cnt - 1).PositionX
+    y2 = nr(cnt - 1).PositionY
+    
+    Set pts = CreateSnapPoint(x1, y1)
+    Set pte = CreateSnapPoint(x2, y2)
+    ActiveLayer.CreateLinearDimension cdrDimensionSlanted, pts, pte, True, x1 - 5, y1 + 5, cdrDimensionStyleEngineering
+    cnt = cnt - 1
+  Wend
+ErrorHandler:
+End Function
 

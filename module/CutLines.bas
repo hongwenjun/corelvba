@@ -52,12 +52,12 @@ End Function
 
 
 Sub test_MarkLines()
- ' Dimension_MarkLines cdrAlignLeft
-  Dimension_MarkLines cdrAlignTop
+  Dimension_MarkLines cdrAlignLeft, True
+'  Dimension_MarkLines cdrAlignTop, True
 End Sub
 
 '// 标注尺寸标记线
-Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAlignTop)
+Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAlignTop, Optional ByVal mirror As Boolean = False)
   If 0 = ActiveSelectionRange.Count Then Exit Function
   API.BeginOpt
   Bleed = API.GetSet("Bleed")
@@ -92,6 +92,8 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   '// 物件范围边界
   px = OrigSelection.LeftX
   py = OrigSelection.TopY
+  mpx = OrigSelection.RightX
+  mpy = OrigSelection.BottomY
   
   '// 页面边缘对齐
   For Each s In sr
@@ -107,8 +109,16 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   
   '// 设置线宽和颜色，再选择
    sr.SetOutlineProperties Outline_Width
-   sr.SetOutlineProperties Color:=CreateRGBColor(0, 255, 0)
+   sr.SetOutlineProperties Color:=CreateCMYKColor(80, 40, 0, 20)
    sr.AddToSelection
+   
+   If mirror Then
+    If mark = cdrAlignTop Then
+      sr.BottomY = mpy - Line_len - Bleed
+    Else
+      sr.RightX = mpx + Line_len + Bleed
+    End If
+   End If
    
   API.EndOpt
 End Function
@@ -128,6 +138,7 @@ Private Function RemoveDuplicates(sr As ShapeRange)
     If cnt > 1 Then
       If Check_duplicate(sr(cnt - 1), sr(cnt)) Then rms.Add sr(cnt)
     End If
+    s.Name = "DMKLine"
     cnt = cnt + 1
   Next s
   
