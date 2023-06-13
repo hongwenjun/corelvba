@@ -1,4 +1,32 @@
 Attribute VB_Name = "API"
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "CorelVBA工具窗口启动"   CorelVBA Tool Window Launches  2023.6.11
+Public Sub Start()
+  Toolbar.Show 0
+End Sub
+
+'// CorelDRAW 窗口刷新优化和关闭
+Public Function BeginOpt(Optional ByVal Name As String = "Undo")
+  EventsEnabled = False
+  ActiveDocument.BeginCommandGroup Name
+  ActiveDocument.SaveSettings
+  ActiveDocument.Unit = cdrMillimeter
+  Optimization = True
+' ActiveDocument.PreserveSelection = False
+End Function
+
+Public Function EndOpt()
+' ActiveDocument.PreserveSelection = True
+  ActiveDocument.RestoreSettings
+  EventsEnabled = True
+  Optimization = False
+  EventsEnabled = True
+  Application.Refresh
+  ActiveDocument.EndCommandGroup
+End Function
+
 Public Function Speak_Msg(message As String)
   Speak_Help = Val(GetSetting("262235.xyz", "Settings", "SpeakHelp", "1"))
   
@@ -89,13 +117,13 @@ End Function
 
 '// 对数组进行排序[单维]
 Public Function ArraySort(src As Variant) As Variant
-  Dim out As Long, I As Long, tmp As Variant
+  Dim out As Long, i As Long, tmp As Variant
   For out = LBound(src) To UBound(src) - 1
-    For I = out + 1 To UBound(src)
-      If src(out) > src(I) Then
-        tmp = src(I): src(I) = src(out): src(out) = tmp
+    For i = out + 1 To UBound(src)
+      If src(out) > src(i) Then
+        tmp = src(i): src(i) = src(out): src(out) = tmp
       End If
-    Next I
+    Next i
   Next out
   
   ArraySort = src
@@ -103,27 +131,27 @@ End Function
 
 '//  把一个数组倒序
 Public Function ArrayReverse(arr)
-    Dim I As Integer, n As Integer
+    Dim i As Integer, n As Integer
     n = UBound(arr)
     Dim p(): ReDim p(n)
-    For I = 0 To n
-        p(I) = arr(n - I)
+    For i = 0 To n
+        p(i) = arr(n - i)
     Next
     ArrayReverse = p
 End Function
 
 '// 测试数组排序
 Private Function test_ArraySort()
-  Dim arr As Variant, I As Integer
+  Dim arr As Variant, i As Integer
   arr = Array(5, 4, 3, 2, 1, 9, 999, 33)
-  For I = 0 To arrlen(arr) - 1
-    Debug.Print arr(I);
-  Next I
+  For i = 0 To arrlen(arr) - 1
+    Debug.Print arr(i);
+  Next i
   Debug.Print arrlen(arr)
   ArraySort arr
-  For I = 0 To arrlen(arr) - 1
-    Debug.Print arr(I);
-  Next I
+  For i = 0 To arrlen(arr) - 1
+    Debug.Print arr(i);
+  Next i
 End Function
 
 '// 两点连线的角度：返回角度(相对于X轴的角度)
@@ -154,21 +182,21 @@ Public Function alfaPP(p, o)
 End Function
 
 '// 求过P点到线段AB上的垂足点(XY平面内的二维计算)
-Public Function pFootInXY(p, a, B)
-    If a(0) = B(0) Then
+Public Function pFootInXY(p, a, b)
+    If a(0) = b(0) Then
         pFootInXY = Array(a(0), p(1), 0#): Exit Function
     End If
-    If a(1) = B(1) Then
+    If a(1) = b(1) Then
         pFootInXY = Array(p(0), a(1), 0#): Exit Function
     End If
-    Dim aa, bb, c, d, x, Y
-    aa = (a(1) - B(1)) / (a(0) - B(0))
+    Dim aa, bb, c, d, X, Y
+    aa = (a(1) - b(1)) / (a(0) - b(0))
     bb = a(1) - aa * a(0)
-    c = -(a(0) - B(0)) / (a(1) - B(1))
+    c = -(a(0) - b(0)) / (a(1) - b(1))
     d = p(1) - c * p(0)
-    x = (d - bb) / (aa - c)
-    Y = aa * x + bb
-    pFootInXY = Array(x, Y, 0#)
+    X = (d - bb) / (aa - c)
+    Y = aa * X + bb
+    pFootInXY = Array(X, Y, 0#)
 End Function
 
 
@@ -216,3 +244,4 @@ Function test()
   Set sapi = CreateObject("sapi.spvoice")
   sapi.Speak message
 End Function
+

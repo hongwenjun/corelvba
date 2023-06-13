@@ -1,5 +1,9 @@
-Attribute VB_Name = "自动中线色阶条"
-' Attribute VB_Name = "自动中线色阶条"
+Attribute VB_Name = "AutoColorMark"
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "自动中线色阶条"   AutoColorMark  2023.6.11
+
 '// 请先选择要印刷的物件群组，本插件完成设置页面大小，自动中线色阶条对准线功能
 Sub Auto_ColorMark()
   If 0 = ActiveSelectionRange.Count Then Exit Sub
@@ -62,7 +66,7 @@ Sub Auto_ColorMark()
   
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.Group
+  ActiveSelection.group
   ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
 
   '// 代码操作结束恢复窗口刷新
@@ -81,7 +85,7 @@ Private Sub set_page_size()
   ActiveDocument.Unit = cdrMillimeter
   Dim OrigSelection As ShapeRange, sh As Shape
   Set OrigSelection = ActiveSelectionRange
-  Set sh = OrigSelection.Group
+  Set sh = OrigSelection.group
   
   ' MsgBox "选择物件尺寸: " & sh.SizeWidth & "x" & sh.SizeHeight
   ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
@@ -303,7 +307,7 @@ Sub Auto_ColorMark_K()
   
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.Group
+  ActiveSelection.group
   ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
 
   '// 代码操作结束恢复窗口刷新

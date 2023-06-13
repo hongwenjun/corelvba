@@ -1,18 +1,22 @@
-Attribute VB_Name = "剪贴板尺寸建立矩形"
-'// Attribute VB_Name = "剪贴板尺寸建立矩形"
+Attribute VB_Name = "ClipbRectangle"
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "剪贴板尺寸建立矩形"  Clipboard Size Build Rectangle  2023.6.11
+
 Type Coordinate
-    x As Double
+    X As Double
     Y As Double
 End Type
 Public O_O As Coordinate
 
-Sub start()
+Sub Start()
     '// 坐标原点
-    O_O.x = 0:   O_O.Y = 0
+    O_O.X = 0:   O_O.Y = 0
     Dim ost As ShapeRange
     Set ost = ActiveSelectionRange
 
-    O_O.x = ost.LeftX
+    O_O.X = ost.LeftX
     O_O.Y = ost.BottomY - 50    '选择物件 下移动 50mm
 
     '// 建立矩形 Width  x Height 单位 mm
@@ -20,28 +24,28 @@ Sub start()
     Str = API.GetClipBoardString
 
     ' 替换 mm x * 换行 TAB 为空格
-    Str = VBA.replace(Str, "m", " ")
-    Str = VBA.replace(Str, "x", " ")
-    Str = VBA.replace(Str, "X", " ")
-    Str = VBA.replace(Str, "*", " ")
-    Str = VBA.replace(Str, vbNewLine, " ")
+    Str = VBA.Replace(Str, "m", " ")
+    Str = VBA.Replace(Str, "x", " ")
+    Str = VBA.Replace(Str, "X", " ")
+    Str = VBA.Replace(Str, "*", " ")
+    Str = VBA.Replace(Str, vbNewLine, " ")
 
     Do While InStr(Str, "  ") '多个空格换成一个空格
-        Str = VBA.replace(Str, "  ", " ")
+        Str = VBA.Replace(Str, "  ", " ")
     Loop
     arr = Split(Str)
     
     ActiveDocument.BeginCommandGroup  '一步撤消'
-    Dim x As Double
+    Dim X As Double
     Dim Y As Double
     For n = LBound(arr) To UBound(arr) - 1 Step 2
         ' MsgBox arr(n)
-        x = Val(arr(n))
+        X = Val(arr(n))
         Y = Val(arr(n + 1))
         
-        If x > 0 And Y > 0 Then
-            Rectangle x, Y
-            O_O.x = O_O.x + x + 30
+        If X > 0 And Y > 0 Then
+            Rectangle X, Y
+            O_O.X = O_O.X + X + 30
         End If
     Next
     ActiveDocument.EndCommandGroup
@@ -55,7 +59,7 @@ Private Function Rectangle(Width As Double, Height As Double)
   Dim s1 As Shape
 
   '// 建立矩形 Width  x Height 单位 mm
-  Set s1 = ActiveLayer.CreateRectangle(O_O.x, O_O.Y, O_O.x + Width, O_O.Y - Height)
+  Set s1 = ActiveLayer.CreateRectangle(O_O.X, O_O.Y, O_O.X + Width, O_O.Y - Height)
   
   '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
   s1.Fill.ApplyNoFill
@@ -66,7 +70,7 @@ Private Function Rectangle(Width As Double, Height As Double)
 
   text = Trim(Str(sw)) + "x" + Trim(Str(sh)) + "mm"
   Set d = ActiveDocument
-  Set size = d.ActiveLayer.CreateArtisticText(O_O.x + sw / 2 - 25, O_O.Y + 10, text, Font:="Tahoma")  '// O_O.y + 10  标注尺寸上移 10mm
+  Set size = d.ActiveLayer.CreateArtisticText(O_O.X + sw / 2 - 25, O_O.Y + 10, text, Font:="Tahoma")  '// O_O.y + 10  标注尺寸上移 10mm
   size.Fill.UniformColor.CMYKAssign 0, 100, 100, 0
 End Function
 
@@ -92,16 +96,16 @@ End Function
 Sub get_all_size()
   ActiveDocument.Unit = cdrMillimeter
   Set fs = CreateObject("Scripting.FileSystemObject")
-  Set F = fs.CreateTextFile("R:\size.txt", True)
+  Set f = fs.CreateTextFile("R:\size.txt", True)
   Dim sh As Shape, shs As Shapes
   Set shs = ActiveSelection.Shapes
   Dim s As String
   For Each sh In shs
     size = Trim(Str(Int(sh.SizeWidth + 0.5))) + "x" + Trim(Str(Int(sh.SizeHeight + 0.5))) + "mm"
-    F.WriteLine (size)
+    f.WriteLine (size)
     s = s + size + vbNewLine
   Next sh
-  F.Close
+  f.Close
   MsgBox "输出物件尺寸信息到文件" & "R:\size.txt" & vbNewLine & s
   API.WriteClipBoard s
 End Sub

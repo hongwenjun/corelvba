@@ -1,43 +1,49 @@
 Attribute VB_Name = "Launcher"
-'// è¿è¡Œè®¡ç®—å™¨
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "ÆäËû¹¤¾ßÆô¶¯"   Other Tools Start  2023.6.11
+
+
+'// ÔËĞĞ¼ÆËãÆ÷
 Public Function START_Calc()
     Shell "Calc"
 End Function
 
 
-'// è®°äº‹æœ¬æ‰“å¼€å¤‡å¿˜å½•
+'// ¼ÇÊÂ±¾´ò¿ª±¸ÍüÂ¼
 Public Function START_Notepad()
-    cmd_line = "Notepad  C:\TSP\å¤‡å¿˜å½•.txt"
+    cmd_line = "Notepad  C:\TSP\±¸ÍüÂ¼.txt"
     Shell cmd_line, vbNormalNoFocus
 End Function
 
 
-'// æ‰“å¼€æ¡ç é˜…è¯»å™¨
+'// ´ò¿ªÌõÂëÔÄ¶ÁÆ÷
 Public Function START_Barcode_ImageReader()
     cmd_line = "C:\Program Files (x86)\Softek Software\Softek Barcode Toolkit 30 Day Evaluation\bin\ImageReader.exe"
     Shell cmd_line, vbNormalNoFocus
 End Function
 
 
-'// çŸ¢é‡åŒ–å·¥å…· Vector Magic
+'// Ê¸Á¿»¯¹¤¾ß Vector Magic
 Public Function START_Vector_Magic()
     cmd_line = "C:\Program Files (x86)\Vector Magic\vmde.exe"
     Shell cmd_line, vbNormalNoFocus
 End Function
 
-'// waifu2x å›¾ç‰‡æ”¾å¤§
+'// waifu2x Í¼Æ¬·Å´ó
 Public Function START_waifu2x()
     cmd_line = "C:\soft\waifu2x-gui-1.2\waifu2x-gui.exe"
     Shell cmd_line, vbNormalNoFocus
 End Function
 
-'// å¼€å§‹è§†é¢‘å½•åˆ¶
+'// ¿ªÊ¼ÊÓÆµÂ¼ÖÆ
 Public Function START_Bandicam()
     cmd_line = "C:\Program Files (x86)\Bandicam\BandicamPortable.exe"
     Shell cmd_line, vbNormalNoFocus
 End Function
 
-'// æ‰¾å­—ä½“ https://www.myfonts.com/pages/whatthefont
+'// ÕÒ×ÖÌå https://www.myfonts.com/pages/whatthefont
 Public Function START_whatthefont()
     Weburl "https://www.myfonts.com/pages/whatthefont"
 End Function

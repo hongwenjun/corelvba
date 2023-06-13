@@ -1,6 +1,11 @@
-Attribute VB_Name = "拼版裁切线"
+Attribute VB_Name = "Arrange"
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "拼版裁切线"   Arrange  2023.6.11
+
 Type Coordinate
-  x As Double
+  X As Double
   Y As Double
 End Type
 
@@ -42,17 +47,17 @@ Sub Cut_lines()
       < radius Or Abs(set_ty - ty) < radius Then
       
       arr = Array(lx, By, rx, By, lx, ty, rx, ty)  '// 物件左下-右下-左上-右上 四个顶点坐标数组
-      For I = 0 To 3
-        dot.x = arr(2 * I)
-        dot.Y = arr(2 * I + 1)
+      For i = 0 To 3
+        dot.X = arr(2 * i)
+        dot.Y = arr(2 * i + 1)
         
         '// 范围边界坐标点判断
-        If Abs(set_lx - dot.x) < radius Or Abs(set_rx - dot.x) < radius _
+        If Abs(set_lx - dot.X) < radius Or Abs(set_rx - dot.X) < radius _
               Or Abs(set_by - dot.Y) < radius Or Abs(set_ty - dot.Y) < radius Then
 
             draw_line dot, border  '// 以坐标点和范围边界画裁切线
         End If
-      Next I
+      Next i
     End If
   Next Target
   
@@ -60,7 +65,7 @@ Sub Cut_lines()
   
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.Group
+  ActiveSelection.group
   ActiveSelection.Outline.SetProperties Outline_Width, Color:=CreateRegistrationColor
   
   ActiveDocument.EndCommandGroup
@@ -76,17 +81,17 @@ Private Function draw_line(dot As Coordinate, border As Variant)
   Dim line As Shape
 
   If Abs(dot.Y - border(3)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x, border(3) + Bleed, dot.x, border(3) + (Line_len + Bleed))
+    Set line = ActiveLayer.CreateLineSegment(dot.X, border(3) + Bleed, dot.X, border(3) + (Line_len + Bleed))
     set_line_color line
   ElseIf Abs(dot.Y - border(2)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x, border(2) - Bleed, dot.x, border(2) - (Line_len + Bleed))
+    Set line = ActiveLayer.CreateLineSegment(dot.X, border(2) - Bleed, dot.X, border(2) - (Line_len + Bleed))
     set_line_color line
   End If
   
-  If Abs(dot.x - border(1)) < radius Then
+  If Abs(dot.X - border(1)) < radius Then
     Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.Y, border(1) + (Line_len + Bleed), dot.Y)
     set_line_color line
-  ElseIf Abs(dot.x - border(0)) < radius Then
+  ElseIf Abs(dot.X - border(0)) < radius Then
     Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.Y, border(0) - (Line_len + Bleed), dot.Y)
     set_line_color line
   End If
@@ -99,18 +104,18 @@ Private Function draw_line_按点基准(dot As Coordinate, border As Variant)
   Dim line As Shape
 
   If Abs(dot.Y - border(3)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x, dot.Y + Bleed, dot.x, dot.Y + (Line_len + Bleed))
+    Set line = ActiveLayer.CreateLineSegment(dot.X, dot.Y + Bleed, dot.X, dot.Y + (Line_len + Bleed))
     set_line_color line
   ElseIf Abs(dot.Y - border(2)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x, dot.Y - Bleed, dot.x, dot.Y - (Line_len + Bleed))
+    Set line = ActiveLayer.CreateLineSegment(dot.X, dot.Y - Bleed, dot.X, dot.Y - (Line_len + Bleed))
     set_line_color line
   End If
   
-  If Abs(dot.x - border(1)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x + Bleed, dot.Y, dot.x + (Line_len + Bleed), dot.Y)
+  If Abs(dot.X - border(1)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.X + Bleed, dot.Y, dot.X + (Line_len + Bleed), dot.Y)
     set_line_color line
-  ElseIf Abs(dot.x - border(0)) < radius Then
-    Set line = ActiveLayer.CreateLineSegment(dot.x - Bleed, dot.Y, dot.x - (Line_len + Bleed), dot.Y)
+  ElseIf Abs(dot.X - border(0)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.X - Bleed, dot.Y, dot.X - (Line_len + Bleed), dot.Y)
     set_line_color line
   End If
 
@@ -122,7 +127,7 @@ Private Function set_line_color(line As Shape)
 End Function
 
 '// CorelDRAW 物件排列拼版简单代码
-Sub arrange()
+Sub Arrange()
   On Error GoTo ErrorHandler
   ActiveDocument.Unit = cdrMillimeter
   row = 3     ' 拼版 3 x 4
@@ -133,25 +138,25 @@ Sub arrange()
   Str = API.GetClipBoardString
 
   ' 替换 mm x * 换行 TAB 为空格
-  Str = VBA.replace(Str, "mm", " ")
-  Str = VBA.replace(Str, "x", " ")
-  Str = VBA.replace(Str, "X", " ")
-  Str = VBA.replace(Str, "*", " ")
-  Str = VBA.replace(Str, Chr(13), " ")
-  Str = VBA.replace(Str, Chr(9), " ")
+  Str = VBA.Replace(Str, "mm", " ")
+  Str = VBA.Replace(Str, "x", " ")
+  Str = VBA.Replace(Str, "X", " ")
+  Str = VBA.Replace(Str, "*", " ")
+  Str = VBA.Replace(Str, Chr(13), " ")
+  Str = VBA.Replace(Str, Chr(9), " ")
   
   Do While InStr(Str, "  ")    '多个空格换成一个空格
-      Str = VBA.replace(Str, "  ", " ")
+      Str = VBA.Replace(Str, "  ", " ")
   Loop
   
   arr = Split(Str)
 
   Dim s1 As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   
   If 0 = ActiveSelectionRange.Count Then
-    x = Val(arr(0)):    Y = Val(arr(1))
-    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    X = Val(arr(0)):    Y = Val(arr(1))
+    row = Int(ActiveDocument.Pages.First.SizeWidth / X)
     List = Int(ActiveDocument.Pages.First.SizeHeight / Y)
 
     If UBound(arr) > 2 Then
@@ -164,7 +169,7 @@ Sub arrange()
     End If
      
     '// 建立矩形 Width  x Height 单位 mm
-    Set s1 = ActiveLayer.CreateRectangle(0, 0, x, Y)
+    Set s1 = ActiveLayer.CreateRectangle(0, 0, X, Y)
     
     '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
     s1.Fill.ApplyNoFill
@@ -174,12 +179,12 @@ Sub arrange()
   '// 如果当前选择物件，按当前物件拼版
   ElseIf 1 = ActiveSelectionRange.Count Then
     Set s1 = ActiveSelection
-    x = s1.SizeWidth:    Y = s1.SizeHeight
-    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    X = s1.SizeWidth:    Y = s1.SizeHeight
+    row = Int(ActiveDocument.Pages.First.SizeWidth / X)
     List = Int(ActiveDocument.Pages.First.SizeHeight / Y)
   End If
   
-  sw = x:  sh = Y
+  sw = X:  sh = Y
 
   '// StepAndRepeat 方法在范围内创建多个形状副本
   Dim dup1 As ShapeRange

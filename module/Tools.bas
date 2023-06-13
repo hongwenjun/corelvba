@@ -1,6 +1,6 @@
 Attribute VB_Name = "Tools"
 Public Function 分分合合()
-  拼版裁切线.arrange
+  拼版裁切线.Arrange
   
   CQL查找相同.CQLline_CM100
   
@@ -15,7 +15,7 @@ Public Function 分分合合()
 
 End Function
 
-
+ActiveDocument.ReferencePoint = cdrTopLeft
 Public Function 傻瓜火车排列(space_width As Double)
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ActiveDocument.Unit = cdrMillimeter
@@ -71,15 +71,25 @@ Public Function 傻瓜阶梯排列(space_width As Double)
   ActiveWindow.Refresh:    Application.Refresh
 End Function
 
-'// 文本转曲线
-Public Function TextShape_ConvertToCurves()
+'// 文本转曲线   默认使用简单转曲，参数 all=1 ，支持框选和图框剪裁内的文本
+Public Function TextShape_ConvertToCurves(Optional all = 0)
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   Dim s As Shape, cnt As Long
-  For Each s In API.FindAllShapes.Shapes.FindShapes(, cdrTextShape)
-    s.ConvertToCurves
-    cnt = cnt + 1
-  Next s
+  
+  If all = 1 Then
+    For Each s In API.FindAllShapes.Shapes.FindShapes(, cdrTextShape)
+      s.ConvertToCurves
+      cnt = cnt + 1
+    Next s
+  Else
+  
+    For Each s In ActivePage.FindShapes(, cdrTextShape)
+      s.ConvertToCurves
+      cnt = cnt + 1
+    Next s
+  End If
+  
   MsgBox "转曲物件统计: " & cnt, , "文本转曲线"
   
   ActiveDocument.EndCommandGroup
@@ -285,7 +295,7 @@ Public Function Split_Segment()
   Dim nd As Node
   
   Set s = ssr.UngroupAllEx.Combine
-  Set nr = s.Curve.Nodes.All
+  Set nr = s.Curve.Nodes.all
   
   nr.BreakApart
   s.BreakApartEx
@@ -429,7 +439,7 @@ Public Function Take_Apart_Character()
     mark_shape_expand sh, tr
   Next sh
   
-  Set ssr = ActivePage.Shapes.FindShapes(query:="@colors.find(RGB(0, 255, 0))")
+  Set ssr = ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(0, 255, 0))")
   ActiveDocument.ClearSelection
   ssr.AddToSelection
   
@@ -622,7 +632,7 @@ Public Function Single_Line_LastNode()
   Dim nr As NodeRange
   For Each s In ssr
     If cnt > 1 Then
-      Set nr = s.DisplayCurve.Nodes.All
+      Set nr = s.DisplayCurve.Nodes.all
       Set line = ActiveLayer.CreateLineSegment(nr.FirstNode.PositionX, nr.FirstNode.PositionY, nr.LastNode.PositionX, nr.LastNode.PositionY)
       line.Outline.SetProperties Color:=cm(1)
       SrNew.Add line
@@ -668,7 +678,7 @@ Function quickColorSelect()
 
     EventsEnabled = False
     
-    Set sr = ActivePage.Shapes.FindShapes(query:="@fill.type = 'uniform'")
+    Set sr = ActivePage.Shapes.FindShapes(Query:="@fill.type = 'uniform'")
     ActiveDocument.ClearSelection
     bClick = False
     While Not bClick
@@ -1005,7 +1015,7 @@ Public Function autogroup(Optional group As String = "group", Optional shft = 0,
   Dim sp As SubPaths
   Dim arr()
   Dim s As Shape
-  If sss Is Nothing Then Set os = ActiveSelectionRange Else Set os = sss.All
+  If sss Is Nothing Then Set os = ActiveSelectionRange Else Set os = sss.all
   On Error GoTo errn
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   
@@ -1106,7 +1116,7 @@ Public Function 角度转平()
   On Error GoTo ErrorHandler
 '  ActiveDocument.ReferencePoint = cdrCenter
   Set sr = ActiveSelectionRange
-  Set nr = sr.LastShape.DisplayCurve.Nodes.All
+  Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
   If nr.Count = 2 Then
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
@@ -1121,7 +1131,7 @@ Public Function 自动旋转角度()
   On Error GoTo ErrorHandler
 '  ActiveDocument.ReferencePoint = cdrCenter
   Set sr = ActiveSelectionRange
-  Set nr = sr.LastShape.DisplayCurve.Nodes.All
+  Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
   If nr.Count = 2 Then
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
@@ -1145,7 +1155,7 @@ End Function
 Public Function 参考线镜像()
   On Error GoTo ErrorHandler
   Set sr = ActiveSelectionRange
-  Set nr = sr.LastShape.DisplayCurve.Nodes.All
+  Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
   If nr.Count = 2 Then
     ActiveDocument.BeginCommandGroup "Mirror": Application.Optimization = True
