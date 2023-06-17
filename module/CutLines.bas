@@ -38,7 +38,7 @@ Public Function Batch_CutLines()
 
     '// 选中裁切线 群组 设置线宽和注册色
     ActiveDocument.AddToSelection s2, s3, s4, s5, s6, s7, s8, s9
-    ActiveSelection.group
+    ActiveSelection.Group
     sr.Add ActiveSelection
   Next s1
 
@@ -49,12 +49,6 @@ Public Function Batch_CutLines()
    
   API.EndOpt
 End Function
-
-
-Sub test_MarkLines()
-  Dimension_MarkLines cdrAlignLeft, True
-'  Dimension_MarkLines cdrAlignTop, True
-End Sub
 
 '// 标注尺寸标记线
 Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAlignTop, Optional ByVal mirror As Boolean = False)
@@ -97,6 +91,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   
   '// 页面边缘对齐
   For Each s In sr
+    s.Name = "DMKLine"
     If mark = cdrAlignTop Then
       s.TopY = py + Line_len + Bleed
     Else
@@ -123,8 +118,8 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   API.EndOpt
 End Function
 
- '// 简单删除重复线算法
-Private Function RemoveDuplicates(sr As ShapeRange)
+ '// 简单删除重复线和物件算法算法
+Public Function RemoveDuplicates(sr As ShapeRange)
   Dim s As Shape, cnt As Integer, rms As New ShapeRange
   cnt = 1
   
@@ -138,7 +133,6 @@ Private Function RemoveDuplicates(sr As ShapeRange)
     If cnt > 1 Then
       If Check_duplicate(sr(cnt - 1), sr(cnt)) Then rms.Add sr(cnt)
     End If
-    s.Name = "DMKLine"
     cnt = cnt + 1
   Next s
   
@@ -148,7 +142,7 @@ End Function
  '// 检查重复算法
 Private Function Check_duplicate(s1 As Shape, s2 As Shape) As Boolean
   Check_duplicate = False
-  Jitter = 0.1
+  Jitter = 0.3
   X = Abs(s1.CenterX - s2.CenterX)
   Y = Abs(s1.CenterY - s2.CenterY)
   w = Abs(s1.SizeWidth - s2.SizeWidth)
@@ -221,3 +215,101 @@ Public Function SelectLine_to_Cropline()
   ActiveWindow.Refresh
   Application.Refresh
 End Function
+
+
+'// 拼版裁切线
+Public Function Draw_Lines()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
+  API.BeginOpt
+  
+  Dim OrigSelection As ShapeRange, sr As ShapeRange
+  Set OrigSelection = ActiveSelectionRange
+  Dim s1 As Shape, sbd As Shape
+  Dim dot As Coordinate
+  Dim arr As Variant, border As Variant
+  
+  ' 当前选择物件的范围边界
+  set_lx = OrigSelection.LeftX:   set_rx = OrigSelection.RightX
+  set_by = OrigSelection.BottomY: set_ty = OrigSelection.TopY
+  set_cx = OrigSelection.CenterX: set_cy = OrigSelection.CenterY
+  radius = 8
+  Bleed = API.GetSet("Bleed")
+  Line_len = API.GetSet("Line_len")
+  Outline_Width = API.GetSet("Outline_Width")
+  border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius, Bleed, Line_len)
+  
+  ' 创建边界矩形，用来添加角线
+  Set sbd = ActiveLayer.CreateRectangle(set_lx, set_by, set_rx, set_ty)
+  OrigSelection.Add sbd
+  
+  For Each Target In OrigSelection
+    Set s1 = Target
+    lx = s1.LeftX:   rx = s1.RightX
+    By = s1.BottomY: ty = s1.TopY
+    cx = s1.CenterX: cy = s1.CenterY
+    
+    '// 范围边界物件判断
+    If Abs(set_lx - lx) < radius Or Abs(set_rx - rx) < radius Or Abs(set_by - By) _
+      < radius Or Abs(set_ty - ty) < radius Then
+      
+      arr = Array(lx, By, rx, By, lx, ty, rx, ty)  '// 物件左下-右下-左上-右上 四个顶点坐标数组
+      For i = 0 To 3
+        dot.X = arr(2 * i)
+        dot.Y = arr(2 * i + 1)
+        
+        '// 范围边界坐标点判断
+        If Abs(set_lx - dot.X) < radius Or Abs(set_rx - dot.X) < radius _
+              Or Abs(set_by - dot.Y) < radius Or Abs(set_ty - dot.Y) < radius Then
+
+            draw_line dot, border  '// 以坐标点和范围边界画裁切线
+        End If
+      Next i
+    End If
+  Next Target
+  
+  sbd.Delete  '删除边界矩形
+  
+  '// 使用CQL 颜色标志查
+  Set sr = ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))")
+  
+  '// 简单删除重复
+  RemoveDuplicates sr
+  
+  '// 设置线宽和颜色，再选择
+   sr.SetOutlineProperties Outline_Width, Color:=CreateRegistrationColor
+   sr.Group
+   sr.AddRange OrigSelection
+   sr.AddToSelection
+
+  API.EndOpt
+End Function
+
+'范围边界 border = Array(set_lx, set_rx, set_by, set_ty, set_cx, set_cy, radius, Bleed, Line_len)
+Private Function draw_line(dot As Coordinate, border As Variant)
+  radius = border(6): Bleed = border(7):  Line_len = border(8)
+  Dim line As Shape
+
+  If Abs(dot.Y - border(3)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.X, border(3) + Bleed, dot.X, border(3) + (Line_len + Bleed))
+    set_line_color line
+  ElseIf Abs(dot.Y - border(2)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(dot.X, border(2) - Bleed, dot.X, border(2) - (Line_len + Bleed))
+    set_line_color line
+  End If
+  
+  If Abs(dot.X - border(1)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(border(1) + Bleed, dot.Y, border(1) + (Line_len + Bleed), dot.Y)
+    set_line_color line
+  ElseIf Abs(dot.X - border(0)) < radius Then
+    Set line = ActiveLayer.CreateLineSegment(border(0) - Bleed, dot.Y, border(0) - (Line_len + Bleed), dot.Y)
+    set_line_color line
+  End If
+
+End Function
+
+Private Function set_line_color(line As Shape)
+   '// 设置轮廓线注册色
+  line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
+End Function
+
+

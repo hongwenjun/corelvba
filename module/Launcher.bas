@@ -2,53 +2,63 @@ Attribute VB_Name = "Launcher"
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
-'// Attribute VB_Name = "ÆäËû¹¤¾ßÆô¶¯"   Other Tools Start  2023.6.11
+'// Attribute VB_Name = "å…¶ä»–å·¥å…·å¯åŠ¨"   Other Tools Start  2023.6.11
 
 
-'// ÔËĞĞ¼ÆËãÆ÷
+'// è¿è¡Œè®¡ç®—å™¨
 Public Function START_Calc()
     Shell "Calc"
 End Function
 
 
-'// ¼ÇÊÂ±¾´ò¿ª±¸ÍüÂ¼
+'// è®°äº‹æœ¬æ‰“å¼€å¤‡å¿˜å½•
 Public Function START_Notepad()
-    cmd_line = "Notepad  C:\TSP\±¸ÍüÂ¼.txt"
-    Shell cmd_line, vbNormalNoFocus
+  On Error GoTo ErrorHandler
+  cmd_line = "Notepad  C:\TSP\å¤‡å¿˜å½•.txt"
+  Shell cmd_line, vbNormalNoFocus
+ErrorHandler:
 End Function
 
 
-'// ´ò¿ªÌõÂëÔÄ¶ÁÆ÷
+'// æ‰“å¼€æ¡ç é˜…è¯»å™¨
 Public Function START_Barcode_ImageReader()
-    cmd_line = "C:\Program Files (x86)\Softek Software\Softek Barcode Toolkit 30 Day Evaluation\bin\ImageReader.exe"
-    Shell cmd_line, vbNormalNoFocus
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\Program Files (x86)\Softek Software\Softek Barcode Toolkit 30 Day Evaluation\bin\ImageReader.exe"
+  Shell cmd_line, vbNormalNoFocus
+ErrorHandler:
 End Function
 
 
-'// Ê¸Á¿»¯¹¤¾ß Vector Magic
+'// çŸ¢é‡åŒ–å·¥å…· Vector Magic
 Public Function START_Vector_Magic()
-    cmd_line = "C:\Program Files (x86)\Vector Magic\vmde.exe"
-    Shell cmd_line, vbNormalNoFocus
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\Program Files (x86)\Vector Magic\vmde.exe"
+  Shell cmd_line, vbNormalNoFocus
+ErrorHandler:
 End Function
 
-'// waifu2x Í¼Æ¬·Å´ó
+'// waifu2x å›¾ç‰‡æ”¾å¤§
 Public Function START_waifu2x()
-    cmd_line = "C:\soft\waifu2x-gui-1.2\waifu2x-gui.exe"
-    Shell cmd_line, vbNormalNoFocus
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\soft\waifu2x-gui-1.2\waifu2x-gui.exe"
+  Shell cmd_line, vbNormalNoFocus
+ErrorHandler:
 End Function
 
-'// ¿ªÊ¼ÊÓÆµÂ¼ÖÆ
+'// å¼€å§‹è§†é¢‘å½•åˆ¶
 Public Function START_Bandicam()
-    cmd_line = "C:\Program Files (x86)\Bandicam\BandicamPortable.exe"
-    Shell cmd_line, vbNormalNoFocus
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\Program Files (x86)\Bandicam\BandicamPortable.exe"
+  Shell cmd_line, vbNormalNoFocus
+ErrorHandler:
 End Function
 
-'// ÕÒ×ÖÌå https://www.myfonts.com/pages/whatthefont
+'// æ‰¾å­—ä½“ https://www.myfonts.com/pages/whatthefont
 Public Function START_whatthefont()
-    Weburl "https://www.myfonts.com/pages/whatthefont"
+  Weburl "https://www.myfonts.com/pages/whatthefont"
 End Function
 
 
 Function Weburl(url As String)
-  CorelVBA.WebHelp url
+  API.WebHelp url
 End Function

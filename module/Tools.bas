@@ -1,24 +1,10 @@
 Attribute VB_Name = "Tools"
-Public Function 分分合合()
-  拼版裁切线.Arrange
-  
-  CQL查找相同.CQLline_CM100
-  
-  拼版裁切线.Cut_lines
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
 
-  ' 记忆选择范围
-  Dim X As Double, Y As Double, w As Double, h As Double
-  ActiveSelectionRange.GetBoundingBox X, Y, w, h
-  Set s = ActivePage.SelectShapesFromRectangle(X, Y, w, h, True)
-  
-  自动中线色阶条.Auto_ColorMark
-
-End Function
-
-ActiveDocument.ReferencePoint = cdrTopLeft
-Public Function 傻瓜火车排列(space_width As Double)
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+'// 简易火车排列
+Public Function Simple_Train_Arrangement(Space_Width As Double)
+  API.BeginOpt
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
   Set ssr = ActiveSelectionRange
@@ -33,21 +19,19 @@ Public Function 傻瓜火车排列(space_width As Double)
 
   ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
-    '' 底对齐 If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
-    '' 改成顶对齐 2022-08-10
+    '// 底对齐 If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
+    '// 改成顶对齐 2022-08-10
     ActiveDocument.ReferencePoint = cdrTopLeft + cdrBottomTop
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX + space_width, ssr(cnt - 1).TopY
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX + Space_Width, ssr(cnt - 1).TopY
     cnt = cnt + 1
   Next s
 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
 End Function
 
-
-Public Function 傻瓜阶梯排列(space_width As Double)
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+'// 简易阶梯排列
+Public Function Simple_Ladder_Arrangement(Space_Width As Double)
+  API.BeginOpt
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
   Set ssr = ActiveSelectionRange
@@ -62,19 +46,17 @@ Public Function 傻瓜阶梯排列(space_width As Double)
 
   ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY - space_width
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY - Space_Width
     cnt = cnt + 1
   Next s
 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
 End Function
 
 '// 文本转曲线   默认使用简单转曲，参数 all=1 ，支持框选和图框剪裁内的文本
 Public Function TextShape_ConvertToCurves(Optional all = 0)
+  API.BeginOpt
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   Dim s As Shape, cnt As Long
   
   If all = 1 Then
@@ -89,19 +71,11 @@ Public Function TextShape_ConvertToCurves(Optional all = 0)
       cnt = cnt + 1
     Next s
   End If
-  
-  MsgBox "转曲物件统计: " & cnt, , "文本转曲线"
-  
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
-'' 复制物件
+'// 复制物件
 Public Function copy_shape()
   Dim OrigSelection As ShapeRange
   Set OrigSelection = ActiveSelectionRange
@@ -109,10 +83,9 @@ Public Function copy_shape()
 
 End Function
 
-'' 旋转物件角度
+'// 旋转物件角度
 Public Function Rotate_Shapes(n As Double)
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
   Dim sh As Shape, shs As Shapes
   Set shs = ActiveSelection.Shapes
@@ -121,12 +94,10 @@ Public Function Rotate_Shapes(n As Double)
     sh.Rotate n
   Next sh
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
 End Function
 
-'' 得到物件尺寸
+'// 得到物件尺寸
 Public Function get_shape_size(ByRef sx As Double, ByRef sy As Double)
   ActiveDocument.Unit = cdrMillimeter
   Dim sh As ShapeRange
@@ -137,10 +108,9 @@ Public Function get_shape_size(ByRef sx As Double, ByRef sy As Double)
   sy = Int(sy * 100 + 0.5) / 100
 End Function
 
-'' 批量设置物件尺寸
+'// 批量设置物件尺寸
 Public Function Set_Shapes_size(ByRef sx As Double, ByRef sy As Double)
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   ActiveDocument.ReferencePoint = cdrCenter
   
   Dim sh As Shape, shs As Shapes
@@ -151,15 +121,14 @@ Public Function Set_Shapes_size(ByRef sx As Double, ByRef sy As Double)
      sh.SizeHeight = sy
   Next sh
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
 End Function
 
-Public Function 尺寸取整()
+'// 批量设置物件尺寸整数
+Public Function Size_to_Integer()
   If 0 = ActiveSelectionRange.Count Then Exit Function
-  ActiveDocument.Unit = cdrMillimeter
-  ' 修改变形尺寸基准
+  API.BeginOpt
+  '// 修改变形尺寸基准
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes
   Set shs = ActiveSelection.Shapes
@@ -171,18 +140,20 @@ Public Function 尺寸取整()
     s = s & size & vbNewLine
   Next sh
 
-  MsgBox "物件尺寸信息到剪贴板" & vbNewLine & s & vbNewLine
   API.WriteClipBoard s
+  API.EndOpt
 
+  MsgBox "Object Size Information To Clipboard:" & vbNewLine & s & vbNewLine
 End Function
 
-Public Function 居中页面()
+'// 设置物件页面居中
+Public Function Align_Page_Center()
   If 0 = ActiveSelectionRange.Count Then Exit Function
-  ' 实践应用: 选择物件群组,页面设置物件大小,物件页面居中
+  '// 实践应用: 选择物件群组,页面设置物件大小,物件页面居中
   ActiveDocument.Unit = cdrMillimeter
   Dim OrigSelection As ShapeRange, sh As Shape
   Set OrigSelection = ActiveSelectionRange
-  Set sh = OrigSelection.group
+  Set sh = OrigSelection.Group
   ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
   
 #If VBA7 Then
@@ -197,39 +168,49 @@ End Function
 
 '''///  使用Python脚本 整理尺寸 提取条码数字 建立二维码 位图转文本 ///'''
 Public Function Python_Organize_Size()
-    mypy = Path & "GMS\262235.xyz\Organize_Size.py"
-    cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  mypy = Path & "GMS\LYVBA\Organize_Size.py"
+  cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
+  Shell cmd_line
+ErrorHandler:
 End Function
 
 Public Function Python_Get_Barcode_Number()
-    mypy = Path & "GMS\262235.xyz\Get_Barcode_Number.py"
-    cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  mypy = Path & "GMS\LYVBA\Get_Barcode_Number.py"
+  cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
+  Shell cmd_line
+ErrorHandler:
 End Function
 
 Public Function Python_BITMAP()
-    mypy = Path & "GMS\262235.xyz\BITMAP.py"
-    cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  mypy = Path & "GMS\LYVBA\BITMAP.py"
+  cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
+  Shell cmd_line
+ErrorHandler:
 End Function
 
 Public Function Python_BITMAP2()
-    Bitmap = "C:\TSP\BITMAP.exe"
-    Shell Bitmap
+  On Error GoTo ErrorHandler
+  Bitmap = "C:\TSP\BITMAP.exe"
+  Shell Bitmap
+ErrorHandler:
 End Function
 
 
 Public Function Python_Make_QRCode()
-    mypy = Path & "GMS\262235.xyz\Make_QRCode.py"
-    cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  mypy = Path & "GMS\LYVBA\Make_QRCode.py"
+  cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
+  Shell cmd_line
+ErrorHandler:
 End Function
 
-'' QRCode二维码制作
+'// QRCode二维码制作
 Public Function QRCode_replace()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
   Dim image_path As String
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
@@ -255,17 +236,11 @@ Public Function QRCode_replace()
     
   Next sh
   
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
-'' QRCode二维码转矢量图
+'// QRCode二维码转矢量图
 Public Function QRCode_to_Vector()
   On Error GoTo ErrorHandler
   
@@ -286,13 +261,12 @@ End Function
 '''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
 Public Function Split_Segment()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
+
+  Dim ssr As ShapeRange, s As Shape
+  Dim nr As NodeRange, nd As Node
   
-  Dim ssr As ShapeRange
   Set ssr = ActiveSelectionRange
-  Dim s As Shape
-  Dim nr As NodeRange
-  Dim nd As Node
   
   Set s = ssr.UngroupAllEx.Combine
   Set nr = s.Curve.Nodes.all
@@ -303,27 +277,19 @@ Public Function Split_Segment()
 '    nd.BreakApart
 '  Next nd
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 
 '''////  标记画框 支持容差  ////'''
 Public Function Mark_CreateRectangle(expand As Boolean)
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   ActiveDocument.ReferencePoint = cdrBottomLeft
   Dim ssr As ShapeRange
+  Dim sh As Shape, tr As Double
   Set ssr = ActiveSelectionRange
-  Dim sh As Shape
-  Dim tr As Double
   
   tr = 0
   If GlobalUserData.Exists("Tolerance", 1) Then
@@ -338,13 +304,8 @@ Public Function Mark_CreateRectangle(expand As Boolean)
     End If
   Next sh
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 Private Function mark_shape_expand(sh As Shape, tr As Double)
@@ -388,53 +349,45 @@ End Function
 '''////  批量组合合并  ////'''
 Public Function Batch_Combine()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  
-  Dim ssr As ShapeRange
+  API.BeginOpt
+  Dim ssr As ShapeRange, sh As Shape
   Set ssr = ActiveSelectionRange
-  Dim sh As Shape
+  
   For Each sh In ssr
     sh.UngroupAllEx.Combine
   Next sh
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 '''////  一键拆开多行组合的文字字符   ////'''   ''' 本功能由群友半缘君赞助发行 '''
 Public Function Take_Apart_Character()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   ActiveDocument.ReferencePoint = cdrBottomLeft
   
   Dim ssr As ShapeRange
-  Set ssr = ActiveSelectionRange
   Dim s1 As Shape, sh As Shape, s As Shape
   Dim tr As Double
+  Set ssr = ActiveSelectionRange
   
-  ' 记忆选择范围
+  '// 记忆选择范围
   Dim X As Double, Y As Double, w As Double, h As Double
   ssr.GetBoundingBox X, Y, w, h
   Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
   
-  ' 解散群组，先组合，再散开
+  '// 解散群组，先组合，再散开
   Set s = ssr.UngroupAllEx.Combine
   Set ssr = s.BreakApartEx
 
-  ' 读取容差值
+  '// 读取容差值
   tr = 0
   If GlobalUserData.Exists("Tolerance", 1) Then
     tr = Val(GlobalUserData("Tolerance", 1))
   End If
 
-  ' 标记画框，选择标记框
+  '// 标记画框，选择标记框
   For Each sh In ssr
     mark_shape_expand sh, tr
   Next sh
@@ -443,8 +396,8 @@ Public Function Take_Apart_Character()
   ActiveDocument.ClearSelection
   ssr.AddToSelection
   
-  ' 调用 智能群组 后删除标记画框
-  智能群组和查找.智能群组
+  '// 调用 智能群组 后删除标记画框
+  SmartGroup.Smart_Group
   
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ssr.Delete
@@ -453,19 +406,13 @@ Public Function Take_Apart_Character()
 ' sh.Shapes.All.Group
   s1.Delete
   
-  ' 通过s1矩形范围选择群组后合并组合
+  '// 通过s1矩形范围选择群组后合并组合
   For Each s In sh.Shapes
     s.UngroupAllEx.Combine
   Next s
 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 
@@ -473,8 +420,7 @@ End Function
 Public Function Single_Line()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
   Dim cm(2)  As Color
   Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
@@ -486,14 +432,13 @@ Public Function Single_Line()
   Dim cnt As Integer
   cnt = 1
   
-
   If 1 = ActiveSelectionRange.Count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
     Set ssr = ActiveSelectionRange
   End If
     
-  ' 记忆选择范围
+  '// 记忆选择范围
   Dim X As Double, Y As Double, w As Double, h As Double
 
   ssr.GetBoundingBox X, Y, w, h
@@ -508,8 +453,8 @@ Public Function Single_Line()
 ' X4 不支持 ShapeRange.sort
 #End If
 
-'''  相交 Set line2 = line.Intersect(s, True, True)
-'''  判断相交  line.Curve.IntersectsWith(s.Curve)
+'//  相交   Set line2 = line.Intersect(s, True, True)
+'//  判断相交  line.Curve.IntersectsWith(s.Curve)
 
   For Each s In ssr
     If cnt > 1 Then
@@ -521,23 +466,16 @@ Public Function Single_Line()
     cnt = cnt + 1
   Next s
   
-  SrNew.group
+  SrNew.Group
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 Public Function Single_Line_Vertical()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
   Dim cm(2)  As Color
   Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
@@ -549,14 +487,13 @@ Public Function Single_Line_Vertical()
   Dim cnt As Integer
   cnt = 1
   
-
   If 1 = ActiveSelectionRange.Count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
     Set ssr = ActiveSelectionRange
   End If
     
-  ' 记忆选择范围
+  '// 记忆选择范围
   Dim X As Double, Y As Double, w As Double, h As Double
 
   ssr.GetBoundingBox X, Y, w, h
@@ -580,23 +517,16 @@ Public Function Single_Line_Vertical()
     cnt = cnt + 1
   Next s
   
-  SrNew.group
+  SrNew.Group
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 Public Function Single_Line_LastNode()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
   Dim cm(2)  As Color
   Set cm(0) = CreateRGBColor(0, 255, 0) ' RGB 绿
@@ -640,16 +570,10 @@ Public Function Single_Line_LastNode()
     cnt = cnt + 1
   Next s
   
-  SrNew.group
+  SrNew.Group
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 
@@ -664,7 +588,7 @@ Public Function Mark_Range_Box()
 
   ssr.GetBoundingBox X, Y, w, h
   Set s1 = ActiveLayer.CreateRectangle2(X, Y, w, h)
-  s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0) ' RGB 绿
+  s1.Outline.SetProperties Color:=CreateRGBColor(0, 255, 0)  '// RGB 绿
 End Function
 
 
@@ -781,12 +705,11 @@ End Function
 
 
 '// 批量多页居中-遍历批量物件，放置物件到页面
-Public Function 批量多页居中()
+Public Function Batch_Align_Page_Center()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
+  
   Set sr = ActiveSelectionRange
   total = sr.Count
 
@@ -803,7 +726,7 @@ Public Function 批量多页居中()
 
 
   Dim sh As Shape
-  
+
   '// 遍历批量物件，放置物件到页面
   For i = 1 To sr.Count
     doc.Pages(i).Activate
@@ -820,15 +743,8 @@ Public Function 批量多页居中()
 #End If
 
   Next i
-
-  ActiveDocument.EndCommandGroup: Application.Optimization = False
-  ActiveWindow.Refresh:   Application.Refresh
-Exit Function
-
 ErrorHandler:
-  Application.Optimization = False
-  MsgBox "请先选择一些物件"
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 
@@ -855,7 +771,7 @@ End Function
 
 '// 标注尺寸 批量简单标注数字
 Public Function Simple_Label_Numbers()
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   Set sr = ActiveSelectionRange
   
   For Each s In sr.Shapes
@@ -866,20 +782,19 @@ Public Function Simple_Label_Numbers()
     Set s = ActiveLayer.CreateArtisticText(0, 0, text)
     s.CenterX = X: s.BottomY = Y + 5
   Next
+  API.EndOpt
 End Function
 
 '// 修复圆角缺角到直角
-Public Sub corner_off()
+Public Function corner_off()
+  API.BeginOpt
     Dim os As ShapeRange
     Dim s As Shape, fir As Shape, ci As Shape
     Dim nd As Node, nds As Node, nde As Node
-
+    
     Set os = ActiveSelectionRange
-    ud = ActiveDocument.Unit
-    ActiveDocument.Unit = cdrMillimeter
+
 On Error GoTo errn
-    ActiveDocument.BeginCommandGroup "corners off"
-    Application.Optimization = True
     selec = False
     If os.Shapes.Count = 1 Then
         Set s = os.FirstShape
@@ -941,18 +856,13 @@ On Error GoTo errn
         End If
     End If
 errn:
-    Application.Optimization = False
-    ActiveDocument.EndCommandGroup
-    Application.Refresh
-    ActiveDocument.Unit = ud
-End Sub
+  API.EndOpt
+End Function
 
-Private Sub corner_off_make(s As Shape, nds As Node, nde As Node)
+Private Function corner_off_make(s As Shape, nds As Node, nde As Node)
     Dim l1 As Shape, l2 As Shape
     Dim os As ShapeRange
     Dim ss As Shape
-    ud = ActiveDocument.Unit
-    ActiveDocument.Unit = cdrMillimeter
 
     Set l1 = ActiveLayer.CreateLineSegment(nds.PositionX, nds.PositionY, nds.PositionX + s.SizeWidth * 3, nds.PositionY)
     l1.RotationCenterX = nds.PositionX
@@ -1007,10 +917,9 @@ Private Sub corner_off_make(s As Shape, nds As Node, nde As Node)
         l1.Delete
         l2.Delete
     End If
-    ActiveDocument.Unit = ud
-End Sub
+End Function
 
-Public Function autogroup(Optional group As String = "group", Optional shft = 0, Optional sss As Shapes = Nothing, Optional undogroup = True) As ShapeRange
+Public Function autogroup(Optional Group As String = "group", Optional shft = 0, Optional sss As Shapes = Nothing, Optional undogroup = True) As ShapeRange
   Dim sr As ShapeRange, sr_all As ShapeRange, os As ShapeRange
   Dim sp As SubPaths
   Dim arr()
@@ -1070,8 +979,8 @@ Public Function autogroup(Optional group As String = "group", Optional shft = 0,
         End If
       Next j
       If inar > 1 Then
-        If group = "group" Then
-          If shft < 4 Then sr_all.Add sr.group
+        If Group = "group" Then
+          If shft < 4 Then sr_all.Add sr.Group
         End If
       Else
         If sr.Shapes.Count > 0 Then sr_all.AddRange sr
@@ -1101,20 +1010,21 @@ Public Function collect_arr(arr, ci, ki)
     collect_arr = arr
 End Function
 
-' 两个端点的坐标,为(x1,y1)和(x2,y2) 那么其角度a的tan值: tana=(y2-y1)/(x2-x1)
-' 所以计算arctan(y2-y1)/(x2-x1), 得到其角度值a
-' VB中用atn(), 返回值是弧度，需要 乘以 PI /180
+'// 两个端点的坐标,为(x1,y1)和(x2,y2) 那么其角度a的tan值: tana=(y2-y1)/(x2-x1)
+'// 所以计算arctan(y2-y1)/(x2-x1), 得到其角度值a
+'// VB中用atn(), 返回值是弧度，需要 乘以 PI /180
 Private Function lineangle(x1, y1, x2, y2) As Double
-  pi = 4 * VBA.Atn(1) ' 计算圆周率
+  pi = 4 * VBA.Atn(1)    '// 计算圆周率
   If x2 = x1 Then
     lineangle = 90: Exit Function
   End If
   lineangle = VBA.Atn((y2 - y1) / (x2 - x1)) / pi * 180
 End Function
 
-Public Function 角度转平()
+'// 角度转平
+Public Function Angle_to_Horizon()
   On Error GoTo ErrorHandler
-'  ActiveDocument.ReferencePoint = cdrCenter
+  API.BeginOpt
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
@@ -1122,13 +1032,17 @@ Public Function 角度转平()
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2): sr.Rotate -a
-    ' sr.LastShape.Delete   '// 删除参考线
+    sr.LastShape.Delete   '// 删除参考线
   End If
 ErrorHandler:
+  API.EndOpt
 End Function
 
-Public Function 自动旋转角度()
+'// 自动旋转角度
+Public Function Auto_Rotation_Angle()
   On Error GoTo ErrorHandler
+  API.BeginOpt
+  
 '  ActiveDocument.ReferencePoint = cdrCenter
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
@@ -1140,10 +1054,11 @@ Public Function 自动旋转角度()
     sr.LastShape.Delete   '// 删除参考线
   End If
 ErrorHandler:
+  API.EndOpt
 End Function
 
-
-Public Function 交换对象()
+'// 交换对象
+Public Function Exchange_Object()
   Set sr = ActiveSelectionRange
   If sr.Count = 2 Then
     X = sr.LastShape.CenterX: Y = sr.LastShape.CenterY
@@ -1152,32 +1067,33 @@ Public Function 交换对象()
   End If
 End Function
 
-Public Function 参考线镜像()
+'// 参考线镜像
+Public Function Mirror_ByGuide()
   On Error GoTo ErrorHandler
+  API.BeginOpt
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
   If nr.Count = 2 Then
-    ActiveDocument.BeginCommandGroup "Mirror": Application.Optimization = True
     byshape = False
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2)  '// 参考线和水平的夹角 a
     sr.Remove sr.Count
     
-    ang = 90 - a  ' 镜像的旋转角度
+    ang = 90 - a    '// 镜像的旋转角度
     For Each s In sr
       With s
-        .Duplicate   ' // 复制物件保留，然后按 x1,y1 点 旋转
+        .Duplicate   '// 复制物件保留，然后按 x1,y1 点 旋转
         .RotationCenterX = x1
         .RotationCenterY = y1
         .Rotate ang
         If Not byshape Then
             lx = .LeftX
-            .Stretch -1#, 1#    ' // 通过拉伸完成镜像
+            .Stretch -1#, 1#    '// 通过拉伸完成镜像
             .LeftX = lx
             .Move (x1 - .LeftX) * 2 - .SizeWidth, 0
-            .RotationCenterX = x1   '// 之前因为镜像，旋转中心点反了，重置回来
+            .RotationCenterX = x1     '// 之前因为镜像，旋转中心点反了，重置回来
             .RotationCenterY = y1
             .Rotate -ang
         End If
@@ -1185,21 +1101,17 @@ Public Function 参考线镜像()
         .RotationCenterY = .CenterY
       End With
     Next s
-    ActiveDocument.EndCommandGroup
+
   End If
 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
 ErrorHandler:
-  Application.Optimization = False
+  API.EndOpt
 End Function
 
-
-Public Function 按面积排列(space_width As Double)
+'// 按面积排列计数
+Public Function Count_byArea(Space_Width As Double)
   If 0 = ActiveSelectionRange.Count Then Exit Function
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   ActiveDocument.ReferencePoint = cdrCenter
   
   Set ssr = ActiveSelectionRange
@@ -1220,7 +1132,7 @@ Public Function 按面积排列(space_width As Double)
 
   ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY - space_width
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).LeftX, ssr(cnt - 1).BottomY - Space_Width
     cnt = cnt + 1
   Next s
 
@@ -1229,7 +1141,7 @@ Public Function 按面积排列(space_width As Double)
 '  Set f = fs.CreateTextFile("D:\size.txt", True)
 '  f.WriteLine str: f.Close
 
-  Str = 分类汇总(Str)
+  Str = Subtotals(Str)
   Debug.Print Str
 
   Dim s1 As Shape
@@ -1238,13 +1150,11 @@ Public Function 按面积排列(space_width As Double)
   Y = ssr.FirstShape.TopY
   Set s1 = ActiveLayer.CreateParagraphText(X, Y, X + 90, Y - 150, Str, Font:="华文中宋")
 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
+  API.EndOpt
 End Function
  
 '// 实现Excel里分类汇总功能
-Private Function 分类汇总(Str As String) As String
+Private Function Subtotals(Str As String) As String
   Dim a, b, d, arr
   Str = VBA.Replace(Str, vbNewLine, " ")
   Do While InStr(Str, "  ")
@@ -1270,5 +1180,5 @@ Private Function 分类汇总(Str As String) As String
     Str = Str & a(i) & vbTab & vbTab & b(i) & "条" & vbNewLine
   Next
 
-  分类汇总 = Str & "合计总量:" & vbTab & vbTab & vbTab & UBound(arr) & "条" & vbNewLine
+  Subtotals = Str & "合计总量:" & vbTab & vbTab & vbTab & UBound(arr) & "条" & vbNewLine
 End Function

@@ -14,6 +14,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
 #If VBA7 Then
     Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
@@ -63,8 +66,8 @@ Private Sub MakeUserFormTransparent(frm As Object, Optional Color As Variant)
 End Sub
 
 Private Sub Change_UI_Close_Voice_Click()
-  Speak_Msg "修改UI图片更换界面  注册表关闭语音 详QQ群"
-  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA中秋节版" & vbNewLine & "coreldrawvba插件交流群  8531411"
+  SaveSetting "LYVBA", "Settings", "SpeakHelp", "0"
+  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA工具 永久免费开源" & vbNewLine & "主题图片文件名ToolBar.jpg 安装包中有多套皮肤选用"
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -82,8 +85,8 @@ Private Sub UserForm_Initialize()
   
 With Me
   .StartUpPosition = 0
-  .Left = Val(GetSetting("262235.xyz", "Settings", "Left", "400"))  ' 设置工具栏位置
-  .Top = Val(GetSetting("262235.xyz", "Settings", "Top", "55"))
+  .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400"))  ' 设置工具栏位置
+  .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55"))
   .Height = 30
   .Width = 336
 End With
@@ -94,15 +97,15 @@ End With
   ' 读取角线设置
   Bleed.text = API.GetSet("Bleed")
   Line_len.text = API.GetSet("Line_len")
-  Outline_Width.text = GetSetting("262235.xyz", "Settings", "Outline_Width", "0.2")
+  Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
   
-  UIFile = Path & "GMS\262235.xyz\ToolBar.jpg"
+  UIFile = Path & "GMS\LYVBA\ToolBar.jpg"
   If API.ExistsFile_UseFso(UIFile) Then
     UI.Picture = LoadPicture(UIFile)   '换UI图
     Set pic1 = LoadPicture(UIFile)
   End If
 
-  UIL = Path & "GMS\262235.xyz\ToolBar1.jpg"
+  UIL = Path & "GMS\LYVBA\ToolBar1.jpg"
   If API.ExistsFile_UseFso(UIL) Then
     Set pic2 = LoadPicture(UIL)
     UIL_Key = True
@@ -201,48 +204,59 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       '// 暂时空
       
     ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 暂时空
+      '// 木头人智能群组，异形群组
+      autogroup("group", 1).CreateSelection
       
     ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// CTRL扩展工具栏
       Me.Height = 30 + 45
       
+    ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+      ' 文本转曲  参数 all=1 ，支持框选和图框剪裁内的文本
+      ' Tools.TextShape_ConvertToCurves 1
     End If
     Exit Sub
   End If
 
+
   '// 鼠标右键 扩展键按钮优先  收缩工具栏  标记范围框  居中页面 尺寸取整数  单色黑中线标记 扩展工具栏  排列工具  扩展工具栏收缩
   If Button = 2 Then
     If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+      '// 收缩工具栏
       Me.Width = 30: Me.Height = 30
       UI.Visible = False: LOGO.Visible = True
 
     ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.居中页面
+      '// 居中页面
+      Tools.Align_Page_Center
 
     ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+      '// 标记范围框
       Tools.Mark_Range_Box
 
     ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.尺寸取整
+      '// 批量设置物件尺寸整数
+      Tools.Size_to_Integer
     
-    ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      自动中线色阶条.Auto_ColorMark_K
-
     '//分分合合把几个功能按键合并到一起，定义到右键上
     ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      Tools.分分合合
+     '// Tools.分分合合
+
+    ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+      '// 自动中线色阶条 黑白
+      AutoColorMark.Auto_ColorMark_K
 
     ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      智能群组和查找.智能群组 API.Create_Tolerance
+     '// 智能群组
+      SmartGroup.Smart_Group API.Create_Tolerance
 
     ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键扩展工具栏
       Me.Height = 30 + 45
       
     ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 右键拆分线段
-      Tools.Split_Segment
+     '// 文本统计信息
+     Application.FrameWork.Automation.InvokeItem "bf3bd8fe-ca26-4fe0-91b0-3b5c99786fb6"
 
     ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键排列工具
@@ -259,25 +273,32 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   
   '// 鼠标左键 单击按钮功能  按工具栏上图标正常功能
   If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    裁切线.start
+   '// 裁切线: 批量物件裁切线
+    CutLines.Batch_CutLines
     
   ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    剪贴板尺寸建立矩形.start
+  '// 剪贴板尺寸建立矩形
+    ClipbRectangle.Build_Rectangle
     
   ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    裁切线.SelectLine_to_Cropline
+    '// 单线条转裁切线 - 放置到页面四边
+    CutLines.SelectLine_to_Cropline
     
   ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    拼版裁切线.arrange
+    '// 拼版.Arrange
+    Arrange.Arrange
     
   ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    拼版裁切线.Cut_lines
+    '// 拼版裁切线
+    CutLines.Draw_Lines
     
   ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    自动中线色阶条.Auto_ColorMark
+    '// 自动中线色阶条 彩色
+    AutoColorMark.Auto_ColorMark
     
   ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    智能群组和查找.智能群组
+   '// 智能群组 没容差
+    SmartGroup.Smart_Group
     
   ElseIf Abs(X - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     CQL_FIND_UI.Show 0
@@ -286,7 +307,8 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     Replace_UI.Show 0
     
   ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    Tools.TextShape_ConvertToCurves
+    ' 简单文本转曲
+    Tools.TextShape_ConvertToCurves 0
     
   ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 扩展工具栏
@@ -306,8 +328,8 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       LOGO.Visible = True
   
       ' 保存工具条位置 Left 和 Top
-      SaveSetting "262235.xyz", "Settings", "Left", Me.Left
-      SaveSetting "262235.xyz", "Settings", "Top", Me.Top
+      SaveSetting "LYVBA", "Settings", "Left", Me.Left
+      SaveSetting "LYVBA", "Settings", "Top", Me.Top
     
       Speak_Msg "左键缩小 右键收缩"
     End If
@@ -403,19 +425,20 @@ End Sub
 
 Private Sub OPEN_UI_BIG_Click()
   Unload Me
-  CorelVBA.Show 0
+  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA工具 永久免费开源" _
+       & vbNewLine & "源码网址:" & vbNewLine & "https://github.com/hongwenjun/corelvba"
 End Sub
 
 Private Sub Settings_Click()
   If 0 < Val(Bleed.text) * Val(Line_len.text) < 100 Then
-   SaveSetting "262235.xyz", "Settings", "Bleed", Bleed.text
-   SaveSetting "262235.xyz", "Settings", "Line_len", Line_len.text
-   SaveSetting "262235.xyz", "Settings", "Outline_Width", Outline_Width.text
+   SaveSetting "LYVBA", "Settings", "Bleed", Bleed.text
+   SaveSetting "LYVBA", "Settings", "Line_len", Line_len.text
+   SaveSetting "LYVBA", "Settings", "Outline_Width", Outline_Width.text
   End If
 
   ' 保存工具条位置 Left 和 Top
-  SaveSetting "262235.xyz", "Settings", "Left", Me.Left
-  SaveSetting "262235.xyz", "Settings", "Top", Me.Top
+  SaveSetting "LYVBA", "Settings", "Left", Me.Left
+  SaveSetting "LYVBA", "Settings", "Top", Me.Top
   
   Me.Height = 30
 End Sub

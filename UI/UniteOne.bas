@@ -28,7 +28,7 @@ Option Explicit
  Dim LogoFile As String         'Logo
  
  Dim s(1 To 255) As Shape   '定义对象用于存放每页的群组
- Dim p As Page          '定义多页
+ Dim P As Page          '定义多页
  
 
 '**** 主程序  执行
@@ -41,21 +41,21 @@ Private Sub cmdRun_Click()
  ActiveDocument.Unit = cdrMillimeter
  ActiveDocument.EditAcrossLayers = False    '跨图层编辑禁止
  
- For Each p In ActiveDocument.Pages
-    p.Activate                    '激活每页
-    p.Shapes.All.CreateSelection          '每页全选
-    Set s(p.index) = ActiveSelection.Group    '存放每页的群组
- Next p
+ For Each P In ActiveDocument.Pages
+    P.Activate                    '激活每页
+    P.Shapes.all.CreateSelection          '每页全选
+    Set s(P.index) = ActiveSelection.Group    '存放每页的群组
+ Next P
  
  ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
  
   x_M = y_M = 0
   
-  For Each p In ActiveDocument.Pages
-    p.Activate
+  For Each P In ActiveDocument.Pages
+    P.Activate
        
-    s(p.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(p.index).Move (iYouyi * x_M), -(300 + iXiayi * y_M) '排列对象  右偏移，下偏移
+    s(P.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
+    s(P.index).Move (iYouyi * x_M), -(300 + iXiayi * y_M) '排列对象  右偏移，下偏移
   
   y_M = y_M + 1
   
@@ -64,7 +64,7 @@ Private Sub cmdRun_Click()
   y_M = 0
   End If
   
- Next p
+ Next P
  
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
@@ -84,21 +84,21 @@ Private Sub cmdRunX_Click()
  ActiveDocument.Unit = cdrMillimeter
  ActiveDocument.EditAcrossLayers = False    '跨图层编辑禁止
  
- For Each p In ActiveDocument.Pages
-    p.Activate                    '激活每页
-    p.Shapes.All.CreateSelection          '每页全选
-    Set s(p.index) = ActiveSelection.Group    '存放每页的群组
- Next p
+ For Each P In ActiveDocument.Pages
+    P.Activate                    '激活每页
+    P.Shapes.all.CreateSelection          '每页全选
+    Set s(P.index) = ActiveSelection.Group    '存放每页的群组
+ Next P
  
  ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
  
   x_M = y_M = 0
   
-  For Each p In ActiveDocument.Pages
-    p.Activate
+  For Each P In ActiveDocument.Pages
+    P.Activate
        
-    s(p.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(p.index).Move (iYouyi * y_M), -(600 + iXiayi * x_M) '排列对象  右偏移，下偏移
+    s(P.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
+    s(P.index).Move (iYouyi * y_M), -(600 + iXiayi * x_M) '排列对象  右偏移，下偏移
   
   y_M = y_M + 1
   
@@ -107,7 +107,7 @@ Private Sub cmdRunX_Click()
   y_M = 0
   End If
   
- Next p
+ Next P
  
   ActiveDocument.EndCommandGroup
   Application.Optimization = False
@@ -124,11 +124,11 @@ Private Sub UserForm_Initialize()
  Dim s As Shape
 ActiveDocument.Unit = cdrMillimeter '本文档单位为mm
 
- For Each p In ActiveDocument.Pages
- iPages = p.index
+ For Each P In ActiveDocument.Pages
+ iPages = P.index
  If iPages = 1 Then
-  p.Activate
-  p.Shapes.All.CreateSelection
+  P.Activate
+  P.Shapes.all.CreateSelection
 
  Set s = ActiveDocument.Selection
         If s.Shapes.Count = 0 Then
@@ -137,7 +137,7 @@ ActiveDocument.Unit = cdrMillimeter '本文档单位为mm
         End If
  
  End If
- Next p
+ Next P
  
 
  txtLie.text = 5

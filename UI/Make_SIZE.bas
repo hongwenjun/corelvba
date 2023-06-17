@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 Private Sub UserForm_Initialize()
     With Tis
         .BackColor = RGB(0, 150, 255)
@@ -147,7 +149,7 @@ Private Sub 标注线段长()
             s.Copy
             Set sc = ActiveLayer.Paste
             sc.ConvertToCurves
-            sc.Curve.Nodes.All.BreakApart
+            sc.Curve.Nodes.all.BreakApart
             sc.BreakApart
             For Each s1 In ActiveSelection.Shapes
                 Set st1 = ActiveLayer.CreateArtisticText(0, 0, round(s1.Curve.Length, 0), , , , TextBox1.value)
@@ -200,7 +202,7 @@ Private Sub 选中标注字号增加()
     Optimization = True '优化启动
     If TextBox1.value > 0 Then
         TextBox1.value = TextBox1.value + 1
-        For Each s In ActiveSelection.Shapes.FindShapes(query:="@type ='text:artistic' and @Name='Text' ")
+        For Each s In ActiveSelection.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ")
             s.text.Story.size = s.text.Story.size + 1
         Next
     End If
@@ -213,7 +215,7 @@ Private Sub 选中标注字号减少()
     Optimization = True '优化启动
     If TextBox1.value > 0 Then
         TextBox1.value = TextBox1.value - 1
-        For Each s In ActiveSelection.Shapes.FindShapes(query:="@type ='text:artistic' and @Name='Text' ")
+        For Each s In ActiveSelection.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ")
             s.text.Story.size = s.text.Story.size - 1
         Next
     End If
@@ -225,7 +227,7 @@ Private Sub 选中标注字号()
     Dim s As Shape
     Optimization = True '优化启动
     If TextBox1.value > 0 Then
-        For Each s In ActiveSelection.Shapes.FindShapes(query:="@type ='text:artistic' and @Name='Text' ")
+        For Each s In ActiveSelection.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ")
             s.text.Story.size = TextBox1.value
         Next
     End If
@@ -235,11 +237,11 @@ End Sub
 
 Private Sub 删除标注()
     If ActiveSelection.Shapes.Count > 0 Then
-        ActiveSelection.Shapes.FindShapes(query:="@type ='text:artistic' and @Name='Text' ").Delete
-        ActiveSelection.Shapes.FindShapes(query:="@Name='line' ").Delete
+        ActiveSelection.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ").Delete
+        ActiveSelection.Shapes.FindShapes(Query:="@Name='line' ").Delete
     Else
-        ActivePage.Shapes.FindShapes(query:="@type ='text:artistic' and @Name='Text' ").Delete
-        ActivePage.Shapes.FindShapes(query:="@Name='line' ").Delete
+        ActivePage.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ").Delete
+        ActivePage.Shapes.FindShapes(Query:="@Name='line' ").Delete
     End If
 End Sub
 

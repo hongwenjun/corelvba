@@ -14,8 +14,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-
-
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
@@ -37,7 +35,7 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 
 
 Private Sub Close_Icon_Click()
-  Unload Me    ' 关闭
+  Unload Me    '// 关闭
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -63,35 +61,35 @@ Private Sub UserForm_Initialize()
   
 End Sub
 
-Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button Then
-    mx = x
+    mx = X
     my = Y
   End If
 End Sub
 
-Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button Then
-    Me.Left = Me.Left - mx + x
+    Me.Left = Me.Left - mx + X
     Me.Top = Me.Top - my + Y
   End If
 End Sub
 
 
-Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim pos_x As Variant
   Dim pos_y As Variant
   pos_x = Array(307, 27)
   pos_y = Array(64, 126, 188, 200)
 
-  If Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
+  If Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
     Call copy_shape_replace
-  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
+  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
     Call copy_shape_replace_resize
-  ElseIf Abs(x - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
+  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
     Call image_replace
-  ElseIf Abs(x - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
-    CorelVBA.WebHelp "https://262235.xyz/index.php/tag/vba/"
+  ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
+    API.WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
   Replace_UI.Hide
@@ -100,12 +98,14 @@ End Sub
 
 Private Sub image_replace()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
+  
   Dim image_path As String
   image_path = API.GetClipBoardString
   ActiveDocument.ReferencePoint = cdrCenter
+  
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -117,33 +117,27 @@ Private Sub image_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition x, Y
-    sc.SetPosition x, Y
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
     
-    sh.GetSize x, Y
-    sc.SetSize x, Y
+    sh.GetSize X, Y
+    sc.SetSize X, Y
     sh.Delete
     
   Next sh
 
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
 ErrorHandler:
-    MsgBox "请先复制图片的完整路径，本工具能自动替换图片!"
-    Application.Optimization = False
-    On Error Resume Next
+'//    MsgBox "请先复制图片的完整路径，本工具能自动替换图片!"
+  API.EndOpt
 End Sub
 
 Private Sub copy_shape_replace_resize()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
 
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -153,34 +147,28 @@ Private Sub copy_shape_replace_resize()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition x, Y
-    sc.SetPosition x, Y
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
     
-    sh.GetSize x, Y
-    sc.SetSize x, Y
+    sh.GetSize X, Y
+    sc.SetSize X, Y
     sh.Delete
     
   Next sh
 
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
 ErrorHandler:
-    MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
-    Application.Optimization = False
-    On Error Resume Next
+'// MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
+  API.EndOpt
 End Sub
 
 
 Private Sub copy_shape_replace()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
 
   ActiveDocument.ReferencePoint = cdrCenter
   Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
   cnt = 0
   For Each sh In shs
@@ -190,19 +178,13 @@ Private Sub copy_shape_replace()
     Else
       sc.Duplicate 0, 0
     End If
-    sh.GetPosition x, Y
-    sc.SetPosition x, Y
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
     sh.Delete
   Next sh
 
-    '// 代码操作结束恢复窗口刷新
-    ActiveDocument.EndCommandGroup
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
 ErrorHandler:
-    MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
-    Application.Optimization = False
-    On Error Resume Next
+'// MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
+  API.EndOpt
 End Sub
 

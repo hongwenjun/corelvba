@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmSelectSame 
-   Caption         =   "ÏàËÆÑ¡Ôñ"
-   ClientHeight    =   4770
+   Caption         =   "ç›¸ä¼¼é€‰æ‹©-é­”æ”¹ç‰ˆ è˜­é›…"
+   ClientHeight    =   5775
    ClientLeft      =   495
    ClientTop       =   5895
    ClientWidth     =   2625
@@ -14,93 +14,63 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-Option Explicit         'Requires explicit declaration of all
-                        'variables. This protects against
-                        'inadvertent use of the slow 'Variant' type
-                        'variables which are used when the specific
-                        'type is unknown.
-                        
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
+
+'// Attribute VB_Name = "ç›¸ä¼¼é€‰æ‹©-é­”æ”¹ç‰ˆ è˜­é›…"   frmSelectSame   2023.6.12
+
+Option Explicit
+'éœ€è¦æ˜¾å¼å£°æ˜æ‰€æœ‰å˜é‡ã€‚ è¿™å¯ä»¥é˜²æ­¢æ— æ„ä¸­ä½¿ç”¨ç¼“æ…¢çš„â€œVariantâ€ç±»å‹å˜é‡ï¼Œè¿™äº›å˜é‡åœ¨ç‰¹å®šç±»å‹æœªçŸ¥æ—¶ä½¿ç”¨ã€‚
+'Requires explicit declaration of all variables. This protects against inadvertent use of the slow 'Variant' type variables which are used when the specific type is unknown.
+
+Public ssreg As ShapeRange
+
 Private Const TOOLNAME As String = "VBA_SelectSame"
 Private Const SECTION As String = "Options"
 
- Private Sub btnSelect_Click()
-    On Error Resume Next
+Private Sub btnSelect_Click()
+    If 0 = ActiveSelectionRange.Count Then Exit Sub
+    On Error GoTo ErrorHandler
+    
     Dim fLeft As Double, fTop As Double
     fLeft = frmSelectSame.Left
     fTop = frmSelectSame.Top
     SaveSetting "SelectSame", "Preferences", "form_left", fLeft
     SaveSetting "SelectSame", "Preferences", "form_top", fTop
-    beg
     
-    If (chkFill = False And _
-        chkOutline = False And _
-        chkOutlineColor = False And _
-        chkOutlineLength = False And _
-        chkSize = False And _
-        chkWHratio = False And _
-        chkType = False And _
-        chkNodes = False And _
-        chkSegments = False And _
-        chkPaths = False) Then
-            MsgBox "ÇëÖÁÉÙÑ¡ÔñÒ»¸öÑ¡Ïî", vbCritical, "JH Select Same 2"
-            Exit Sub
+    '// åŒºåŸŸèŒƒå›´é€‰æ‹©ï¼Œéœ€è¦å…³é—­åˆ·æ–°ä¼˜åŒ–
+    If OptBt.value = False Then
+      API.BeginOpt
+    Else
+      add_ssreg
     End If
-            
-    With Me '"Me" is a VBA reserved word, returning a
-                        'reference to the form (or class module)
-                        'in which the current code is located.
-                        'The chk... functions return the current
-                        'Value of the check buttons of the same
-                        'name.
-        .SelectAllSimilar .chkFill, .chkOutline, .chkOutlineColor, .chkOutlineLength, _
-            .chkSize, .chkWHratio, .chkType, .chkNodes, .chkSegments, .chkPaths, _
-             .OptDoc, .Optpage, .Optlayer, .chkInGroups, .chkColorMark, .chkIndiv
+    
+    If (chkFill = False And chkOutline = False And chkOutlineColor = False And _
+      chkOutlineLength = False And chkSize = False And chkWHratio = False And _
+      chkType = False And chkNodes = False And chkSegments = False And _
+      chkPaths = False And chkFontName = False And chkFontSize = False And chkShapeName = False) Then
+        MsgBox "è¯·è‡³å°‘é€‰æ‹©ä¸€ä¸ªé€‰é¡¹", vbCritical, "Select Same"
+        GoTo ErrorHandler
+    End If
+
+
+'// "ME"æ˜¯ä¸€ä¸ªVBAä¿ç•™å­—ï¼Œè¿”å›å¯¹å½“å‰ä»£ç æ‰€åœ¨çª—ä½“ï¼ˆæˆ–ç±»æ¨¡å—ï¼‰çš„å¼•ç”¨ã€‚ chk... å‡½æ•°è¿”å›åŒåå¤é€‰æŒ‰é’®çš„å½“å‰å€¼ã€‚
+'// "ME" is a VBA reserved word, returning a reference to the form (or class module) in which the current code is located.
+'//  The chk... functions return the current Value of the check buttons of the same name.
+    With Me
+      .SelectAllSimilar .chkFill, .chkOutline, .chkOutlineColor, .chkOutlineLength, _
+      .chkSize, .chkWHratio, .chkType, .chkNodes, .chkSegments, .chkPaths, _
+      .OptDoc, .Optpage, .Optlayer, .chkInGroups, .chkColorMark, .chkIndiv, _
+      .chkFontName, .chkFontSize, .chkShapeName
     End With
     
-    EndOpt
+    API.EndOpt
     
-'Added to fix refresh issues
-ActiveWindow.Refresh
-Application.Refresh
-
-'On Error Resume Next
-'    If VersionMajor = 13 Then
-'        AppActivate "CorelDRAW X3"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 14 Then
-'        AppActivate "CorelDRAW X4"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 15 Then
-'        AppActivate "CorelDRAW X5"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 16 Then
-'        AppActivate "CorelDRAW X6"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 17 Then
-'        AppActivate "CorelDRAW X7"
-'        AppActivate ActiveDocument
-'    End If
-'        If VersionMajor = 18 Then
-'        AppActivate "CorelDRAW X8"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 19 Then
-'        AppActivate "CorelDRAW 2017"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 20 Then
-'        AppActivate "CorelDRAW 2018"
-'        AppActivate ActiveDocument
-'    End If
-'    If VersionMajor = 21 Then
-'        AppActivate "CorelDRAW 2019"
-'        AppActivate ActiveDocument
-'    End If
+Exit Sub
+ErrorHandler:
+  Application.Optimization = False
 End Sub
+
 Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
                     Optional CheckOutline As Boolean = True, _
                     Optional CheckOutlineColor As Boolean = True, _
@@ -116,45 +86,61 @@ Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
                     Optional WithinLayer As Boolean = False, _
                     Optional WithinGroups As Boolean = True, _
                     Optional CheckColorMark As Boolean = False, _
-                    Optional CheckIndiv As Boolean = True)
+                    Optional CheckIndiv As Boolean = True, _
+                    Optional CheckFontName As Boolean = False, _
+                    Optional CheckFontSize As Boolean = False, _
+                    Optional CheckShapeName As Boolean = False)
                     
     'Object variables.              Reference to:
     Dim shpsSelected As Shapes          'selected shapes,
-    Dim shpsToTest As Shapes            'full set of shapes to be tested,
+    Dim shpsToTest As Shapes            'full set of shapes to be tested,  ' å¾…æµ‹å½¢çŠ¶å…¨éƒ¨é›†åˆ
     Dim pagesr As ShapeRange           'pages shapes collection,
     Dim docsr As New ShapeRange
     Dim shpModel As Shape               'a pre-selected shape,
     Dim shpToMatch As Shape             'a shape to be matched,
     'Dim oScript As Object               'CorelScript object,
-    Dim clnModelShapes As Collection    'our list of pre-selected shapes,¶¨ÒåÔ´¶ÔÏó¼¯ºÏ
-    Dim clnSubShapes As Collection      'our list of shapes inside a group. ¶¨ÒåÈº×éÄÚµÄÄ¿±ê¶ÔÏó
-    Dim P As Page, p1 As Page           'ÎÄµµÖĞ²éÕÒÊ¹ÓÃ
+    Dim clnModelShapes As Collection    'our list of pre-selected shapes,  'å®šä¹‰æºå¯¹è±¡é›†åˆ
+    Dim clnSubShapes As Collection      'our list of shapes inside a group. 'å®šä¹‰ç¾¤ç»„å†…çš„ç›®æ ‡å¯¹è±¡
+    Dim P As Page, p1 As Page           'æ–‡æ¡£ä¸­æŸ¥æ‰¾ä½¿ç”¨
     Dim shr As ShapeRange, sr As New ShapeRange
-    Dim i As Integer  ' 'ÎÄµµÖĞÑ­»·²éÕÒ¼ÆÊıÊ¹ÓÃ
-                                            
+    Dim i As Integer  ' 'æ–‡æ¡£ä¸­å¾ªç¯æŸ¥æ‰¾è®¡æ•°ä½¿ç”¨
+    Dim fsn As Shape  '// æ‰©å±•åŠŸèƒ½: å­—ä½“å­—å·æ ‡è®°åæ£€æµ‹æºå¯¹è±¡
+
     On Error GoTo NothingSelected       'Get a reference to any
     Set shr = ActiveSelectionRange
     Set shpsSelected = ActiveDocument.Selection.Shapes
-    On Error GoTo 0                     'pre-selected shapes. ½«ÎÄµµÖĞµ±Ç°Ñ¡ÖĞµÄ·¶Î§×÷ÎªÔ´¶ÔÏó
+'    On Error GoTo 0                     'pre-selected shapes. å°†æ–‡æ¡£ä¸­å½“å‰é€‰ä¸­çš„èŒƒå›´ä½œä¸ºæºå¯¹è±¡
     
     If shpsSelected.Count > 0 Then          'Gather the pre-selected shapes
         Set clnModelShapes = New Collection 'into a new collection for
-        For Each shpModel In shpsSelected   'simple processing. ½¨Á¢Ô´¶ÔÏó¼¯ºÏ
+        For Each shpModel In shpsSelected   'simple processing. å»ºç«‹æºå¯¹è±¡é›†åˆ
            clnModelShapes.Add shpModel
         Next
         
+
+        '// é­”æ”¹åˆ†æ”¯ å­—ä½“-å­—å·-æ ‡è®°å
+        If CheckFontName Or CheckFontSize Or CheckShapeName Then
+          Set fsn = shr(1)
+        End If
+
         '===================================
         ' TurnOptimizations cdrOptimizationOn
         '===================================
        
-        
         If WithinPage Then
+
+          If OptBt.value = True Then
+            Set shpsToTest = ssreg.Shapes
+            OptBt.value = 0
+            API.BeginOpt
+          Else
             Set shpsToTest = ActivePage.Shapes
+          End If
                                             'Ensure that "Edit across layers"
                                             'is ON. Otherwise, selecting
 '            Set oScript = CorelScript       'across layers, followed by
 '            oScript.SetMultiLayer True      'grouping, can flatten all
-'            Set oScript = Nothing           'layers into one. Ñ¡ÖĞ±íÊ¾½«¶Ôµ±Ç°Ò³ÃæµÄËùÓĞ¶ÔÏóÓëÔ´¶ÔÏó½øĞĞÆ¥Åä£¬·ñÔòÖ»Æ¥Åäµ±Ç°Í¼²ãµÄ¶ÔÏó
+'            Set oScript = Nothing           'layers into one. é€‰ä¸­è¡¨ç¤ºå°†å¯¹å½“å‰é¡µé¢çš„æ‰€æœ‰å¯¹è±¡ä¸æºå¯¹è±¡è¿›è¡ŒåŒ¹é…ï¼Œå¦åˆ™åªåŒ¹é…å½“å‰å›¾å±‚çš„å¯¹è±¡
  
             'Replace the above with this line, CoreScript is not longer support X7+
             ActiveDocument.EditAcrossLayers = True
@@ -163,18 +149,18 @@ Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
             Set shpsToTest = ActivePage.ActiveLayer.Shapes
         End If
         
-        If WithinDoc Then 'ÔÚµ±Ç°ÎÄµµ²éÕÒ£¬½«µ±Ç°Ò³ÃæÏàÓ¦µÄ¶ÔÏó¼ÓÈëµ½´ı±È½Ï·¶Î§
-            
-            'Set p1 = ActivePage
+        If WithinDoc Then 'åœ¨å½“å‰æ–‡æ¡£æŸ¥æ‰¾ï¼Œå°†å½“å‰é¡µé¢ç›¸åº”çš„å¯¹è±¡åŠ å…¥åˆ°å¾…æ¯”è¾ƒèŒƒå›´
             For i = 1 To ActiveDocument.Pages.Count
                 ActiveDocument.Pages(i).Activate
-                Set pagesr = ActivePage.SelectShapesFromRectangle(0, 2480, 1820, 0, False).Shapes.All
-                docsr.AddRange pagesr '¸÷Ò³ÃæÒÀ´Î²éÕÒ£¬ÏàÓ¦µÄ¶ÔÏó¼ÓÈëµ½´ı±È½Ï·¶Î§
+                Set p1 = ActiveDocument.Pages(i)
+                Set pagesr = ActivePage.SelectShapesFromRectangle(0, p1.CenterY * 2, p1.CenterX * 2, 0, False).Shapes.all
+                Debug.Print p1.CenterY * 2 & p1.CenterX * 2
+                docsr.AddRange pagesr 'å„é¡µé¢ä¾æ¬¡æŸ¥æ‰¾ï¼Œç›¸åº”çš„å¯¹è±¡åŠ å…¥åˆ°å¾…æ¯”è¾ƒèŒƒå›´
                 
             Next i
             Set shpsToTest = docsr.Shapes
-'            MsgBox "¹²ÓĞ´ı±È½Ï¶ÔÏó " & shpsToTest.Count & " ¸ö"
-            Label13.Caption = "¹²ÓĞ´ı±È½Ï¶ÔÏó " & shpsToTest.Count & " ¸ö"
+'            MsgBox "å…±æœ‰å¾…æ¯”è¾ƒå¯¹è±¡ " & shpsToTest.Count & " ä¸ª"
+            Label13.Caption = "å…±æœ‰å¾…æ¯”è¾ƒå¯¹è±¡ " & shpsToTest.Count & " ä¸ª"
             'p1.Activate
         End If
         
@@ -207,7 +193,7 @@ Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
                         If ShapesMatch(shpToMatch, shpModel, CheckFill, _
                                 CheckOutline, CheckOutlineColor, CheckOutlineLength, CheckSize, CheckWHratio, _
                                 CheckType, CountNodes, CountSegments, CountPaths, CheckIndiv) Then
-                            'shpToMatch.AddToSelection
+                               'shpToMatch.AddToSelection
                             sr.Add shpToMatch
                             Exit For        'If a match has now been found,
                         End If              'we can skip any remaining models.
@@ -222,11 +208,19 @@ Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
         'CorelScript.RedrawScreen
         '===================================
         'sr.Add ActiveDocument.Selection
-        If CheckColorMark And sr.Count > 0 Then sr.SetOutlineProperties , , CreateCMYKColor(0, 100, 0, 0) 'ÂÖÀªÏßÉÏÉ«
+        If CheckColorMark And sr.Count > 0 Then sr.SetOutlineProperties , , CreateCMYKColor(0, 100, 0, 0) 'è½®å»“çº¿ä¸Šè‰²
         sr.AddRange shr
-        sr.CreateSelection
-'        MsgBox "¹²ÕÒµ½ " & sr.Count & " ¸ö¶ÔÏó"
-        Label13.Caption = "¹²ÕÒµ½ " & sr.Count & " ¸ö¶ÔÏó"
+    
+        '// é­”æ”¹åˆ†æ”¯ å­—ä½“-å­—å·-æ ‡è®°å
+        If CheckFontName Or CheckFontSize Or CheckShapeName Then
+          If CheckFontName Then ShapesMatch_Font_Name fsn, sr, "FontName"
+          If CheckFontSize Then ShapesMatch_Font_Name fsn, sr, "FontSize"
+          If CheckShapeName Then ShapesMatch_Font_Name fsn, sr, "ShapeName"
+        End If
+        
+       sr.CreateSelection
+        '// æ˜¾ç¤ºæ‰¾åˆ°å¯¹è±¡
+        Label13.Caption = "å…±æ‰¾åˆ° " & sr.Count & " ä¸ªå¯¹è±¡"
     End If
     
     Set clnModelShapes = Nothing               'Release the memory allocated
@@ -234,6 +228,48 @@ Sub SelectAllSimilar(Optional CheckFill As Boolean = True, _
     Exit Sub
 NothingSelected:
 End Sub
+
+'// æ·»åŠ åŒºåŸŸé€‰æ‹©åˆ†æ”¯
+Private Function add_ssreg()
+    Dim ssr As ShapeRange, shr As ShapeRange
+    Dim x1 As Double, y1 As Double, x2 As Double, y2 As Double
+    Dim Shift As Long
+    Dim b As Boolean
+    Set shr = ActiveSelectionRange
+    b = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
+    If Not b Then
+      Set ssreg = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, True).Shapes.all
+    End If
+    ActiveDocument.ClearSelection
+    shr.CreateSelection
+End Function
+
+'// é­”æ”¹åˆ†æ”¯ å­—ä½“-å­—å·-æ ‡è®°å  æ£€æŸ¥åŒ¹é…
+Private Function ShapesMatch_Font_Name(ByVal fsn As Shape, sr As ShapeRange, Check_Case As String)
+  Dim xz As String, sh_name As String, strFontName As String
+  Dim FontSize As Double
+  Dim srText As ShapeRange
+  Set srText = sr.Shapes.FindShapes(Type:=cdrTextShape)
+      
+  Select Case Check_Case
+  Case "FontName"
+    If fsn.Type = cdrTextShape Then
+      strFontName = fsn.text.Story.Font
+      Set sr = srText.Shapes.FindShapes(Query:="@type ='text:artistic' or @type ='text:paragraph' and @com.text.story.font = '" & strFontName & "'")
+    End If
+    
+  Case "FontSize"
+    If fsn.Type = cdrTextShape Then
+      FontSize = fsn.text.Story.size
+      Set sr = srText.Shapes.FindShapes(Query:="@type ='text:artistic' or @type ='text:paragraph' and (@com.text.story.size - " & FontSize & ").abs() < 0.1 ")
+    End If
+    
+  Case "ShapeName"
+    sh_name = fsn.Name
+      Set sr = sr.Shapes.FindShapes(Query:="@name ='" & sh_name & "'")
+  End Select
+End Function
+
 
 Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                     Optional CheckFill As Boolean = True, _
@@ -249,23 +285,23 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                     Optional CheckIndiv As Boolean = False) As Boolean
     
     'Sizes "match" if they differ by less than one per cent
-    Dim ToleranceSize As Double     'Ãæ»ı´óĞ¡ÔÊĞí²¨¶¯
-    ToleranceSize = Me.TextBox1 / 100  'Ãæ»ı´óĞ¡ÔÊĞí²¨¶¯,ÒÔ°Ù·Ö±ÈÎªµ¥Î»
+    Dim ToleranceSize As Double     'é¢ç§¯å¤§å°å…è®¸æ³¢åŠ¨
+    ToleranceSize = Me.TextBox1 / 100  'é¢ç§¯å¤§å°å…è®¸æ³¢åŠ¨,ä»¥ç™¾åˆ†æ¯”ä¸ºå•ä½
     
-    Dim ToleranceLength As Double   'Ïß³¤ÔÊĞí²¨¶¯
-    ToleranceLength = Me.TextBox2 / 100 '³¤¶ÈÔÊĞí²¨¶¯,ÒÔ°Ù·Ö±ÈÎªµ¥Î»
+    Dim ToleranceLength As Double   'çº¿é•¿å…è®¸æ³¢åŠ¨
+    ToleranceLength = Me.TextBox2 / 100 'é•¿åº¦å…è®¸æ³¢åŠ¨,ä»¥ç™¾åˆ†æ¯”ä¸ºå•ä½
     
-    Dim ToleranceNodesCount As Long  '½ÚµãÊıÁ¿ÔÊĞí²¨¶¯,ÒÔ µã µ¥Î»
-    ToleranceNodesCount = Me.TextBox3 '½ÚµãÊıÁ¿ÔÊĞí²¨¶¯,ÒÔ µã µ¥Î»
+    Dim ToleranceNodesCount As Long  'èŠ‚ç‚¹æ•°é‡å…è®¸æ³¢åŠ¨,ä»¥ ç‚¹ å•ä½
+    ToleranceNodesCount = Me.TextBox3 'èŠ‚ç‚¹æ•°é‡å…è®¸æ³¢åŠ¨,ä»¥ ç‚¹ å•ä½
     
-    Dim ToleranceSubPathsCount As Long  '×ÓÂ·¾¶ ×ÓÏß¶Î ÔÊĞí²¨¶¯,ÒÔ Ìõ Îªµ¥Î»
-    ToleranceSubPathsCount = Me.TextBox4 '×ÓÂ·¾¶ ×ÓÏß¶Î ÔÊĞí²¨¶¯,ÒÔ Ìõ Îªµ¥Î»
+    Dim ToleranceSubPathsCount As Long  'å­è·¯å¾„ å­çº¿æ®µ å…è®¸æ³¢åŠ¨,ä»¥ æ¡ ä¸ºå•ä½
+    ToleranceSubPathsCount = Me.TextBox4 'å­è·¯å¾„ å­çº¿æ®µ å…è®¸æ³¢åŠ¨,ä»¥ æ¡ ä¸ºå•ä½
     
-    Dim ToleranceWHratio As Double  '³¤¿í±È ÔÊĞí²¨¶¯,ÒÔ °Ù·Ö±È Îªµ¥Î»
-    ToleranceWHratio = Me.TextBox5  '³¤¿í±È ÔÊĞí²¨¶¯,ÒÔ °Ù·Ö±È Îªµ¥Î»
+    Dim ToleranceWHratio As Double  'é•¿å®½æ¯” å…è®¸æ³¢åŠ¨,ä»¥ ç™¾åˆ†æ¯” ä¸ºå•ä½
+    ToleranceWHratio = Me.TextBox5  'é•¿å®½æ¯” å…è®¸æ³¢åŠ¨,ä»¥ ç™¾åˆ†æ¯” ä¸ºå•ä½
     
-    Dim ToleranceSegmentsCount As Long  'Ïß¶ÎÊı ÔÊĞí²¨¶¯,ÒÔ ¸ö Îªµ¥Î»
-    ToleranceSegmentsCount = Me.TextBox6 'Ïß¶ÎÊı ÔÊĞí²¨¶¯,ÒÔ ¸ö Îªµ¥Î»
+    Dim ToleranceSegmentsCount As Long  'çº¿æ®µæ•° å…è®¸æ³¢åŠ¨,ä»¥ ä¸ª ä¸ºå•ä½
+    ToleranceSegmentsCount = Me.TextBox6 'çº¿æ®µæ•° å…è®¸æ³¢åŠ¨,ä»¥ ä¸ª ä¸ºå•ä½
         
     'Object Variables.        'Reference to:
     Dim clrModel As Color           'color features of model shape,
@@ -275,7 +311,7 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
     Dim crvModel As Curve           'Bezier curve of model shape,
     Dim crvShape As Curve           'Bezier curve of shape to be tested,
     Dim fntModel As StructFontProperties  'font properties of model text shape,
-    Dim trgModel As Text            'general text properties of model shape.
+    Dim trgModel As text            'general text properties of model shape.
     Dim spath As SubPath, opath As SubPath
     Dim j As Integer
     
@@ -326,7 +362,7 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                 Set crvShape = .Curve
                 Set crvModel = shpModel.Curve
                 
-                'If CheckIndiv Then 'ÖğÌõ×ÓÂ·¾¶±È½Ï
+                'If CheckIndiv Then 'é€æ¡å­è·¯å¾„æ¯”è¾ƒ
                     'If Abs(crvShape.SubPaths.Count - crvModel.SubPaths.Count) <> 0 Then GoTo NoMatch
                     'For j = 1 To crvShape.SubPaths.Count
                             'If Abs(crvShape.SubPath(j).Nodes.Count - crvModel.SubPath(j).Nodes.Count) > ToleranceNodesCount Then GoTo NoMatch
@@ -586,17 +622,14 @@ Private Function ShapesInGroup(GroupShape As Shape) As Collection
     End If                                  'collection is not needed
 End Function
 
-Private Sub Image2_Click()
-    frminfo.Show vbModeless
-End Sub
-
 Private Sub UserForm_Activate()
     Const YES As String = "True"
     Const NO As String = "False"
-   
-    Optpage = GetSetting(TOOLNAME, SECTION, "InPage", YES)
+
     OptDoc = GetSetting(TOOLNAME, SECTION, "InDoc", NO)
     Optlayer = GetSetting(TOOLNAME, SECTION, "InLayer", NO)
+    Optpage = GetSetting(TOOLNAME, SECTION, "InPage", YES)
+    
     chkColorMark = GetSetting(TOOLNAME, SECTION, "ColorMark", YES)
     chkFill = GetSetting(TOOLNAME, SECTION, "Fill", YES)
     chkInGroups = GetSetting(TOOLNAME, SECTION, "InGroups", YES)
@@ -678,15 +711,3 @@ End Sub
 Private Sub chkOutLineLength_Click()
     SaveSetting TOOLNAME, SECTION, "OutlineLength", CStr(chkOutlineLength)
 End Sub
-Sub beg()
-    ActiveDocument.Unit = cdrMillimeter
-    ActiveDocument.BeginCommandGroup "aa"
-    Optimization = True
-End Sub
-Sub EndOpt()
-    Optimization = False
-    ActiveDocument.EndCommandGroup
-    ActiveWindow.Refresh
-    Application.Refresh
-End Sub
-

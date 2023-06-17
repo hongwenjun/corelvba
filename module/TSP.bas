@@ -1,10 +1,10 @@
 Attribute VB_Name = "TSP"
 '// 导出节点信息到数据文件
 Public Function CDR_TO_TSP()
+  API.BeginOpt
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
-  
-  ActiveDocument.Unit = cdrMillimeter
+
   Dim sh As Shape, shs As Shapes, cs As Shape
   Dim X As Double, Y As Double
   Set shs = ActiveSelection.Shapes
@@ -19,13 +19,14 @@ Public Function CDR_TO_TSP()
   
   f.WriteLine TSP
   f.Close
-  MsgBox "小圆点导出节点信息到数据文件!" & vbNewLine
+'//  MsgBox "小圆点导出节点信息到数据文件!" & vbNewLine
+  API.EndOpt
 End Function
 
 '// 导出节点信息到数据文件
 Public Function Nodes_To_TSP()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+  API.BeginOpt
   
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
@@ -53,38 +54,32 @@ Public Function Nodes_To_TSP()
   f.WriteLine TSP
   f.Close
   s.Delete
-  MsgBox "选择物件导出节点信息到数据文件!" & vbNewLine
+'//   MsgBox "选择物件导出节点信息到数据文件!" & vbNewLine
   
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Function
 ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 '// 运行CDR2TSP.exe
 Public Function START_TSP()
-    cmd_line = "C:\TSP\CDR2TSP.exe C:\TSP\CDR_TO_TSP"
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\TSP\CDR2TSP.exe C:\TSP\CDR_TO_TSP"
+  Shell cmd_line
+  
+ErrorHandler:
 End Function
 
 '//  TSP功能画线-连贯线
 Public Function TSP_TO_DRAW_LINE()
   On Error GoTo ErrorHandler
-  ActiveDocument.Unit = cdrMillimeter
-  
+  API.BeginOpt
+
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.OpenTextFile("C:\TSP\TSP.txt", 1, False)
   Dim Str, arr, n
   Str = f.ReadAll()
   
-  Str = VBA.Replace(Str, vbNewLine, " ")
-  Do While InStr(Str, "  ")
-      Str = VBA.Replace(Str, "  ", " ")
-  Loop
-  
+  Str = API.Newline_to_Space(Str)
   arr = Split(Str)
   total = Val(arr(0))
   
@@ -112,7 +107,7 @@ Public Function TSP_TO_DRAW_LINE()
   ActiveLayer.CreateCurve crv
   
 ErrorHandler:
-  On Error Resume Next
+  API.EndOpt
 End Function
 
 '// 设置线条标记(颜色)
@@ -124,8 +119,7 @@ End Function
 '//  TSP功能画线-多线段
 Public Function TSP_TO_DRAW_LINES()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup: Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
@@ -133,10 +127,7 @@ Public Function TSP_TO_DRAW_LINES()
   Dim line As Shape
   Str = f.ReadAll()
   
-  Str = VBA.Replace(Str, vbNewLine, " ")
-  Do While InStr(Str, "  ")
-    Str = VBA.Replace(Str, "  ", " ")
-  Loop
+  Str = API.Newline_to_Space(Str)
   
   arr = Split(Str)
   For n = 2 To UBound(arr) - 1 Step 4
@@ -150,28 +141,26 @@ Public Function TSP_TO_DRAW_LINES()
   Next
   
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.group
+  ActiveSelection.Group
   ActiveSelection.Outline.SetProperties 0.2, Color:=CreateCMYKColor(0, 100, 100, 0)
   
-  ActiveDocument.EndCommandGroup: Application.Optimization = False
-  ActiveWindow.Refresh: Application.Refresh
-Exit Function
 ErrorHandler:
-    Application.Optimization = False
-    On Error Resume Next
+  API.EndOpt
 End Function
 
 '// 运行 TSP.exe
 Public Function MAKE_TSP()
-    cmd_line = "C:\TSP\TSP.exe"
-    Shell cmd_line
+  On Error GoTo ErrorHandler
+  cmd_line = "C:\TSP\TSP.exe"
+  Shell cmd_line
+ErrorHandler:
 End Function
 
 '// 位图制作小圆点
 Public Function BITMAP_MAKE_DOTS()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup: Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
+  
   Dim line, art, n, h, w
   Dim X As Double
   Dim Y As Double
@@ -189,7 +178,7 @@ Public Function BITMAP_MAKE_DOTS()
   h = Val(arr(0)): w = Val(arr(1))
   
   If h * w > 20000 Then
-      MsgBox "位图转换后的小圆点数量比较多:" & vbNewLine & h & " x " & w & " = " & h * w
+'//      MsgBox "位图转换后的小圆点数量比较多:" & vbNewLine & h & " x " & w & " = " & h * w
       flag = 1
   End If
 
@@ -208,18 +197,13 @@ Public Function BITMAP_MAKE_DOTS()
     Next n
   Next i
 
-  ActiveDocument.EndCommandGroup: Application.Optimization = False
-  ActiveWindow.Refresh: Application.Refresh
-Exit Function
 ErrorHandler:
-    Application.Optimization = False
-    On Error Resume Next
+  API.EndOpt
 End Function
 
 '// 坐标绘制圆点
 Private Function make_dots(X As Double, Y As Double)
-  Dim s As Shape
-  Dim c As Variant
+  Dim s As Shape, c As Variant
   c = Array(0, 255, 0)
   Set s = ActiveLayer.CreateEllipse2(X, Y, 0.5, 0.5)
   s.Fill.UniformColor.RGBAssign c(Int(Rnd() * 2)), c(Int(Rnd() * 2)), c(Int(Rnd() * 2))

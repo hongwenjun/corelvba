@@ -4,11 +4,8 @@ Attribute VB_Name = "SmartGroup"
 
 '// Attribute VB_Name = "智能群组"   SmartGroup  2023.6.11
 
-Sub 剪贴板物件替换()
-  Replace_UI.Show 0
-End Sub
 
-Public Sub 智能群组(Optional ByVal tr As Double = 0)
+Public Sub Smart_Group(Optional ByVal tr As Double = 0)
   If 0 = ActiveSelectionRange.Count Then Exit Sub
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -54,7 +51,7 @@ Public Sub 智能群组(Optional ByVal tr As Double = 0)
   '// 矩形边界智能群组，删除矩形
   For Each s In brk1
     Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-    sh.Shapes.all.group
+    sh.Shapes.all.Group
     s.Delete
   Next
 
@@ -70,10 +67,8 @@ ErrorHandler:
 
 End Sub
 
-' 智能群组_V1 第一版，储备示例代码
-Function 智能群组_V1()
-  On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
+'// 智能群组 原理版
+Function Smart_Group_ABC()
   ActiveDocument.Unit = cdrMillimeter
   
   Dim OrigSelection As ShapeRange, brk1 As ShapeRange
@@ -81,28 +76,14 @@ Function 智能群组_V1()
   Dim s1 As Shape, sh As Shape, s As Shape
   
   Set s1 = OrigSelection.CustomCommand("Boundary", "CreateBoundary")
-' s1.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
   Set brk1 = s1.BreakApartEx
 
   For Each s In brk1
     If s.SizeHeight > 10 Then
       Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-      sh.Shapes.all.group
+      sh.Shapes.all.Group
     End If
     s.Delete
   Next
-  
-' ActiveDocument.ClearSelection
-' ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelections
-
-  '// 代码操作结束恢复窗口刷新
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Function
-ErrorHandler:
-  Application.Optimization = False
-  MsgBox "请先选择一些物件来确定群组范围!"
-  On Error Resume Next
 End Function
 

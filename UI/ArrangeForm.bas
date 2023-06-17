@@ -17,6 +17,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Private Sub CommandButton1_Click()
   On Error GoTo ErrorHandler
   ActiveDocument.Unit = cdrMillimeter
@@ -61,10 +62,10 @@ End Sub
 Private Function arrange_Clone(matrix As Variant, s As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
-  x = s.SizeWidth: Y = s.SizeHeight
+  X = s.SizeWidth: Y = s.SizeHeight
   Set s1 = s.Clone
   '// StepAndRepeat 方法在范围内创建多个形状副本
-  Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
+  Set dup1 = s1.StepAndRepeat(ls - 1, X + lj, 0#)
   Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(hs - 1, 0#, -(Y + hj))
   s1.Delete
 End Function
@@ -72,11 +73,11 @@ End Function
 Private Function arrange_Clone_one(matrix As Variant, s As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
-  x = s.SizeWidth: Y = s.SizeHeight
+  X = s.SizeWidth: Y = s.SizeHeight
   Set s1 = s.Clone
   '// StepAndRepeat 方法在范围内创建多个形状副本
   If ls > 1 Then
-    Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
+    Set dup1 = s1.StepAndRepeat(ls - 1, X + lj, 0#)
   Else
     Set dup1 = s1
   End If

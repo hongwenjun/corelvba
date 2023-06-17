@@ -5,14 +5,15 @@ Attribute VB_Name = "AutoColorMark"
 '// Attribute VB_Name = "自动中线色阶条"   AutoColorMark  2023.6.11
 
 '// 请先选择要印刷的物件群组，本插件完成设置页面大小，自动中线色阶条对准线功能
-Sub Auto_ColorMark()
-  If 0 = ActiveSelectionRange.Count Then Exit Sub
+Function Auto_ColorMark()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  Dim doc As Document: Set doc = ActiveDocument: doc.Unit = cdrMillimeter
+  API.BeginOpt
+
+  Dim doc As Document: Set doc = ActiveDocument
 
   ' 物件群组，设置页面大小
-  Call set_page_size
+  set_page_size
 
   '// 获得页面中心点 x,y
   px = ActiveDocument.ActivePage.CenterX
@@ -36,7 +37,7 @@ Sub Auto_ColorMark()
       put_target_line sh
 
   ElseIf "ColorStrip" = sh.ObjectData("MarkName").value Then
-      ColorStrip = Val(GetSetting("262235.xyz", "Settings", "ColorStrip", "1"))
+      ColorStrip = Val(GetSetting("LYVBA", "Settings", "ColorStrip", "1"))
       
       If Val(ColorStrip) = 1 Then
         put_ColorStrip sh   ' 放置彩色色阶条
@@ -66,26 +67,19 @@ Sub Auto_ColorMark()
   
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.group
+  ActiveSelection.Group
   ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
 
-  '// 代码操作结束恢复窗口刷新
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
 ErrorHandler:
-  MsgBox "请先选择要印刷的物件群组，本插件完成设置页面大小，自动中线色阶条对准线功能!"
-  Application.Optimization = False
-  On Error Resume Next
-End Sub
+  API.EndOpt
+End Function
 
-Private Sub set_page_size()
+Private Function set_page_size()
   ' 实践应用: 选择物件群组,页面设置物件大小,物件页面居中
   ActiveDocument.Unit = cdrMillimeter
   Dim OrigSelection As ShapeRange, sh As Shape
   Set OrigSelection = ActiveSelectionRange
-  Set sh = OrigSelection.group
+  Set sh = OrigSelection.Group
   
   ' MsgBox "选择物件尺寸: " & sh.SizeWidth & "x" & sh.SizeHeight
   ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
@@ -98,7 +92,7 @@ Private Sub set_page_size()
   sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
 #End If
 
-End Sub
+End Function
 
 Private Function set_line_color(line As Shape)
     '// 设置线宽和注册色
@@ -176,7 +170,7 @@ Private Function put_page_size()
   ' 添加文字 页面大小和文件名
   Dim st As Shape
   size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
-  size = size & " " & ActiveDocument.FileName & " " & Date '   & vbNewLine & "Https://262235.xyz 需要您的支持!"
+  size = size & " " & ActiveDocument.FileName & " " & Date '
   Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
 End Function
 
@@ -252,14 +246,15 @@ End Function
 
 
 ' 自动中线 For 黑白产品版
-Sub Auto_ColorMark_K()
-  If 0 = ActiveSelectionRange.Count Then Exit Sub
+Function Auto_ColorMark_K()
+  If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  Dim doc As Document: Set doc = ActiveDocument: doc.Unit = cdrMillimeter
+  API.BeginOpt
+  
+  Dim doc As Document: Set doc = ActiveDocument
 
   ' 物件群组，设置页面大小
-  Call set_page_size
+  set_page_size
 
   '// 获得页面中心点 x,y
   px = ActiveDocument.ActivePage.CenterX
@@ -307,16 +302,9 @@ Sub Auto_ColorMark_K()
   
   '// 使用CQL 颜色标志查找，然后群组统一设置线宽和注册色
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.group
+  ActiveSelection.Group
   ActiveSelection.Outline.SetProperties 0.1, Color:=CreateRegistrationColor
 
-  '// 代码操作结束恢复窗口刷新
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Sub
 ErrorHandler:
-  MsgBox "请先选择要印刷的物件群组，本插件完成设置页面大小，自动中线色阶条对准线功能!"
-  Application.Optimization = False
-  On Error Resume Next
-End Sub
+  API.EndOpt
+End Function

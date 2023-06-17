@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ActiveDocument.BeginCommandGroup:  Application.Optimization = True
     Set os = ActiveSelectionRange
@@ -73,8 +74,12 @@ Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
         On Error Resume Next
         Set os = ActiveSelectionRange
         For Each s In os.Shapes
-            If s.Type = cdrLinearDimensionShape Then s.Delete
+            If s.Type = cdrLinearDimensionShape Then sr.Add s
         Next s
+          If sr.Count > 0 Then
+            os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
+            ActiveSelectionRange.Delete
+          End If
         On Error GoTo 0
     Else
         make_sizes Shift
@@ -122,13 +127,17 @@ Sub make_sizes_sep(dr, Optional shft = 0)
     
     Dim border As Variant
     Dim Line_len As Double
-    Line_len = API.GetSet("Line_len")
+    If shft > 1 Then
+        Line_len = API.Set_Space_Width   '// 设置文字空间间隙
+    Else
+        Line_len = API.Set_Space_Width(True)    '// 只读文字空间间隙
+    End If
     
-    border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + 10, os.TopY + 20 + Line_len, _
-                    cdrBottomRight, cdrTopRight, os.LeftX - 10, os.LeftX - 20 - Line_len)
+    border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
+                    cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
                     
-    If chkOpposite.value Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - 10, os.BottomY - 20 - Line_len, _
-                            cdrBottomLeft, cdrTopLeft, os.RightX + 10, os.RightX + 20 + Line_len)
+    If chkOpposite.value Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
+                            cdrBottomLeft, cdrTopLeft, os.RightX + Line_len, os.RightX + 2 * Line_len)
    
         
     If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
@@ -355,8 +364,10 @@ ErrorHandler:
   MsgBox "s.Curve.AutoReduceNodes 只有高版本才支持本API"
 End Sub
 
-
-Private Sub MarkLines_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+'// 使用标记线批量建立尺寸标注
+Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  Dim sr As ShapeRange
+  Set sr = ActiveSelectionRange
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, chkOpposite.value
     make_sizes_sep "lfbx", Shift
@@ -365,13 +376,15 @@ Private Sub MarkLines_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, B
     Label_Makesizes.Caption = "试试右键"
     make_sizes_sep "upbx", Shift
   End If
+  sr.CreateSelection
 End Sub
 
 Private Sub chkOpposite_Click()
 '  Debug.Print chkOpposite.value
 End Sub
 
-Private Sub manual_makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+'// 使用手工选节点建立尺寸标注，使用Ctrl分离尺寸标注
+Private Sub Manual_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
       '// 右键
   ElseIf Shift = fmCtrlMask Then
@@ -399,16 +412,24 @@ Private Function Untie_MarkLines()
   End If
 End Function
 
-
 '// 手动标注倾斜尺寸
 Private Function Slanted_Makesize()
   On Error GoTo ErrorHandler
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   Dim nr As NodeRange, cnt As Integer
+  Dim sr As ShapeRange
   Dim x1 As Double, y1 As Double
   Dim x2 As Double, y2 As Double
+  
+  Set sr = ActiveSelectionRange
   Set nr = ActiveShape.Curve.Selection
+  
+  If chkOpposite.value = False Then
+    Slanted_Sort_Make sr  '// 排序标注倾斜尺寸
+    Exit Function
+  End If
   If nr.Count < 2 Then Exit Function
+
   cnt = nr.Count
   While cnt > 1
     x1 = nr(cnt).PositionX
@@ -418,9 +439,46 @@ Private Function Slanted_Makesize()
     
     Set pts = CreateSnapPoint(x1, y1)
     Set pte = CreateSnapPoint(x2, y2)
-    ActiveLayer.CreateLinearDimension cdrDimensionSlanted, pts, pte, True, x1 - 5, y1 + 5, cdrDimensionStyleEngineering
+    ActiveLayer.CreateLinearDimension cdrDimensionSlanted, pts, pte, True, x1 - 20, y1 + 20, cdrDimensionStyleEngineering
     cnt = cnt - 1
   Wend
+
 ErrorHandler:
+  API.EndOpt
+End Function
+
+'// 排序标注倾斜尺寸
+Private Function Slanted_Sort_Make(shs As ShapeRange)
+  Dim sr As New ShapeRange, sr_copy As New ShapeRange
+  Dim s As Shape, sh As Shape
+  Dim nr As NodeRange
+  For Each sh In shs
+    Set nr = sh.Curve.Selection
+    For Each n In nr
+      Set s = ActiveLayer.CreateEllipse2(n.PositionX, n.PositionY, 0.5, 0.5)
+      sr.Add s
+    Next n
+  Next sh
+  
+  CutLines.RemoveDuplicates sr  '// 简单删除重复算法
+  
+  sr.Sort "@shape1.left < @shape2.left"
+  sr.CreateSelection
+  
+  Set sr_copy = ActiveSelectionRange
+'  Debug.Print sr_copy.Count
+  
+  For i = 1 To sr_copy.Count - 1
+    x1 = sr_copy(i + 1).CenterX
+    y1 = sr_copy(i + 1).CenterY
+    x2 = sr_copy(i).CenterX
+    y2 = sr_copy(i).CenterY
+    
+    Set pts = CreateSnapPoint(x1, y1)
+    Set pte = CreateSnapPoint(x2, y2)
+    ActiveLayer.CreateLinearDimension cdrDimensionSlanted, pts, pte, True, x1 - 20, y1 + 20, cdrDimensionStyleEngineering
+  Next i
+  sr_copy.Delete
+  API.EndOpt
 End Function
 
