@@ -12,10 +12,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
+
+Private Const Github_Version = 1
 
 #If VBA7 Then
     Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
@@ -35,6 +35,7 @@ Attribute VB_Exposed = False
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
 #End If
+
 Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE = (-20)
 Private Const WS_CAPTION As Long = &HC00000
@@ -281,9 +282,12 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     ClipbRectangle.Build_Rectangle
     
   ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    '// 单线条转裁切线 - 放置到页面四边
-    CutLines.SelectLine_to_Cropline
-    
+    If Github_Version = 1 Then
+      Woodman.Show 0
+    Else
+      '// 单线条转裁切线 - 放置到页面四边
+      CutLines.SelectLine_to_Cropline
+    End If
   ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 拼版.Arrange
     Arrange.Arrange
@@ -511,8 +515,6 @@ Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
   Else
     Create_Tolerance
   End If
-
-  Speak_Msg "智能拆字"
 End Sub
 
 '''////  简单一刀切  ////'''
@@ -524,29 +526,27 @@ Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
   Else
     Tools.Single_Line_LastNode
   End If
-  
-  Speak_Msg "简单一刀切"
 End Sub
 
 '''////  傻瓜火车排列  ////'''
 Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Tools.傻瓜火车排列 3#
+    Tools.Simple_Train_Arrangement 3#
   ElseIf Shift = fmCtrlMask Then
-    Tools.傻瓜火车排列 0#
+    Tools.Simple_Train_Arrangement 0#
   Else
-    Tools.傻瓜火车排列 Set_Space_Width
+    Tools.Simple_Train_Arrangement Set_Space_Width
   End If
 End Sub
 
 '''////  傻瓜阶梯排列  ////'''
 Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Tools.傻瓜阶梯排列 3#
+    Tools.Simple_Ladder_Arrangement 3#
   ElseIf Shift = fmCtrlMask Then
-    Tools.傻瓜阶梯排列 0#
+    Tools.Simple_Ladder_Arrangement 0#
   Else
-    Tools.傻瓜阶梯排列 Set_Space_Width
+    Tools.Simple_Ladder_Arrangement Set_Space_Width
   End If
 End Sub
 
@@ -554,10 +554,9 @@ End Sub
 '''////  左键-多页合并一页工具   右键-批量多页居中 ////'''
 Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Tools.批量多页居中
+    Tools.Batch_Align_Page_Center
   ElseIf Shift = fmCtrlMask Then
     UniteOne.Show 0
-    Speak_Msg "多页合并一页"
   Else
     ' Ctrl + 鼠标  空
   End If
@@ -566,7 +565,7 @@ End Sub
 '''////  Adobe AI EPS INDD PDF和CorelDRAW 缩略图工具  ////'''
 Private Sub AdobeThumbnail_Click()
     Dim h As Long, r As Long
-    mypath = Path & "GMS\262235.xyz\"
+    mypath = Path & "GMS\LYVBA\"
     App = mypath & "GuiAdobeThumbnail.exe"
     
     h = FindWindow(vbNullString, "CorelVBA 青年节 By 蘭雅sRGB")
@@ -625,23 +624,23 @@ Private Sub btn_corners_off_Click()
 End Sub
 
 Private Sub SortCount_Click()
-  Tools.按面积排列 30
+  Tools.Count_byArea 30
 End Sub
 
 Private Sub LevelRuler_Click()
-  Tools.角度转平
+  Tools.Angle_to_Horizon
 End Sub
 
 Private Sub MirrorLine_Click()
-  Tools.参考线镜像
+  Tools.Mirror_ByGuide
 End Sub
 
 Private Sub AutoRotate_Click()
-  Tools.自动旋转角度
+  Tools.Auto_Rotation_Angle
 End Sub
 
 Private Sub SwapShape_Click()
-  Tools.交换对象
+  Tools.Exchange_Object
 End Sub
 
 

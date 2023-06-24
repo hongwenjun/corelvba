@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Woodman 
-   Caption         =   "批量标注尺寸节点"
-   ClientHeight    =   1980
+   Caption         =   "Batch Dimension Nodes"
+   ClientHeight    =   1995
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   3960
+   ClientWidth     =   3930
    OleObjectBlob   =   "Woodman.frx":0000
    StartUpPosition =   1  '所有者中心
 End
@@ -13,8 +13,73 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'// This is free and unencumbered software released into the public domain.
+'// For more information, please refer to  https://github.com/hongwenjun
 
+#If VBA7 Then
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+    Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+    
+#Else
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+    Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+#End If
+Private Const GWL_STYLE As Long = (-16)
+Private Const GWL_EXSTYLE = (-20)
+Private Const WS_CAPTION As Long = &HC00000
+Private Const WS_EX_DLGMODALFRAME = &H1&
 
+Private Sub chkOpposite_Click()
+  MiniForm
+End Sub
+
+'// Minimizes the window and retains dimensioning functionality   '// 最小化窗口并保留标注尺寸功能
+Private Function MiniForm()
+
+  Dim IStyle As Long
+  Dim hWnd As Long
+  
+  hWnd = FindWindow("ThunderDFrame", Woodman.Caption)
+
+  IStyle = GetWindowLong(hWnd, GWL_STYLE)
+  IStyle = IStyle And Not WS_CAPTION
+  SetWindowLong hWnd, GWL_STYLE, IStyle
+  DrawMenuBar hWnd
+  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
+
+  Dim ctl As Control
+  For Each ctl In Woodman.Controls
+      ctl.Visible = False
+      ctl.Top = 2
+  Next ctl
+  
+  With Woodman
+    .StartUpPosition = 0
+    .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400")) + 318
+    .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55")) - 2
+    .Height = 30
+    .Width = 100
+    
+    .MarkLines_Makesize.Visible = True
+    .btn_Makesizes.Visible = True
+    .Manual_Makesize.Visible = True
+    .chkOpposite.Visible = True
+    .X_EXIT.Visible = True
+    
+    .MarkLines_Makesize.Left = 0
+    .btn_Makesizes.Left = 25
+    .Manual_Makesize.Left = 50
+    .chkOpposite.Left = 75: .chkOpposite.Top = 14
+    .X_EXIT.Left = 85: .X_EXIT.Top = 0
+  End With
+End Function
 
 Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -43,7 +108,7 @@ Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
     ActiveWindow.Refresh:    Application.Refresh
 End Sub
 
-Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub btn_Makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     Dim os As ShapeRange
     Dim s As Shape
     Dim sr As ShapeRange
@@ -74,9 +139,9 @@ Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
         On Error Resume Next
         Set os = ActiveSelectionRange
         For Each s In os.Shapes
-            If s.Type = cdrLinearDimensionShape Then sr.Add s
+            If s.Type = cdrLinearDimensionShape Then s.Delete
         Next s
-          If sr.Count > 0 Then
+          If os.Count > 0 Then
             os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
             ActiveSelectionRange.Delete
           End If
@@ -114,7 +179,7 @@ Private Sub btn_sizes_btw_ri_MouseUp(ByVal Button As Integer, ByVal Shift As Int
     make_sizes_sep "rib", Shift
 End Sub
 
-Sub make_sizes_sep(dr, Optional shft = 0)
+Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = False)
     Set doc = ActiveDocument
     Dim s As Shape
     Dim pts As New SnapPoint, pte As New SnapPoint
@@ -136,7 +201,7 @@ Sub make_sizes_sep(dr, Optional shft = 0)
     border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
                     cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
                     
-    If chkOpposite.value Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
+    If mirror = True Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
                             cdrBottomLeft, cdrTopLeft, os.RightX + Line_len, os.RightX + 2 * Line_len)
    
         
@@ -262,81 +327,6 @@ Sub make_sizes(Optional shft = 0)
     doc.Unit = un
 End Sub
 
-Public Function make_selection(Optional mode = "fcolor", Optional sel = True, Optional OSS As ShapeRange = Nothing, Optional colr = Nothing) As ShapeRange
-    Dim s As Shape, lst As Shape
-    Dim sr As ShapeRange
-    'Dim os As ShapeRange
-    Set doc = ActiveDocument
-    doc.Unit = cdrTenthMicron
-    
-    If OSS Is Nothing Then
-        If toolspanel.num_list.value Or mode = "locked" Then
-            Set os = ActivePage
-        Else
-            Set os = ActiveSelectionRange
-        End If
-    Else
-        Set os = OSS
-    End If
-    Set sr = ActiveSelectionRange
-    sr.RemoveAll
-    If sel Then ActiveDocument.ClearSelection
-    Set lst = os.Shapes.First
-    For Each s In os.Shapes
-        Select Case mode
-            Case "ocolor": If s.Outline.Type <> cdrNoOutline And s.Shapes.Count = 0 And s.Outline.Color.HexValue = colr.HexValue Then sr.Add s
-            Case "fcolor": If s.Fill.Type <> cdrNoFill And s.Shapes.Count = 0 And s.Fill.UniformColor.HexValue = colr.HexValue Then sr.Add s
-            Case "nofil": If s.Fill.Type = cdrNoFill And s.Shapes.Count = 0 Then sr.Add s
-            Case "fil": If s.Fill.Type <> cdrNoFill And s.Shapes.Count = 0 Then sr.Add s
-            Case "abr": If s.Outline.Type <> cdrNoOutline And s.Shapes.Count = 0 Then sr.Add s
-            Case "noabr": If s.Outline.Type = cdrNoOutline And s.Shapes.Count = 0 Then sr.Add s
-            Case "open": If Not s.DisplayCurve Is Nothing Then If Not s.DisplayCurve.Closed Then sr.Add s
-            Case "closed": If Not s.DisplayCurve Is Nothing Then If s.DisplayCurve.Closed Then sr.Add s
-            Case "single": If s.Shapes.Count = 0 Then sr.Add s
-            Case "dashed": If s.Outline.Style.DashCount > 0 Then sr.Add s
-            Case "groups": If s.Shapes.Count > 0 And s.Effect Is Nothing Then sr.Add s
-            Case "text": If s.Shapes.Count = 0 And s.Type = cdrTextShape Then sr.Add s
-            Case "notext": If s.Shapes.Count = 0 And s.Type <> cdrTextShape Then sr.Add s
-            Case "images": If s.Type = cdrBitmapShape Then sr.Add s
-            Case "locked": If s.Locked Then sr.Add s
-            Case "effects": If s.Effects.Count > 0 Or Not s.Effect Is Nothing Then sr.Add s
-            Case "noeffects": If s.Effects.Count = 0 And s.Effect Is Nothing Then sr.Add s
-            Case "bigger":
-                arelst = lst.SizeHeight * lst.SizeWidth
-                ares = s.SizeHeight * s.SizeWidth
-                If ares >= arelst Then
-                    are = one_shape_area(lst)
-                    If one_shape_area(s) >= are Then sr.Add s
-                End If
-            Case "smaller":
-                arelst = lst.SizeHeight * lst.SizeWidth
-                ares = s.SizeHeight * s.SizeWidth
-                If ares <= arelst Then
-                    are = one_shape_area(lst)
-                    If one_shape_area(s) <= are Then sr.Add s
-                End If
-            Case "last":
-                If lst.Fill.Type = cdrNoFill Then
-                    's.CreateSelection
-                    If s.Outline.Type <> cdrNoOutline Then If s.Outline.Color.HexValue = lst.Outline.Color.HexValue Then sr.Add s
-                Else
-                    If s.Fill.UniformColor.HexValue = lst.Fill.UniformColor.HexValue Then sr.Add s
-                End If
-        End Select
-    Next s
-    
-    If sr.Shapes.Count > 0 And sel Then sr.CreateSelection
-    Set make_selection = sr
-    
-    Application.Refresh
-    ActiveWindow.Activate
-End Function
-
-Public Function get_events(btn As String, Optional shft = 0, Optional click = 1)
-    out = "ok"
-    get_events = out
-End Function
-
 Private Sub btn_join_nodes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ActiveSelection.CustomCommand "ConvertTo", "JoinCurves"
     Application.Refresh
@@ -364,23 +354,33 @@ ErrorHandler:
   MsgBox "s.Curve.AutoReduceNodes 只有高版本才支持本API"
 End Sub
 
-'// 使用标记线批量建立尺寸标注
+'// 使用标记线批量建立尺寸标注:   左键上标注，右键右标注
 Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim sr As ShapeRange
   Set sr = ActiveSelectionRange
+  
+  '// 右键
   If Button = 2 Then
-    CutLines.Dimension_MarkLines cdrAlignLeft, chkOpposite.value
-    make_sizes_sep "lfbx", Shift
-  Else
-    CutLines.Dimension_MarkLines cdrAlignTop, chkOpposite.value
-    Label_Makesizes.Caption = "试试右键"
-    make_sizes_sep "upbx", Shift
+    If chkOpposite.value = True Then
+        CutLines.Dimension_MarkLines cdrAlignTop, True
+        make_sizes_sep "upbx", Shift, True
+    Else
+      CutLines.Dimension_MarkLines cdrAlignLeft, True
+      make_sizes_sep "lfbx", Shift, True
+    End If
+  
+  '// 左键
+  ElseIf Button = 1 Then
+    If chkOpposite.value = True Then
+      CutLines.Dimension_MarkLines cdrAlignLeft, False
+      make_sizes_sep "lfbx", Shift, False
+    Else
+        CutLines.Dimension_MarkLines cdrAlignTop, False
+        make_sizes_sep "upbx", Shift, False
+    End If
   End If
+  
   sr.CreateSelection
-End Sub
-
-Private Sub chkOpposite_Click()
-'  Debug.Print chkOpposite.value
 End Sub
 
 '// 使用手工选节点建立尺寸标注，使用Ctrl分离尺寸标注
@@ -482,3 +482,6 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
   API.EndOpt
 End Function
 
+Private Sub X_EXIT_Click()
+  Unload Me    '// EXIT
+End Sub

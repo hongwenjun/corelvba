@@ -150,7 +150,8 @@ End Function
 Public Function Align_Page_Center()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   '// 实践应用: 选择物件群组,页面设置物件大小,物件页面居中
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
+  
   Dim OrigSelection As ShapeRange, sh As Shape
   Set OrigSelection = ActiveSelectionRange
   Set sh = OrigSelection.Group
@@ -163,6 +164,8 @@ Public Function Align_Page_Center()
 #Else
   sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
 #End If
+
+  API.EndOpt
 End Function
 
 

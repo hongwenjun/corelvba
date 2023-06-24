@@ -55,10 +55,10 @@ End Function
 
 '// 找字体 https://www.myfonts.com/pages/whatthefont
 Public Function START_whatthefont()
-  Weburl "https://www.myfonts.com/pages/whatthefont"
+ '// Weburl "https://www.myfonts.com/pages/whatthefont"
 End Function
 
 
 Function Weburl(url As String)
-  API.WebHelp url
+ '// API.WebHelp url
 End Function
