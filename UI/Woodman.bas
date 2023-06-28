@@ -449,7 +449,7 @@ End Function
 
 '// 排序标注倾斜尺寸
 Private Function Slanted_Sort_Make(shs As ShapeRange)
-  Dim sr As New ShapeRange, sr_copy As New ShapeRange
+  Dim sr As New ShapeRange
   Dim s As Shape, sh As Shape
   Dim nr As NodeRange
   For Each sh In shs
@@ -463,22 +463,19 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
   CutLines.RemoveDuplicates sr  '// 简单删除重复算法
   
   sr.Sort "@shape1.left < @shape2.left"
-  sr.CreateSelection
-  
-  Set sr_copy = ActiveSelectionRange
-'  Debug.Print sr_copy.Count
-  
-  For i = 1 To sr_copy.Count - 1
-    x1 = sr_copy(i + 1).CenterX
-    y1 = sr_copy(i + 1).CenterY
-    x2 = sr_copy(i).CenterX
-    y2 = sr_copy(i).CenterY
+
+  For i = 1 To sr.Count - 1
+    x1 = sr(i + 1).CenterX
+    y1 = sr(i + 1).CenterY
+    x2 = sr(i).CenterX
+    y2 = sr(i).CenterY
     
     Set pts = CreateSnapPoint(x1, y1)
     Set pte = CreateSnapPoint(x2, y2)
     ActiveLayer.CreateLinearDimension cdrDimensionSlanted, pts, pte, True, x1 - 20, y1 + 20, cdrDimensionStyleEngineering
   Next i
-  sr_copy.Delete
+  sr.Delete
+  
   API.EndOpt
 End Function
 

@@ -136,6 +136,7 @@ Public Function RemoveDuplicates(sr As ShapeRange)
     cnt = cnt + 1
   Next s
   
+  sr.RemoveRange rms
   rms.Delete
 End Function
 
@@ -156,64 +157,50 @@ End Function
 '// 单线条转裁切线 - 放置到页面四边
 Public Function SelectLine_to_Cropline()
   If 0 = ActiveSelectionRange.Count Then Exit Function
-  '// 代码运行时关闭窗口刷新
-  Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt
   
-  ActiveDocument.BeginCommandGroup  '一步撤消'
-  
-  '// 获得页面中心点 x,y
+  '// 获得页面中心点 x,y , 设置新绘制线属性
   px = ActiveDocument.Pages.First.CenterX
   py = ActiveDocument.Pages.First.CenterY
   Bleed = API.GetSet("Bleed")
   Line_len = API.GetSet("Line_len")
   Outline_Width = API.GetSet("Outline_Width")
   
-  Dim s As Shape
-  Dim line As Shape
+  Dim s As Shape, line As Shape
+  Dim sr_line As New ShapeRange
   
   '// 遍历选择的线条
   For Each s In ActiveSelection.Shapes
-  
-    lx = s.LeftX
-    rx = s.RightX
-    By = s.BottomY
-    ty = s.TopY
+    cx = s.CenterX:  cy = s.CenterY
+    sw = s.SizeWidth:  sh = s.SizeHeight
     
-    cx = s.CenterX
-    cy = s.CenterY
-    sw = s.SizeWidth
-    sh = s.SizeHeight
-   
-   '// 判断横线(高度小于宽度)，在页面左边还是右边
-   If sh <= sw Then
-    s.Delete
-    If cx < px Then
-        Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + Line_len, cy)
-    Else
+    '// 判断横线(高度小于宽度)，在页面左边还是右边
+    If sh <= sw Then
+      s.Delete
+      If cx < px Then
+       Set line = ActiveLayer.CreateLineSegment(0, cy, 0 + Line_len, cy)
+      Else
         Set line = ActiveLayer.CreateLineSegment(px * 2, cy, px * 2 - Line_len, cy)
+      End If
     End If
-   End If
- 
-   '// 判断竖线(高度大于宽度)，在页面下边还是上边
-   If sh > sw Then
-    s.Delete
-    If cy < py Then
+    
+    '// 判断竖线(高度大于宽度)，在页面下边还是上边
+    If sh > sw Then
+      s.Delete
+      If cy < py Then
         Set line = ActiveLayer.CreateLineSegment(cx, 0, cx, 0 + Line_len)
-    Else
-        Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - Line_len)
+      Else
+       Set line = ActiveLayer.CreateLineSegment(cx, py * 2, cx, py * 2 - Line_len)
+      End If
     End If
-   End If
-
-    line.Outline.SetProperties Outline_Width
-    line.Outline.SetProperties Color:=CreateRegistrationColor
+    sr_line.Add line
   Next s
   
-  ActiveDocument.EndCommandGroup
-  '// 代码操作结束恢复窗口刷新
-  Application.Optimization = False
-  ActiveWindow.Refresh
-  Application.Refresh
+  RemoveDuplicates sr_line
+  sr_line.SetOutlineProperties Outline_Width, Color:=CreateRegistrationColor
+  sr_line.AddToSelection
+
+  API.EndOpt
 End Function
 
 
