@@ -2,73 +2,63 @@ Attribute VB_Name = "SmartGroup"
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
-'// Attribute VB_Name = "智能群组"   SmartGroup  2023.6.11
+'// Attribute VB_Name = "智能群组"   SmartGroup  2023.6.30
 
-
-Public Sub Smart_Group(Optional ByVal tr As Double = 0)
-  If 0 = ActiveSelectionRange.Count Then Exit Sub
+Public Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
+  If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  
-  ActiveDocument.ReferencePoint = cdrBottomLeft
-  ActiveDocument.Unit = cdrMillimeter
-  
+  API.BeginOpt
+
   Dim OrigSelection As ShapeRange, sr As New ShapeRange
   Dim s1 As Shape, sh As Shape, s As Shape
-  Dim X As Double, Y As Double, w As Double, h As Double
+  Dim x As Double, Y As Double, w As Double, h As Double
   Dim eff1 As Effect
   
   Set OrigSelection = ActiveSelectionRange
 
   '// 遍历物件画矩形
   For Each sh In OrigSelection
-    sh.GetBoundingBox X, Y, w, h
+    sh.GetBoundingBox x, Y, w, h
     If w * h > 4 Then
-      Set s = ActiveLayer.CreateRectangle2(X - tr, Y - tr, w + 2 * tr, h + 2 * tr)
+      Set s = ActiveLayer.CreateRectangle2(x - tr, Y - tr, w + 2 * tr, h + 2 * tr)
       sr.Add s
 
     '// 轴线 创建轮廓处理
     ElseIf w * h < 0.3 Then
     ' Debug.Print w * h
-      Set eff1 = sh.CreateContour(cdrContourOutside, 0.5, 1, cdrDirectFountainFillBlend, _
-          CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), 0, 0, cdrContourSquareCap, cdrContourCornerMiteredOffsetBevel, 15#)
+      Set eff1 = sh.CreateContour(cdrContourOutside, 0.5, 1, cdrDirectFountainFillBlend, CreateRGBColor(26, 22, 35), _
+              CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), 0, 0, cdrContourSquareCap, cdrContourCornerMiteredOffsetBevel, 15#)
       eff1.Separate
     End If
   Next sh
 
   '// 查找轴线轮廓
-  ActivePage.Shapes.FindShapes(Query:="@Outline.Color=RGB(26, 22, 35)").CreateSelection
-  ActivePage.Shapes.FindShapes(Query:="@fill.Color=RGB(26, 22, 35)").AddToSelection
-  For Each sh In ActiveSelection.Shapes
-     sr.Add sh
-  Next sh
+  sr.AddRange ActivePage.Shapes.FindShapes(Query:="@Outline.Color=RGB(26, 22, 35)")
+  sr.AddRange ActivePage.Shapes.FindShapes(Query:="@fill.Color=RGB(26, 22, 35)")
 
   '// 新矩形寻找边界，散开，删除刚才画的新矩形
   Set s1 = sr.CustomCommand("Boundary", "CreateBoundary")
   Set brk1 = s1.BreakApartEx
   sr.Delete
 
-  '// 矩形边界智能群组，删除矩形
+  '// 矩形边界智能群组, RetSR 返回群组 和 删除矩形s
+  Dim RetSR As New ShapeRange
   For Each s In brk1
-    Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False)
-    sh.Shapes.all.Group
+    Set OrigSelection = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False).Shapes.all
     s.Delete
-  Next
-
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:   Application.Refresh
-Exit Sub
-
+    If OrigSelection.Count > 2 Then RetSR.Add OrigSelection.Group
+  Next s
+  
+  '// 智能群组返回和选择
+  Set Smart_Group = RetSR
+  RetSR.CreateSelection
+  
 ErrorHandler:
-  Application.Optimization = False
-  MsgBox "请先选择一些物件来确定群组范围!"
-  On Error Resume Next
-
-End Sub
+  API.EndOpt
+End Function
 
 '// 智能群组 原理版
-Function Smart_Group_ABC()
+Private Function Smart_Group_ABC()
   ActiveDocument.Unit = cdrMillimeter
   
   Dim OrigSelection As ShapeRange, brk1 As ShapeRange
@@ -86,4 +76,3 @@ Function Smart_Group_ABC()
     s.Delete
   Next
 End Function
-
