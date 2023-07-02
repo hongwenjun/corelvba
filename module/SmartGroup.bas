@@ -37,6 +37,7 @@ Public Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
   sr.AddRange ActivePage.Shapes.FindShapes(Query:="@fill.Color=RGB(26, 22, 35)")
 
   '// 新矩形寻找边界，散开，删除刚才画的新矩形
+  Dim brk1 As ShapeRange
   Set s1 = sr.CustomCommand("Boundary", "CreateBoundary")
   Set brk1 = s1.BreakApartEx
   sr.Delete
@@ -44,9 +45,9 @@ Public Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
   '// 矩形边界智能群组, RetSR 返回群组 和 删除矩形s
   Dim RetSR As New ShapeRange
   For Each s In brk1
-    Set OrigSelection = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False).Shapes.all
-    s.Delete
-    If OrigSelection.Count > 2 Then RetSR.Add OrigSelection.Group
+    Set sr = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, False).Shapes.all
+    sr.DeleteItem sr.IndexOf(s)
+    If sr.Count > 0 Then RetSR.Add sr.Group
   Next s
   
   '// 智能群组返回和选择
@@ -76,3 +77,4 @@ Private Function Smart_Group_ABC()
     s.Delete
   Next
 End Function
+
