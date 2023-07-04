@@ -12,19 +12,21 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
 Private Const Github_Version = 1
 
 #If VBA7 Then
-    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetLayeredWindowAttributes Lib "user32" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+    Private Declare PtrSafe Function SetLayeredWindowAttributes Lib "user32" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
     
 #Else
     Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
@@ -73,23 +75,23 @@ End Sub
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
-  Dim hWnd As Long
+  Dim hwnd As Long
   
-  hWnd = FindWindow("ThunderDFrame", Me.Caption)
+  hwnd = FindWindow("ThunderDFrame", Me.Caption)
 
-  IStyle = GetWindowLong(hWnd, GWL_STYLE)
+  IStyle = GetWindowLong(hwnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hWnd, GWL_STYLE, IStyle
-  DrawMenuBar hWnd
-  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hwnd, GWL_STYLE, IStyle
+  DrawMenuBar hwnd
+  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
   
 With Me
   .StartUpPosition = 0
   .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400"))  ' 设置工具栏位置
   .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55"))
   .Height = 30
-  .Width = 336
+  .width = 336
 End With
 
   OutlineKey = True
@@ -100,7 +102,7 @@ End With
   Line_len.text = API.GetSet("Line_len")
   Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
   
-  UIFile = Path & "GMS\LYVBA\ToolBar.jpg"
+  UIFile = Path & "GMS\LYVBA\" & HDPI.GetHDPIPercentage & "\ToolBar.jpg"
   If API.ExistsFile_UseFso(UIFile) Then
     UI.Picture = LoadPicture(UIFile)   '换UI图
     Set pic1 = LoadPicture(UIFile)
@@ -120,7 +122,7 @@ End With
   #End If
 End Sub
 
-Private Sub UI_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UI_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   UI.Visible = False
   If Y > 1 And Y < 16 And UIL_Key Then
     UI.Picture = pic2
@@ -132,9 +134,9 @@ Private Sub UI_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   ' Debug.Print X & " , " & Y
 End Sub
 
-Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If Button Then
-        mx = X: my = Y
+        mx = x: my = Y
     End If
     
   With Me
@@ -143,16 +145,16 @@ Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, 
 
 End Sub
 
-Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-    Me.Left = Me.Left - mx + X
+    Me.Left = Me.Left - mx + x
     Me.Top = Me.Top - my + Y
   End If
 End Sub
 
-Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-  If Abs(X - 14) < 14 And Abs(Y - 14) < 14 And Button = 2 Then
-    Me.Width = 336
+Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+  If Abs(x - 14) < 14 And Abs(Y - 14) < 14 And Button = 2 Then
+    Me.width = 336
     OPEN_UI_BIG.Left = 322
     UI.Visible = True
     LOGO.Visible = False
@@ -160,20 +162,20 @@ Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVa
     LEFT_ALIGN_BT.Visible = False
     Exit Sub
   ElseIf Shift = fmCtrlMask Then
-      mx = X: my = Y
+      mx = x: my = Y
   Else
     Unload Me   ' Ctrl + 鼠标 关闭工具
   End If
 End Sub
 
-Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button Then
-    Me.Left = Me.Left - mx + X
+    Me.Left = Me.Left - mx + x
     Me.Top = Me.Top - my + Y
   End If
 End Sub
 
-Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   Dim c As New Color
   ' 定义图标坐标pos
   Dim pos_x As Variant, pos_y As Variant
@@ -182,37 +184,37 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   '// 按下Ctrl键，最优先处理工具功能
   If Shift = 2 Then
-    If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    If Abs(x - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 安全线，清除辅助线
       Tools.guideangle CorelDRAW.ActiveSelectionRange, 3    ' 左键 3mm 出血
       
-    ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// Adobe AI EPS INDD PDF和CorelDRAW 缩略图工具
       AdobeThumbnail_Click
       
-    ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 多物件拆分线段
       Tools.Split_Segment
       
-    ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 智能拆字
       Tools.Take_Apart_Character
       
-    ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 暂时空
       
-    ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 暂时空
       
-    ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 木头人智能群组，异形群组
       autogroup("group", 1).CreateSelection
       
-    ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// CTRL扩展工具栏
       Me.Height = 30 + 45
       
-    ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       ' 文本转曲  参数 all=1 ，支持框选和图框剪裁内的文本
       ' Tools.TextShape_ConvertToCurves 1
     End If
@@ -222,49 +224,59 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
 
   '// 鼠标右键 扩展键按钮优先  收缩工具栏  标记范围框  居中页面 尺寸取整数  单色黑中线标记 扩展工具栏  排列工具  扩展工具栏收缩
   If Button = 2 Then
-    If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    If Abs(x - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 收缩工具栏
-      Me.Width = 30: Me.Height = 30
+      Me.width = 30: Me.Height = 30
       UI.Visible = False: LOGO.Visible = True
 
-    ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 居中页面
       Tools.Align_Page_Center
 
-    ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// 标记范围框
-      Tools.Mark_Range_Box
+    ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    
+      If Github_Version = 1 Then
+        '// 单线条转裁切线 - 放置到页面四边
+        CutLines.SelectLine_to_Cropline
+      Else
+        '// 标记范围框
+        Tools.Mark_Range_Box
+      End If
 
-    ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 批量设置物件尺寸整数
       Tools.Size_to_Integer
     
     '//分分合合把几个功能按键合并到一起，定义到右键上
-    ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
      '// Tools.分分合合
 
-    ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 自动中线色阶条 黑白
       AutoColorMark.Auto_ColorMark_K
 
-    ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
      '// 智能群组
       SmartGroup.Smart_Group API.Create_Tolerance
+      
+    ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+     '// 选择相同工具增强版
+      frmSelectSame.show 0
 
-    ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键扩展工具栏
       Me.Height = 30 + 45
       
-    ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
      '// 文本统计信息
      Application.FrameWork.Automation.InvokeItem "bf3bd8fe-ca26-4fe0-91b0-3b5c99786fb6"
 
-    ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键排列工具
       TOP_ALIGN_BT.Visible = True
       LEFT_ALIGN_BT.Visible = True
 
-    ElseIf Abs(X - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ElseIf Abs(x - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键扩展工具栏收缩
       Me.Height = 30
       
@@ -273,59 +285,59 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
   End If
   
   '// 鼠标左键 单击按钮功能  按工具栏上图标正常功能
-  If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  If Abs(x - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
    '// 裁切线: 批量物件裁切线
     CutLines.Batch_CutLines
     
-  ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
   '// 剪贴板尺寸建立矩形
     ClipbRectangle.Build_Rectangle
     
-  ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
-      Woodman.Show 0
+      Woodman.show 0
     Else
       '// 单线条转裁切线 - 放置到页面四边
       CutLines.SelectLine_to_Cropline
     End If
-  ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 拼版.Arrange
     Arrange.Arrange
     
-  ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 拼版裁切线
     CutLines.Draw_Lines
     
-  ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 自动中线色阶条 彩色
     AutoColorMark.Auto_ColorMark
     
-  ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
    '// 智能群组 没容差
     SmartGroup.Smart_Group
     
-  ElseIf Abs(X - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    CQL_FIND_UI.Show 0
+  ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    CQL_FIND_UI.show 0
     
-  ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    Replace_UI.Show 0
+  ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    Replace_UI.show 0
     
-  ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     ' 简单文本转曲
     Tools.TextShape_ConvertToCurves 0
     
-  ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     '// 扩展工具栏
     Me.Height = 30 + 45
     
     Speak_Msg "左右键有不同功能"
     
-  ElseIf Abs(X - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+  ElseIf Abs(x - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Me.Height > 30 Then
       Me.Height = 30
     Else
       '// 最小化
-      Me.Width = 30
+      Me.width = 30
       Me.Height = 30
       OPEN_UI_BIG.Left = 31
       UI.Visible = False
@@ -352,7 +364,7 @@ End Sub
 ' End Sub
 
 '''///  贪心商人和好玩工具等  ///'''
-Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     TSP.Nodes_To_TSP
   ElseIf Shift = fmCtrlMask Then
@@ -362,23 +374,23 @@ Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integ
   End If
 End Sub
 
-Private Sub Cdr_Nodes_BT_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Cdr_Nodes_BT_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   TSP_L1.ForeColor = RGB(0, 150, 255)
 End Sub
 
-Private Sub START_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub START_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   TSP_L2.ForeColor = RGB(0, 150, 255)
 End Sub
 
-Private Sub PATH_TO_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub PATH_TO_TSP_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   TSP_L3.ForeColor = RGB(0, 150, 255)
 End Sub
 
-Private Sub TSP2DRAW_LINE_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub TSP2DRAW_LINE_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   TSP_L4.ForeColor = RGB(0, 150, 255)
 End Sub
 
-Private Sub TSP2DRAW_LINE_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub TSP2DRAW_LINE_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     TSP.TSP_TO_DRAW_LINE
   ElseIf Shift = fmCtrlMask Then
@@ -456,7 +468,7 @@ Private Sub Tools_Icon_Click()
 End Sub
 
 '''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
-Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     MsgBox "鼠标右键，功能待定"
     Exit Sub
@@ -467,7 +479,7 @@ Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
   End If
 End Sub
 
-Private Sub Split_Segment_Copy_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Split_Segment_Copy_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     MsgBox "左键拆分线段，Ctrl合并线段"
   ElseIf Shift = fmCtrlMask Then
@@ -481,7 +493,7 @@ Private Sub Split_Segment_Copy_MouseDown(ByVal Button As Integer, ByVal Shift As
 End Sub
 
 '''////  CorelDRAW 与 Adobe_Illustrator 剪贴板转换  ////'''
-Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   Dim value As Integer
   If Button = 2 Then
     value = GMSManager.RunMacro("AIClipboard", "CopyPaste.PasteAIFormat")
@@ -495,7 +507,7 @@ Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As 
 End Sub
 
 '''////  标记画框 支持容差  ////'''
-Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Mark_CreateRectangle True
   ElseIf Shift = fmCtrlMask Then
@@ -507,7 +519,7 @@ Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift 
 End Sub
 
 '''////  一键拆开多行组合的文字字符  ////'''
-Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Batch_Combine
   ElseIf Shift = fmCtrlMask Then
@@ -518,7 +530,7 @@ Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
 End Sub
 
 '''////  简单一刀切  ////'''
-Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Single_Line_Vertical
   ElseIf Shift = fmCtrlMask Then
@@ -529,7 +541,7 @@ Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
 End Sub
 
 '''////  傻瓜火车排列  ////'''
-Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Simple_Train_Arrangement 3#
   ElseIf Shift = fmCtrlMask Then
@@ -540,7 +552,7 @@ Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integ
 End Sub
 
 '''////  傻瓜阶梯排列  ////'''
-Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Simple_Ladder_Arrangement 3#
   ElseIf Shift = fmCtrlMask Then
@@ -552,11 +564,11 @@ End Sub
 
 
 '''////  左键-多页合并一页工具   右键-批量多页居中 ////'''
-Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Batch_Align_Page_Center
   ElseIf Shift = fmCtrlMask Then
-    UniteOne.Show 0
+    UniteOne.show 0
   Else
     ' Ctrl + 鼠标  空
   End If
@@ -577,7 +589,7 @@ Private Sub Quick_Color_Select_Click()
   Tools.quickColorSelect
 End Sub
 
-Private Sub Cut_Cake_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Cut_Cake_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.divideVertically
   ElseIf Shift = fmCtrlMask Then
@@ -588,7 +600,7 @@ Private Sub Cut_Cake_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, 
 End Sub
 
 '// 安全辅助线功能，三键控制，讨厌辅助线的也可以用来删除辅助线
-Private Sub Safe_Guideangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub Safe_Guideangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.guideangle ActiveSelectionRange, 0#   ' 右键0距离贴紧
   ElseIf Shift = fmCtrlMask Then
@@ -599,14 +611,14 @@ Private Sub Safe_Guideangle_MouseDown(ByVal Button As Integer, ByVal Shift As In
 End Sub
 
 '// 标准尺寸，左键右键Ctrl三键控制，调用三种样式
-Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
-    Make_SIZE.Show 0   ' 右键
+    Make_SIZE.show 0   ' 右键
   ElseIf Shift = fmCtrlMask Then
     #If VBA7 Then
-      Woodman.Show 0
+      Woodman.show 0
     #Else  ' X4 使用
-      Make_SIZE.Show 0
+      Make_SIZE.show 0
     #End If
   Else
     Tools.Simple_Label_Numbers  ' Ctrl + 鼠标  批量简单数字标注
@@ -615,7 +627,7 @@ End Sub
 
 '// 批量转图片和导出图片文件
 Private Sub Photo_Form_Click()
-  PhotoForm.Show 0
+  PhotoForm.show 0
 End Sub
 
 '// 修复圆角缺角到直角
