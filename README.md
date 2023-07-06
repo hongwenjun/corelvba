@@ -1,6 +1,15 @@
 ### [捐赠 蘭雅CorelVBA工具 开源软件](https://github.com/hongwenjun/corelvba/blob/main/donate.md)
 - [![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/youtube.png)频道](https://www.youtube.com/sRGB18/videos) &nbsp;&nbsp;www.youtube.com/sRGB18 &nbsp;&nbsp;[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)赞赏支持!](https://paypal.me/sRGB18)&nbsp;&nbsp;https://paypal.me/sRGB18
 
+
+## *LYVBA_MakeSizes.gms* :  Streamlining GMS files that only keep batch size features
+
+## Dowload [LYVBA_MakeSizes.gms](https://raw.githubusercontent.com/hongwenjun/corelvba/main/gms/LYVBA_MakeSizes.7z)  
+
+![Batch_Dimension](https://raw.githubusercontent.com/hongwenjun/img/master/VBA/Batch_Dimension.webp)
+
+
+
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
 ![](https://262235.xyz/usr/uploads/2022/03/525753621.webp)
 
