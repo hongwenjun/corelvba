@@ -13,20 +13,21 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
 #If VBA7 Then
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -39,18 +40,18 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 Private Function MiniForm()
 
   Dim IStyle As Long
-  Dim hWnd As Long
+  Dim hwnd As Long
   
-  hWnd = FindWindow("ThunderDFrame", Woodman.Caption)
+  hwnd = FindWindow("ThunderDFrame", Woodman.Caption)
 
-  IStyle = GetWindowLong(hWnd, GWL_STYLE)
+  IStyle = GetWindowLong(hwnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hWnd, GWL_STYLE, IStyle
-  DrawMenuBar hWnd
-  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hwnd, GWL_STYLE, IStyle
+  DrawMenuBar hwnd
+  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
 
-' Dim ctl As Control  '// CorelDRAW 2020 需要注释，才不会错误
+  Dim ctl As Variant  '// CorelDRAW 2020 定义成 Variant 才不会错误
   For Each ctl In Woodman.Controls
       ctl.Visible = False
       ctl.Top = 2
@@ -62,7 +63,7 @@ Private Function MiniForm()
     .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400")) + 318
     .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55")) - 2
     .Height = 28
-    .Width = 98
+    .width = 98
     
     .MarkLines_Makesize.Visible = True
     .btn_Makesizes.Visible = True
@@ -82,76 +83,71 @@ Private Sub btn_MiniForm_Click()
   MiniForm
 End Sub
 
+Private Sub UserForm_Initialize()
+  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+  Init_Translations Me, LNG_CODE
+  Me.Caption = i18n("Batch Dimension Nodes", LNG_CODE)
+End Sub
+
 Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-    ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-    Set os = ActiveSelectionRange
-    Set ss = os.Shapes
-    uc = 0
-    For Each s In ss
-        s.SizeWidth = s.SizeHeight
-        uc = uc + 1
-    Next s
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
+  API.BeginOpt
+  Set os = ActiveSelectionRange
+  Set ss = os.Shapes
+  For Each s In ss
+    s.SizeWidth = s.SizeHeight
+  Next s
+  API.EndOpt
 End Sub
 
 
 Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-    ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-    Set os = ActiveSelectionRange
-    Set ss = os.Shapes
-    uc = 0
-    For Each s In ss
-        s.SizeHeight = s.SizeWidth
-        uc = uc + 1
-    Next s
-    Application.Optimization = False
-    ActiveWindow.Refresh:    Application.Refresh
+  API.BeginOpt
+  Set os = ActiveSelectionRange
+  Set ss = os.Shapes
+  For Each s In ss
+    s.SizeHeight = s.SizeWidth
+  Next s
+  API.EndOpt
 End Sub
 
 Private Sub btn_Makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-    Dim os As ShapeRange
-    Dim s As Shape
-    Dim sr As ShapeRange
-    Set doc = ActiveDocument
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+  Dim os As ShapeRange
+  Dim s As Shape
+  Dim sr As ShapeRange
+  Set doc = ActiveDocument
+  Set sr = ActiveSelectionRange
+  sr.RemoveAll
     
-'rasm.Dimension.TextShape.Text.Story.size = CLng(fnt)
-'rasm.Style.GetProperty("dimension").SetProperty "precision", 0
-'rasm.Style.GetProperty("dimension").SetProperty "units", 3
+  If Shift = 4 Then
+    Set os = ActiveSelectionRange
+    For Each s In os.Shapes
+      If s.Type = cdrLinearDimensionShape Then s.Delete
+    Next s
     
-    doc.BeginCommandGroup "delete sizes"
-        Set sr = ActiveSelectionRange
-        sr.RemoveAll
-    If Shift = 4 Then
-        On Error Resume Next
-        Set os = ActiveSelectionRange
-        For Each s In os.Shapes
-            If s.Type = cdrLinearDimensionShape Then s.Delete
-        Next s
-        On Error GoTo 0
-    ElseIf Shift = 1 Then
-        Set os = ActiveSelectionRange
-        For Each s In os.Shapes
-            If s.Type = cdrLinearDimensionShape Then sr.Add s
-        Next s
-        sr.CreateSelection
-        On Error GoTo 0
-    ElseIf Shift = 2 Then
-        On Error Resume Next
-        Set os = ActiveSelectionRange
-        For Each s In os.Shapes
-            If s.Type = cdrLinearDimensionShape Then s.Delete
-        Next s
-          If os.Count > 0 Then
-            os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
-            ActiveSelectionRange.Delete
-          End If
-        On Error GoTo 0
-    Else
-        make_sizes Shift
-    End If
-    doc.EndCommandGroup
-    Application.Refresh
+  ElseIf Shift = 1 Then
+    Set os = ActiveSelectionRange
+    For Each s In os.Shapes
+      If s.Type = cdrLinearDimensionShape Then sr.Add s
+    Next s
+    sr.CreateSelection
+    
+  ElseIf Shift = 2 Then
+    Set os = ActiveSelectionRange
+    For Each s In os.Shapes
+      If s.Type = cdrLinearDimensionShape Then s.Delete
+    Next s
+      If os.Count > 0 Then
+        os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
+        ActiveSelectionRange.Delete
+      End If
+  Else
+    make_sizes Shift
+  End If
+  
+ErrorHandler:
+  API.EndOpt
 End Sub
 
 Private Sub btn_sizes_up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
@@ -183,140 +179,162 @@ End Sub
 Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = False)
   On Error GoTo ErrorHandler
   API.BeginOpt "Make Size"
-    Set doc = ActiveDocument
-    Dim s As Shape, sh As Shape
-    Dim pts As New SnapPoint, pte As New SnapPoint
-    Dim os As ShapeRange
-    
-    Set os = ActiveSelectionRange
-    
-    Dim border As Variant
-    Dim Line_len As Double
-    If shft > 1 Then
-        Line_len = API.Set_Space_Width   '// 设置文字空间间隙
-    Else
-        Line_len = API.Set_Space_Width(True)    '// 只读文字空间间隙
-    End If
-    
-    border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
-                    cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
-                    
-    If mirror = True Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
-                            cdrBottomLeft, cdrTopLeft, os.RightX + Line_len, os.RightX + 2 * Line_len)
-   
-        
-    If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
-    If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then os.Sort "@shape1.top > @shape2.top"
-    
-    If os.Count > 0 Then
-        If os.Count > 1 And Len(dr) > 2 And os.Shapes.Count > 1 Then
-            For i = 1 To os.Shapes.Count - 1
-                Select Case dr
-                    Case "upbx":
-                          Set pts = os.Shapes(i).SnapPoints.BBox(border(0))
-                          Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(1))
-                          Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(2), cdrDimensionStyleEngineering)
-
-                          If shft > 0 And i = 1 Then
-                            Dimension_SetProperty sh, PresetProperty.value
-                            Set pts = os.FirstShape.SnapPoints.BBox(border(0))
-                            Set pte = os.LastShape.SnapPoints.BBox(border(1))
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(3), cdrDimensionStyleEngineering)
-                          End If
-
-                    Case "lfbx":
-                          Set pts = os.Shapes(i).SnapPoints.BBox(border(4))
-                          Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(5))
-                          Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(6), 0, cdrDimensionStyleEngineering)
+  Set doc = ActiveDocument
+  Dim s As Shape, sh As Shape
+  Dim pts As New SnapPoint, pte As New SnapPoint
+  Dim os As ShapeRange
   
-                          If shft > 0 And i = 1 Then
-                            Dimension_SetProperty sh, PresetProperty.value
-                            Set pts = os.FirstShape.SnapPoints.BBox(border(4))
-                            Set pte = os.LastShape.SnapPoints.BBox(border(5))
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(7), 0, cdrDimensionStyleEngineering)
-                          End If
-                          
-                    Case "upb":
-                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrTopRight)
-                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+  Set os = ActiveSelectionRange
+  
+  Dim border As Variant
+  Dim Line_len As Double
+  If shft > 1 Then
+    Line_len = API.Set_Space_Width  '// 设置文字空间间隙
+  Else
+    Line_len = API.Set_Space_Width(True)  '// 只读文字空间间隙
+  End If
+  
+  border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
+  cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
+  
+  If mirror = True Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
+  cdrBottomLeft, cdrTopLeft, os.RightX + Line_len, os.RightX + 2 * Line_len)
+  
+#If VBA7 Then
+  If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
+  If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then os.Sort "@shape1.top > @shape2.top"
+#Else
+  If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then Set os = X4_Sort_ShapeRange(os, stlx)
+  If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then Set os = X4_Sort_ShapeRange(os, stty).ReverseRange
+#End If
 
-                    Case "dnb":
-                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
-                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrBottomLeft)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.BottomY - os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    
-                    Case "lfb":
-                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomLeft)
-                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.LeftX - os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    
-                    Case "rib":
-                            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
-                            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopRight)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                End Select
-                '// 尺寸标注设置属性
-                Dimension_SetProperty sh, PresetProperty.value
-                'ActiveDocument.ClearSelection
-            Next i
-        Else
-            If shft > 0 Then
-                Select Case dr
-                    Case "up":
-                            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopLeft)
-                            Set pte = os.LastShape.SnapPoints.BBox(cdrTopRight)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    
-                    Case "dn":
-                            Set pts = os.FirstShape.SnapPoints.BBox(cdrBottomLeft)
-                            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomRight)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.BottomY - os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    Case "lf":
-                            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopLeft)
-                            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomLeft)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.LeftX - os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    Case "ri":
-                            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopRight)
-                            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomRight)
-                            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
-                End Select
-                Dimension_SetProperty sh, PresetProperty.value
-            Else
-                For Each s In os.Shapes
-                    Select Case dr
-                        Case "up":
-                                Set pts = s.SnapPoints.BBox(cdrTopLeft)
-                                Set pte = s.SnapPoints.BBox(cdrTopRight)
-                                Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
-                        
-                        Case "dn":
-                                Set pts = s.SnapPoints.BBox(cdrBottomLeft)
-                                Set pte = s.SnapPoints.BBox(cdrBottomRight)
-                                Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.BottomY - s.SizeHeight / 10, cdrDimensionStyleEngineering)
-                        Case "lf":
-                                Set pts = s.SnapPoints.BBox(cdrTopLeft)
-                                Set pte = s.SnapPoints.BBox(cdrBottomLeft)
-                                Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
-                        Case "ri":
-                                Set pts = s.SnapPoints.BBox(cdrTopRight)
-                                Set pte = s.SnapPoints.BBox(cdrBottomRight)
-                                Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, s.RightX + s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
-                    End Select
-                    Dimension_SetProperty sh, PresetProperty.value
-                Next s
+  
+  If os.Count > 0 Then
+    If os.Count > 1 And Len(dr) > 2 And os.Shapes.Count > 1 Then
+      For i = 1 To os.Shapes.Count - 1
+        Select Case dr
+          Case "upbx"
+#If VBA7 Then
+            Set pts = os.Shapes(i).SnapPoints.BBox(border(0))
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(1))
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(2), cdrDimensionStyleEngineering)
+            
+            If shft > 0 And i = 1 Then
+              Dimension_SetProperty sh, PresetProperty.value
+              Set pts = os.FirstShape.SnapPoints.BBox(border(0))
+              Set pte = os.LastShape.SnapPoints.BBox(border(1))
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(3), cdrDimensionStyleEngineering)
             End If
-        End If
+          
+          Case "lfbx"
+            Set pts = os.Shapes(i).SnapPoints.BBox(border(4))
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(border(5))
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(6), 0, cdrDimensionStyleEngineering)
+            
+            If shft > 0 And i = 1 Then
+              Dimension_SetProperty sh, PresetProperty.value
+              Set pts = os.FirstShape.SnapPoints.BBox(border(4))
+              Set pte = os.LastShape.SnapPoints.BBox(border(5))
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(7), 0, cdrDimensionStyleEngineering)
+            End If
+#Else
+' X4  There is a difference
+            Set pts = CreateSnapPoint(os.Shapes(i).CenterX, os.Shapes(i).CenterY)
+            Set pte = CreateSnapPoint(os.Shapes(i + 1).CenterX, os.Shapes(i + 1).CenterY)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(2), Textsize:=18)
+            
+          Case "lfbx"
+            Set pts = CreateSnapPoint(os.Shapes(i).CenterX, os.Shapes(i).CenterY)
+            Set pte = CreateSnapPoint(os.Shapes(i + 1).CenterX, os.Shapes(i + 1).CenterY)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(6), 0, Textsize:=18)
+#End If
+          
+          Case "upb"
+            Set pts = os.Shapes(i).SnapPoints.BBox(cdrTopRight)
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+          Case "dnb"
+            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrBottomLeft)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.BottomY - os.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+          Case "lfb"
+            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomLeft)
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.LeftX - os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+          Case "rib"
+            Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
+            Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopRight)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+        End Select
+        '// 尺寸标注设置属性
+        Dimension_SetProperty sh, PresetProperty.value
+        'ActiveDocument.ClearSelection
+      Next i
+    Else
+      If shft > 0 Then
+        Select Case dr
+          Case "up"
+            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopLeft)
+            Set pte = os.LastShape.SnapPoints.BBox(cdrTopRight)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+
+          Case "dn"
+            Set pts = os.FirstShape.SnapPoints.BBox(cdrBottomLeft)
+            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomRight)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.BottomY - os.SizeHeight / 10, cdrDimensionStyleEngineering)
+
+          Case "lf"
+            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopLeft)
+            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomLeft)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.LeftX - os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+          
+          Case "ri"
+            Set pts = os.FirstShape.SnapPoints.BBox(cdrTopRight)
+            Set pte = os.LastShape.SnapPoints.BBox(cdrBottomRight)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+        End Select
+        Dimension_SetProperty sh, PresetProperty.value
+      Else
+        For Each s In os.Shapes
+          Select Case dr
+            Case "up"
+              Set pts = s.SnapPoints.BBox(cdrTopLeft)
+              Set pte = s.SnapPoints.BBox(cdrTopRight)
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+            Case "dn"
+              Set pts = s.SnapPoints.BBox(cdrBottomLeft)
+              Set pte = s.SnapPoints.BBox(cdrBottomRight)
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.BottomY - s.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+            Case "lf"
+              Set pts = s.SnapPoints.BBox(cdrTopLeft)
+              Set pte = s.SnapPoints.BBox(cdrBottomLeft)
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
+            
+            Case "ri"
+              Set pts = s.SnapPoints.BBox(cdrTopRight)
+              Set pte = s.SnapPoints.BBox(cdrBottomRight)
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, s.RightX + s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
+          End Select
+          Dimension_SetProperty sh, PresetProperty.value
+        Next s
+      End If
     End If
-    os.CreateSelection
-    
+  End If
+  os.CreateSelection
+  
 ErrorHandler:
+  
   API.EndOpt
 End Sub
 
 Sub make_sizes(Optional shft = 0)
-  On Error GoTo ErrorHandler
-  API.BeginOpt
+'  On Error GoTo ErrorHandler
+'  API.BeginOpt
   
   Dim s As Shape
   Dim pts As SnapPoint, pte As SnapPoint
@@ -324,13 +342,24 @@ Sub make_sizes(Optional shft = 0)
   Set os = ActiveSelectionRange
   If os.Count > 0 Then
   For Each s In os.Shapes
+#If VBA7 Then
       Set pts = s.SnapPoints.BBox(cdrTopLeft)
       Set pte = s.SnapPoints.BBox(cdrTopRight)
       Set ptle = s.SnapPoints.BBox(cdrBottomLeft)
       If shft <> 6 Then Dimension_SetProperty ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, ptle, True, _
                                               s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
       If shft <> 3 Then Dimension_SetProperty ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, _
-                                              s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
+                                          s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
+#Else
+' X4  There is a difference
+      Set pts = s.SnapPoints(cdrTopLeft)
+      Set pte = s.SnapPoints(cdrTopRight)
+      Set ptle = s.SnapPoints(cdrBottomLeft)
+      If shft <> 6 Then ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, ptle, True, _
+                      s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering, Textsize:=18
+      If shft <> 3 Then ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, _
+                      s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering, Textsize:=18
+#End If
   Next s
   End If
 
@@ -338,31 +367,30 @@ ErrorHandler:
   API.EndOpt
 End Sub
 
+'// 节点连接合并
 Private Sub btn_join_nodes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     ActiveSelection.CustomCommand "ConvertTo", "JoinCurves"
     Application.Refresh
 End Sub
 
+'// 节点优化减少
 Private Sub btn_nodes_reduce_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-    On Error GoTo ErrorHandler
-    Set doc = ActiveDocument
-    Dim s As Shape
-    ps = Array(1)
-    doc.Unit = cdrTenthMicron
-    Set os = ActivePage.Shapes
-    If os.Count > 0 Then
-        doc.BeginCommandGroup "reduce nodes"
-        For Each s In os
-            s.ConvertToCurves
-            If Not s.DisplayCurve Is Nothing Then
-                s.Curve.AutoReduceNodes 50
-            End If
-        Next s
-        doc.EndCommandGroup
-    End If
-    Application.Refresh
+  On Error GoTo ErrorHandler: API.BeginOpt
+  Set doc = ActiveDocument
+  Dim s As Shape
+  ps = Array(1)
+  doc.Unit = cdrTenthMicron
+  Set os = ActivePage.Shapes
+  If os.Count > 0 Then
+    For Each s In os
+    s.ConvertToCurves
+      If Not s.DisplayCurve Is Nothing Then
+        s.Curve.AutoReduceNodes 50
+      End If
+    Next s
+  End If
 ErrorHandler:
-  MsgBox "s.Curve.AutoReduceNodes 只有高版本才支持本API"
+  API.EndOpt
 End Sub
 
 '// 使用标记线批量建立尺寸标注:   左键上标注，右键右标注
@@ -476,8 +504,11 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
   
   CutLines.RemoveDuplicates sr  '// 简单删除重复算法
   
+#If VBA7 Then
   sr.Sort "@shape1.left < @shape2.left"
-
+#Else
+  Set sr = X4_Sort_ShapeRange(sr, stlx)
+#End If
   For i = 1 To sr.Count - 1
     x1 = sr(i + 1).CenterX
     y1 = sr(i + 1).CenterY
@@ -486,8 +517,12 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
     
     Set pts = CreateSnapPoint(x1, y1)
     Set pte = CreateSnapPoint(x2, y2)
+#If VBA7 Then
     Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionSlanted, pts, pte, True, x1 - 20, y1 + 20, cdrDimensionStyleEngineering)
-    
+#Else
+' X4  There is a difference
+    Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionSlanted, pts, pte, True, (x1 + x2) / 2, (y1 + y2) / 2, cdrDimensionStyleEngineering, Textsize:=18)
+#End If
     Dimension_SetProperty sh, PresetProperty.value
   Next i
   sr.Delete
@@ -498,6 +533,7 @@ End Function
 
 '// 尺寸标注设置属性
 Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As Boolean = False)
+#If VBA7 Then
   If Preset And sh_dim.Type = cdrLinearDimensionShape Then
     With sh_dim.Style.GetProperty("dimension")
       .SetProperty "precision", 0 '       小数位数
@@ -507,6 +543,10 @@ Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As
     '  .SetProperty "overhang", 500000 '
     End With
   End If
+  
+#Else
+' X4  There is a difference
+#End If
 End Function
 
 

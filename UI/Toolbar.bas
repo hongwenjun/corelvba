@@ -13,7 +13,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -29,13 +28,13 @@ Private Const Github_Version = 1
     Private Declare PtrSafe Function SetLayeredWindowAttributes Lib "user32" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
     
 #Else
-    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
-    Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+    Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
 #End If
 
 Private Const GWL_STYLE As Long = (-16)
@@ -70,7 +69,18 @@ End Sub
 
 Private Sub Change_UI_Close_Voice_Click()
   SaveSetting "LYVBA", "Settings", "SpeakHelp", "0"
-  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA工具 永久免费开源" & vbNewLine & "主题图片文件名ToolBar.jpg 安装包中有多套皮肤选用"
+  MsgBox "请给我支持!" & vbNewLine & "您的支持，我才能有动力添加更多功能." & vbNewLine & "蘭雅CorelVBA工具 永久免费开源"
+End Sub
+
+Private Sub I18N_LNG_Click()
+  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+  If LNG_CODE = 1033 Then
+    LNG_CODE = 2052
+  Else
+    LNG_CODE = 1033
+  End If
+  SaveSetting "LYVBA", "Settings", "I18N_LNG", LNG_CODE
+  MsgBox "中英文语言切换完成，请重启插件!", vbOKOnly, "兰雅VBA代码分享"
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -261,7 +271,7 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       
     ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
      '// 选择相同工具增强版
-      frmSelectSame.show 0
+      frmSelectSame.Show 0
 
     ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键扩展工具栏
@@ -295,7 +305,7 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     
   ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
-      Woodman.show 0
+      Woodman.Show 0
     Else
       '// 单线条转裁切线 - 放置到页面四边
       CutLines.SelectLine_to_Cropline
@@ -317,10 +327,10 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     SmartGroup.Smart_Group
     
   ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    CQL_FIND_UI.show 0
+    CQL_FIND_UI.Show 0
     
   ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    Replace_UI.show 0
+    Replace_UI.Show 0
     
   ElseIf Abs(x - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     ' 简单文本转曲
@@ -464,22 +474,10 @@ End Sub
 
 Private Sub Tools_Icon_Click()
   ' 调用语句
-  i = GMSManager.RunMacro("CorelDRAW_VBA", "学习CorelVBA.start")
+  i = GMSManager.RunMacro("ZeroBase", "Hello_VBA.run")
 End Sub
 
-'''////  选择多物件，组合然后拆分线段，为角线爬虫准备  ////'''
 Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-  If Button = 2 Then
-    MsgBox "鼠标右键，功能待定"
-    Exit Sub
-  End If
-  
-  If Button Then
-      Tools.Split_Segment
-  End If
-End Sub
-
-Private Sub Split_Segment_Copy_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
     MsgBox "左键拆分线段，Ctrl合并线段"
   ElseIf Shift = fmCtrlMask Then
@@ -568,7 +566,7 @@ Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
   If Button = 2 Then
     Tools.Batch_Align_Page_Center
   ElseIf Shift = fmCtrlMask Then
-    UniteOne.show 0
+    UniteOne.Show 0
   Else
     ' Ctrl + 鼠标  空
   End If
@@ -613,12 +611,12 @@ End Sub
 '// 标准尺寸，左键右键Ctrl三键控制，调用三种样式
 Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
   If Button = 2 Then
-    Make_SIZE.show 0   ' 右键
+    Make_SIZE.Show 0   ' 右键
   ElseIf Shift = fmCtrlMask Then
     #If VBA7 Then
-      Woodman.show 0
+      Woodman.Show 0
     #Else  ' X4 使用
-      Make_SIZE.show 0
+      Make_SIZE.Show 0
     #End If
   Else
     Tools.Simple_Label_Numbers  ' Ctrl + 鼠标  批量简单数字标注
@@ -627,7 +625,7 @@ End Sub
 
 '// 批量转图片和导出图片文件
 Private Sub Photo_Form_Click()
-  PhotoForm.show 0
+  PhotoForm.Show 0
 End Sub
 
 '// 修复圆角缺角到直角

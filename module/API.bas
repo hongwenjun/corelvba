@@ -3,15 +3,13 @@ Attribute VB_Name = "API"
 '// For more information, please refer to  https://github.com/hongwenjun
 
 '// Attribute VB_Name = "CorelVBA工具窗口启动"   CorelVBA Tool Window Launches  2023.6.11
-Public Sub Start()
-  Toolbar.Show 0
-End Sub
+
 
 '// CorelDRAW 窗口刷新优化和关闭
-Public Function BeginOpt(Optional ByVal Name As String = "Undo")
+Public Function BeginOpt(Optional ByVal name As String = "Undo")
   EventsEnabled = False
-  ActiveDocument.BeginCommandGroup Name
-  ActiveDocument.SaveSettings
+  ActiveDocument.BeginCommandGroup name
+' ActiveDocument.SaveSettings
   ActiveDocument.Unit = cdrMillimeter
   Optimization = True
 ' ActiveDocument.PreserveSelection = False
@@ -19,10 +17,11 @@ End Function
 
 Public Function EndOpt()
 ' ActiveDocument.PreserveSelection = True
-  ActiveDocument.RestoreSettings
+' ActiveDocument.RestoreSettings
   EventsEnabled = True
   Optimization = False
   EventsEnabled = True
+  ActiveDocument.ReferencePoint = cdrBottomLeft
   Application.Refresh
   ActiveDocument.EndCommandGroup
 End Function
@@ -113,13 +112,13 @@ Public Function WriteClipBoard(ByVal s As String)
 End Function
 
 '// 换行转空格 多个空格换成一个空格
-Public Function Newline_to_Space(ByVal Str As String) As String
-  Str = VBA.Replace(Str, Chr(13), " ")
-  Str = VBA.Replace(Str, Chr(9), " ")
-  Do While InStr(Str, "  ")
-      Str = VBA.Replace(Str, "  ", " ")
+Public Function Newline_to_Space(ByVal str As String) As String
+  str = VBA.Replace(str, Chr(13), " ")
+  str = VBA.Replace(str, Chr(9), " ")
+  Do While InStr(str, "  ")
+      str = VBA.Replace(str, "  ", " ")
   Loop
-  Newline_to_Space = Str
+  Newline_to_Space = str
 End Function
 
 '// 获得数组元素个数
@@ -202,14 +201,14 @@ Public Function pFootInXY(P, a, b)
     If a(1) = b(1) Then
         pFootInXY = Array(P(0), a(1), 0#): Exit Function
     End If
-    Dim aa, bb, c, d, X, Y
+    Dim aa, bb, c, d, x, Y
     aa = (a(1) - b(1)) / (a(0) - b(0))
     bb = a(1) - aa * a(0)
     c = -(a(0) - b(0)) / (a(1) - b(1))
     d = P(1) - c * P(0)
-    X = (d - bb) / (aa - c)
-    Y = aa * X + bb
-    pFootInXY = Array(X, Y, 0#)
+    x = (d - bb) / (aa - c)
+    Y = aa * x + bb
+    pFootInXY = Array(x, Y, 0#)
 End Function
 
 
@@ -245,13 +244,6 @@ Public Function ExistsFile_UseFso(ByVal strPath As String) As Boolean
      Set fso = Nothing
 End Function
 
-Public Function WebHelp(url As String)
-  Dim h As Long, r As Long
-  h = FindWindow(vbNullString, "Toolbar")
-  r = ShellExecute(h, "", url, "", "", 1)
-End Function
-
-
 Public Function test_sapi()
   Dim message, sapi
   MsgBox ("Please use the headset and listen to what I have to say...")
@@ -259,4 +251,11 @@ Public Function test_sapi()
   Set sapi = CreateObject("sapi.spvoice")
   sapi.Speak message
 End Function
+
+
+' Public Function WebHelp(url As String)
+'  Dim h As Longer, r As Long
+'  h = FindWindow(vbNullString, "Toolbar")
+'  r = ShellExecute(h, "", url, "", "", 1)
+' End Function
 
