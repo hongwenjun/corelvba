@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmSelectSame 
-   Caption         =   "相似选择-魔改版 蘭雅"
-   ClientHeight    =   5775
+   Caption         =   "Similar Selection Plus"
+   ClientHeight    =   5745
    ClientLeft      =   495
    ClientTop       =   5895
-   ClientWidth     =   2625
+   ClientWidth     =   3255
    OleObjectBlob   =   "frmSelectSame.frx":0000
    ShowModal       =   0   'False
 End
@@ -27,6 +27,12 @@ Public ssreg As ShapeRange
 
 Private Const TOOLNAME As String = "VBA_SelectSame"
 Private Const SECTION As String = "Options"
+
+Private Sub UserForm_Initialize()
+  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+  Init_Translations Me, LNG_CODE
+  Me.Caption = i18n("Similar Selection Plus", LNG_CODE)
+End Sub
 
 Private Sub btnSelect_Click()
     If 0 = ActiveSelectionRange.Count Then Exit Sub
@@ -265,7 +271,7 @@ Private Function ShapesMatch_Font_Name(ByVal fsn As Shape, sr As ShapeRange, Che
     End If
     
   Case "ShapeName"
-    sh_name = fsn.Name
+    sh_name = fsn.name
       Set sr = sr.Shapes.FindShapes(Query:="@name ='" & sh_name & "'")
   End Select
 End Function
@@ -435,7 +441,7 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                         Set clrModel = fillModel.UniformColor
                         lngType = .UniformColor.Type
                         If lngType <> clrModel.Type Then GoTo NoMatch
-                        If .UniformColor.Name(True) <> clrModel.Name(True) Then GoTo NoMatch
+                        If .UniformColor.name(True) <> clrModel.name(True) Then GoTo NoMatch
                     End If  'GDG #############################################################
                 End If
             End With
@@ -453,7 +459,7 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                                                 
                         If lngType > 0 Then     'Does the shape have an OUTLINE ?
                                                 'Same LINE WIDTH ?
-                            If .Width <> outlnModel.Width Then GoTo NoMatch
+                            If .width <> outlnModel.width Then GoTo NoMatch
                                                 'Matching LINE COLOR ?
 '                            Set clrShape = .Color
 '                            lngType = clrShape.Type
@@ -494,7 +500,7 @@ Private Function ShapesMatch(shpShape As Shape, shpModel As Shape, _
                                 lngType = clrShape.Type
                                 Set clrModel = outlnModel.Color
                                 If lngType <> clrModel.Type Then GoTo NoMatch
-                                If clrShape.Name(True) <> clrModel.Name(True) _
+                                If clrShape.name(True) <> clrModel.name(True) _
                                     Then GoTo NoMatch
                             End If
                         End If

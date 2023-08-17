@@ -12,6 +12,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+<<<<<<< HEAD
+=======
+
+>>>>>>> c35edb3649c86cf525848e6148444292197aa8ca
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -269,12 +273,17 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       SmartGroup.Smart_Group API.Create_Tolerance
       
     ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+<<<<<<< HEAD
     If Github_Version = 1 Then
       CQL_FIND_UI.Show 0
     Else
       '// 选择相同工具增强版
       frmSelectSame.Show 0
     End If
+=======
+     '// 选择相同工具增强版
+      frmSelectSame.Show 0
+>>>>>>> c35edb3649c86cf525848e6148444292197aa8ca
 
     ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
       '// 右键扩展工具栏
@@ -308,7 +317,11 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     
   ElseIf Abs(x - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
+<<<<<<< HEAD
       MakeSizePlus.Show 0
+=======
+      Woodman.Show 0
+>>>>>>> c35edb3649c86cf525848e6148444292197aa8ca
     Else
       '// 单线条转裁切线 - 放置到页面四边
       CutLines.SelectLine_to_Cropline
@@ -330,6 +343,7 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     SmartGroup.Smart_Group
     
   ElseIf Abs(x - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+<<<<<<< HEAD
     If Github_Version = 1 Then
        '// 选择相同工具增强版
       frmSelectSame.Show 0
@@ -337,6 +351,10 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
       CQL_FIND_UI.Show 0
     End If
 
+=======
+    CQL_FIND_UI.Show 0
+    
+>>>>>>> c35edb3649c86cf525848e6148444292197aa8ca
   ElseIf Abs(x - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     Replace_UI.Show 0
     
@@ -622,7 +640,11 @@ Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
     Make_SIZE.Show 0   ' 右键
   ElseIf Shift = fmCtrlMask Then
     #If VBA7 Then
+<<<<<<< HEAD
       MakeSizePlus.Show 0
+=======
+      Woodman.Show 0
+>>>>>>> c35edb3649c86cf525848e6148444292197aa8ca
     #Else  ' X4 使用
       Make_SIZE.Show 0
     #End If
