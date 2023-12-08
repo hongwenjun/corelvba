@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} MakeSizePlus 
    Caption         =   "Batch Dimension Nodes"
-   ClientHeight    =   1470
+   ClientHeight    =   1680
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   3900
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -65,13 +66,13 @@ Private Function MiniForm()
     .width = 98
     
     .MarkLines_Makesize.Visible = True
-    .btn_makesizes.Visible = True
+    .btn_Makesizes.Visible = True
     .Manual_Makesize.Visible = True
     .chkOpposite.Visible = True
     .X_EXIT.Visible = True
     
     .MarkLines_Makesize.Left = 1
-    .btn_makesizes.Left = 26
+    .btn_Makesizes.Left = 26
     .Manual_Makesize.Left = 50
     .chkOpposite.Left = 75: .chkOpposite.Top = 14
     .X_EXIT.Left = 85: .X_EXIT.Top = 0
@@ -585,6 +586,59 @@ Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
   End If
 End Sub
 
+Private Sub MakeRuler_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+  If Button = 2 Then
+    CutLines.Dimension_MarkLines cdrAlignLeft, False
+    Add_Ruler_Text_Y True
+  Else
+    '// 建立标尺线
+    CutLines.Dimension_MarkLines cdrAlignTop, False
+    '// 标尺线转换成距离数字
+    Add_Ruler_Text True
+  End If
+End Sub
+
+  '// 标尺线转换成距离数字
+Private Function Add_Ruler_Text(rm_lines As Boolean)
+  API.BeginOpt
+  Dim s As Shape, t As Shape, sr As ShapeRange
+  Dim text As String
+  Set sr = ActiveSelectionRange
+  sr.Sort "@shape1.left < @shape2.left"
+  For Each s In sr
+    x = s.CenterX: Y = s.CenterY
+    text = str(Int(x - sr.FirstShape.CenterX + 0.5))
+    Set t = ActiveLayer.CreateArtisticText(x, Y, text)
+    t.CenterX = x: t.CenterY = Y
+  Next
+  
+  If rm_lines Then sr.Delete
+  
+  API.EndOpt
+End Function
+
+  '// 标尺线转换成距离数字
+Private Function Add_Ruler_Text_Y(rm_lines As Boolean)
+  API.BeginOpt
+  Dim s As Shape, t As Shape, sr As ShapeRange
+  Dim text As String
+  Set sr = ActiveSelectionRange
+  sr.Sort "@shape1.top < @shape2.top"
+  For Each s In sr
+    x = s.CenterX: Y = s.CenterY
+    text = str(Int(Y - sr.FirstShape.CenterY + 0.5))
+    Set t = ActiveLayer.CreateArtisticText(x, Y, text)
+    t.CenterX = x: t.CenterY = Y
+  Next
+  
+  If rm_lines Then sr.Delete
+  
+  API.EndOpt
+End Function
+
+
 Private Sub X_EXIT_Click()
   Unload Me    '// EXIT
 End Sub
+
+

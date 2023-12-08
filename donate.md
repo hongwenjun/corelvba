@@ -14,7 +14,7 @@
 
 | 微信支付 | 支付宝 |
 | ------- | ------- |
-| ![](https://262235.xyz/donate/WXPay.png) | ![](https://262235.xyz/donate/AliPay.jpg) |
+| ![](https://lyvba.com/donate/WXPay.png) | ![](https://lyvba.com/donate/AliPay.jpg) |
 
 ### 捐赠者:
 ```
@@ -52,6 +52,7 @@ Thanh Van
 晋畅迷你字
 cdr_插件 鼠标哥
 w啊啊
+上善若水
 ```
 
 

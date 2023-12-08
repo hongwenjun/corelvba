@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ArrangeForm 
-   Caption         =   "蘭雅sRGB 手动拼版"
+   Caption         =   "蘭雅sRGB 自动拼版 │ 嘉盟赞助"
    ClientHeight    =   2475
    ClientLeft      =   45
    ClientTop       =   330
@@ -16,6 +16,49 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'// 用户窗口初始化
+Private Sub UserForm_Initialize()
+  ActiveDocument.Unit = cdrMillimeter
+  Dim sr As ShapeRange
+  Dim ls, hs, lj, hj, pw, ph As Double
+  
+  pw = ActiveDocument.Pages.First.SizeWidth
+  ph = ActiveDocument.Pages.First.SizeHeight
+  TextBox1.text = 2
+  TextBox2.text = 5
+  TextBox3.text = 0
+  TextBox4.text = 0
+  
+  Set sr = ActiveSelectionRange
+  If sr.Count > 0 Then
+    ls = Int(sr.SizeWidth + 0.5)
+    hs = Int(sr.SizeHeight + 0.5)
+    Label_Size.Caption = "尺寸: " & ls & "×" & hs & "mm"
+    
+    lj = Int(pw / ls)
+    hj = Int(ph / hs)
+    
+    Dim jh, jl, t As Double
+    jl = Int(pw / hs)
+    jh = Int(ph / ls)
+    
+'//  Debug.Print lj, hj, jl, jh
+    If jh * jl > hj * lj Then
+      lj = jl
+      hj = jh
+      If lj * ls > pw Or hj * hs > ph Then
+        t = lj
+        lj = hj
+        hj = t
+      End If
+    End If
+    
+    
+    TextBox1.text = lj
+    TextBox2.text = hj
+  End If
+End Sub
+
 Private Sub CommandButton1_Click()
   On Error GoTo ErrorHandler
   API.BeginOpt
@@ -52,18 +95,18 @@ Private Function arrange_Clone(matrix As Variant, sr As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
   x = sr.SizeWidth: Y = sr.SizeHeight
-  Set s1 = sr.Clone
+  Set s1 = sr '// Set s1 = sr.Clone
   '// StepAndRepeat 方法在范围内创建多个形状副本
   Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
   Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(hs - 1, 0#, -(Y + hj))
-  s1.Delete
+  '// s1.Delete
 End Function
 
 Private Function arrange_Clone_one(matrix As Variant, sr As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
   x = sr.SizeWidth: Y = sr.SizeHeight
-  Set s1 = sr.Clone
+  Set s1 = sr '// Set s1 = sr.Clone
   '// StepAndRepeat 方法在范围内创建多个形状副本
   If ls > 1 Then
     Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
@@ -73,6 +116,6 @@ Private Function arrange_Clone_one(matrix As Variant, sr As ShapeRange)
   If hs > 1 Then
     Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(hs - 1, 0#, -(Y + hj))
   End If
-  s1.Delete
+  '// s1.Delete
 End Function
 
