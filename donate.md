@@ -1,4 +1,4 @@
-![](https://262235.xyz/usr/uploads/2022/12/3254980584.webp)
+![](https://lyvba.com/wp-content/uploads/2023/12/vlog_lanya.jpg)
 ### 2022.12.13 庆祝蘭雅CorelVBA工具捐赠和收益总额达到3000元
 ### 2023.12.29 庆祝蘭雅CorelVBA工具捐赠和收益总额达到5000元
 ## 捐赠
