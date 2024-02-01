@@ -1,13 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Make_SIZE 
-   Caption         =   " 标注尺寸"
-   ClientHeight    =   1515
-   ClientLeft      =   45
-   ClientTop       =   390
-   ClientWidth     =   3690
-   OleObjectBlob   =   "Make_SIZE.frx":0000
-   StartUpPosition =   1  '所有者中心
-End
 Attribute VB_Name = "Make_SIZE"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False

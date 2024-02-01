@@ -1,4 +1,3 @@
-Attribute VB_Name = "StoreSelect"
 Private sr_mem(3) As New ShapeRange
 Public StoreCount As String
 

@@ -1,19 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} MakeSizePlus 
-   Caption         =   "Batch Dimension Nodes"
-   ClientHeight    =   1680
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   3900
-   OleObjectBlob   =   "MakeSizePlus.frx":0000
-   StartUpPosition =   1  '所有者中心
-End
-Attribute VB_Name = "MakeSizePlus"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
-
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -35,6 +19,63 @@ Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE = (-20)
 Private Const WS_CAPTION As Long = &HC00000
 Private Const WS_EX_DLGMODALFRAME = &H1&
+
+'// 插件名称 VBA_UserForm
+Private Const TOOLNAME As String = "LYVBA"
+Private Const SECTION As String = "MakeSizePlus"
+Private sreg As New ShapeRange
+
+Private Sub Frame1_Click()
+
+End Sub
+
+Private Sub UserForm_Initialize()
+  With Me
+    .StartUpPosition = 0
+    .Left = Val(GetSetting(TOOLNAME, SECTION, "form_left", 900))
+    .Top = Val(GetSetting(TOOLNAME, SECTION, "form_top", 200))
+    .width = Val(GetSetting(TOOLNAME, SECTION, "form_width", 200))
+    .Height = Val(GetSetting(TOOLNAME, SECTION, "form_Height", 105))
+  End With
+
+  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+  Init_Translations Me, LNG_CODE
+  Me.Caption = i18n("Batch Dimension Plus", LNG_CODE)
+  
+   ' 读取线设置
+  Bleed.text = API.GetSet("Bleed")
+  Line_len.text = API.GetSet("Line_len")
+  Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
+  
+End Sub
+
+'// 关闭窗口时保存窗口位置
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    saveFormPos True
+End Sub
+
+'// 保存窗口位置和加载窗口位置
+Sub saveFormPos(bDoSave As Boolean)
+  If bDoSave Then 'save position
+    SaveSetting TOOLNAME, SECTION, "form_left", Me.Left
+    SaveSetting TOOLNAME, SECTION, "form_top", Me.Top
+    SaveSetting TOOLNAME, SECTION, "form_width", Me.width
+    SaveSetting TOOLNAME, SECTION, "form_Height", Me.Height
+  End If
+End Sub
+
+Private Sub btn_ExpandForm_Click()
+  With Me
+    If .width = 200 Then
+      .width = 260: .Height = 132
+    ElseIf .Height = 132 Then
+      .Height = 206
+    Else
+      .width = 200: .Height = 105
+    End If
+  End With
+End Sub
+
 
 '// Minimizes the window and retains dimensioning functionality   '// 最小化窗口并保留标注尺寸功能
 Private Function MiniForm()
@@ -83,34 +124,17 @@ Private Sub btn_MiniForm_Click()
   MiniForm
 End Sub
 
-Private Sub UserForm_Initialize()
-  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
-  Init_Translations Me, LNG_CODE
-  Me.Caption = i18n("Batch Dimension Nodes", LNG_CODE)
-End Sub
-
-Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-  API.BeginOpt
-  Set os = ActiveSelectionRange
-  Set ss = os.Shapes
-  For Each s In ss
-    s.SizeWidth = s.SizeHeight
-  Next s
-  API.EndOpt
+Private Sub Settings_Click()
+  If 0 < Val(Bleed.text) * Val(Line_len.text) < 100 Then
+   SaveSetting "LYVBA", "Settings", "Bleed", Bleed.text
+   SaveSetting "LYVBA", "Settings", "Line_len", Line_len.text
+   SaveSetting "LYVBA", "Settings", "Outline_Width", Outline_Width.text
+   Call API.Set_Space_Width  '// 设置空间间隙
+  End If
 End Sub
 
 
-Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-  API.BeginOpt
-  Set os = ActiveSelectionRange
-  Set ss = os.Shapes
-  For Each s In ss
-    s.SizeHeight = s.SizeWidth
-  Next s
-  API.EndOpt
-End Sub
-
-Private Sub btn_Makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub btn_Makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   On Error GoTo ErrorHandler
   API.BeginOpt
   Dim os As ShapeRange
@@ -164,27 +188,17 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
   
   Dim border As Variant
   Dim Line_len As Double
-  If shft > 1 Then
-    Line_len = API.Set_Space_Width  '// 设置文字空间间隙
-  Else
-    Line_len = API.Set_Space_Width(True)  '// 只读文字空间间隙
-  End If
-  
+  Line_len = API.Set_Space_Width(True)  '// 读取间隔
+
   border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
   cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
   
   If mirror = True Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
   cdrBottomLeft, cdrTopLeft, os.RightX + Line_len, os.RightX + 2 * Line_len)
   
-#If VBA7 Then
-  If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then os.Sort "@shape1.left < @shape2.left"
-  If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then os.Sort "@shape1.top > @shape2.top"
-#Else
   If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then Set os = X4_Sort_ShapeRange(os, stlx)
   If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then Set os = X4_Sort_ShapeRange(os, stty).ReverseRange
-#End If
 
-  
   If os.Count > 0 Then
     If os.Count > 1 And Len(dr) > 2 And os.Shapes.Count > 1 Then
       For i = 1 To os.Shapes.Count - 1
@@ -343,34 +357,8 @@ ErrorHandler:
   API.EndOpt
 End Sub
 
-'// 节点连接合并
-Private Sub btn_join_nodes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-    ActiveSelection.CustomCommand "ConvertTo", "JoinCurves"
-    Application.Refresh
-End Sub
-
-'// 节点优化减少
-Private Sub btn_nodes_reduce_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-  On Error GoTo ErrorHandler: API.BeginOpt
-  Set doc = ActiveDocument
-  Dim s As Shape
-  ps = Array(1)
-  doc.Unit = cdrTenthMicron
-  Set os = ActivePage.Shapes
-  If os.Count > 0 Then
-    For Each s In os
-    s.ConvertToCurves
-      If Not s.DisplayCurve Is Nothing Then
-        s.Curve.AutoReduceNodes 50
-      End If
-    Next s
-  End If
-ErrorHandler:
-  API.EndOpt
-End Sub
-
 '// 使用标记线批量建立尺寸标注:   左键上标注，右键右标注
-Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim sr As ShapeRange
   Set sr = ActiveSelectionRange
   
@@ -399,33 +387,15 @@ Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As I
 End Sub
 
 '// 使用手工选节点建立尺寸标注，使用Ctrl分离尺寸标注
-Private Sub Manual_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Manual_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
       '// 右键
   ElseIf Shift = fmCtrlMask Then
       Slanted_Makesize  '// 手动标注倾斜尺寸
   Else
-      Untie_MarkLines   '// 解绑尺寸，分离尺寸
+      ModulePlus.Untie_MarkLines   '// 解绑尺寸，分离尺寸
   End If
 End Sub
-
-
-
-'// 解绑尺寸，分离尺寸
-Private Function Untie_MarkLines()
-  Dim os As ShapeRange, dss As New ShapeRange
-  Set os = ActiveSelectionRange
-  For Each s In os.Shapes
-      If s.Type = cdrLinearDimensionShape Then
-        dss.Add s
-      End If
-  Next s
-  If dss.Count > 0 Then
-    dss.BreakApartEx
-    os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
-    ActiveSelectionRange.Delete
-  End If
-End Function
 
 '// 手动标注倾斜尺寸
 Private Function Slanted_Makesize()
@@ -479,12 +449,8 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
   Next sh
   
   CutLines.RemoveDuplicates sr  '// 简单删除重复算法
-  
-#If VBA7 Then
-  sr.Sort "@shape1.left < @shape2.left"
-#Else
   Set sr = X4_Sort_ShapeRange(sr, stlx)
-#End If
+
   For i = 1 To sr.Count - 1
     x1 = sr(i + 1).CenterX
     y1 = sr(i + 1).CenterY
@@ -520,13 +486,14 @@ Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As
     End With
   End If
   
+  sh_dim.Outline.width = API.GetSet("Outline_Width")
 #Else
 ' X4  There is a difference
 #End If
 End Function
 
 '// 尺寸标注左边
-Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, False
     make_sizes_sep "lfbx", Button, False
@@ -541,7 +508,7 @@ Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
 End Sub
 
 '// 尺寸标注右边
-Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, True
     make_sizes_sep "lfbx", Button, True
@@ -557,7 +524,7 @@ Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integ
 End Sub
 
 '// 尺寸标注向上
-Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, False
     make_sizes_sep "upbx", Button, False
@@ -572,7 +539,7 @@ Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer,
 End Sub
 
 '// 尺寸标注向下
-Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
+Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, True
     make_sizes_sep "upbx", Button, True
@@ -586,59 +553,167 @@ Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
   End If
 End Sub
 
-Private Sub MakeRuler_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
-  If Button = 2 Then
+Private Sub MakeRuler_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+  Set sreg = Nothing
+  
+  If Button = 2 And Shift = 0 Then       '// 鼠标右键 标注右边
+    Ruler_Align cdrAlignRight
+    
+  ElseIf Button = 2 And Shift = 2 Then  '// Ctrl+鼠标右键 标注左边
+    Ruler_Align cdrAlignLeft
+ 
+  ElseIf Shift = 0 Then    '// 鼠标左键，标注在上边
+    Ruler_Align cdrAlignTop
+    
+  ElseIf Shift = 2 Then  '// Ctrl+鼠标左键，标注下边
+    Ruler_Align cdrAlignBottom
+  End If
+  
+  sreg.CreateSelection
+ErrorHandler:
+  API.EndOpt
+End Sub
+
+Private Sub MakeRuler_Align_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+  Set sreg = Nothing
+   
+  Dim ra As cdrAlignType
+  ra = cdrAlignTop
+  ' 定义方向上下左右
+  Dim pos_x As Variant, pos_y As Variant
+  pos_x = Array(27, 27, 12, 44)
+  pos_y = Array(12, 44, 27, 27)
+  If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
+    ra = cdrAlignTop
+  ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(1)) < 14 Then
+    ra = cdrAlignBottom
+  ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(2)) < 14 Then
+    ra = cdrAlignLeft
+  ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(3)) < 14 Then
+    ra = cdrAlignRight
+  End If
+  
+  Ruler_Align ra
+  sreg.CreateSelection
+ErrorHandler:
+  API.EndOpt
+End Sub
+
+Private Function Ruler_Align(ra As cdrAlignType)
+  If ra = cdrAlignRight Then       '// 标注右边
+    CutLines.Dimension_MarkLines cdrAlignLeft, True
+    Add_Ruler_Text_Y True
+  ElseIf ra = cdrAlignLeft Then  '// 标注左边
     CutLines.Dimension_MarkLines cdrAlignLeft, False
     Add_Ruler_Text_Y True
-  Else
-    '// 建立标尺线
+  ElseIf ra = cdrAlignTop Then    '// 标注上边
     CutLines.Dimension_MarkLines cdrAlignTop, False
-    '// 标尺线转换成距离数字
+    Add_Ruler_Text True
+  ElseIf ra = cdrAlignBottom Then  '// 标注下边
+    CutLines.Dimension_MarkLines cdrAlignTop, True
     Add_Ruler_Text True
   End If
-End Sub
+End Function
 
   '// 标尺线转换成距离数字
 Private Function Add_Ruler_Text(rm_lines As Boolean)
+  On Error GoTo ErrorHandler
   API.BeginOpt
+  
   Dim s As Shape, t As Shape, sr As ShapeRange
   Dim text As String
   Set sr = ActiveSelectionRange
-  sr.Sort "@shape1.left < @shape2.left"
+  Set sr = X4_Sort_ShapeRange(sr, stlx)
   For Each s In sr
-    x = s.CenterX: Y = s.CenterY
-    text = str(Int(x - sr.FirstShape.CenterX + 0.5))
-    Set t = ActiveLayer.CreateArtisticText(x, Y, text)
-    t.CenterX = x: t.CenterY = Y
+    X = s.CenterX: Y = s.CenterY
+    text = str(Int(X - sr.FirstShape.CenterX + 0.5))
+    Set t = ActiveLayer.CreateArtisticText(X, Y, text)
+    t.CenterX = X: t.CenterY = Y
+    sreg.Add t
   Next
   
   If rm_lines Then sr.Delete
-  
+ErrorHandler:
   API.EndOpt
 End Function
 
   '// 标尺线转换成距离数字
 Private Function Add_Ruler_Text_Y(rm_lines As Boolean)
+  On Error GoTo ErrorHandler
   API.BeginOpt
+  
   Dim s As Shape, t As Shape, sr As ShapeRange
   Dim text As String
   Set sr = ActiveSelectionRange
-  sr.Sort "@shape1.top < @shape2.top"
+  Set sr = X4_Sort_ShapeRange(sr, stty)
   For Each s In sr
-    x = s.CenterX: Y = s.CenterY
+    X = s.CenterX: Y = s.CenterY
     text = str(Int(Y - sr.FirstShape.CenterY + 0.5))
-    Set t = ActiveLayer.CreateArtisticText(x, Y, text)
-    t.CenterX = x: t.CenterY = Y
+    Set t = ActiveLayer.CreateArtisticText(X, Y, text)
+    t.Rotate 90
+    t.CenterX = X: t.CenterY = Y
+    sreg.Add t
   Next
   
   If rm_lines Then sr.Delete
-  
+ErrorHandler:
   API.EndOpt
 End Function
 
-
 Private Sub X_EXIT_Click()
+  Me.width = 200: Me.Height = 105
   Unload Me    '// EXIT
 End Sub
 
+Private Sub I18N_LNG_Click()
+  LNG_CODE = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+  If LNG_CODE = 1033 Then
+    LNG_CODE = 2052
+  Else
+    LNG_CODE = 1033
+  End If
+  SaveSetting "LYVBA", "Settings", "I18N_LNG", LNG_CODE
+  MsgBox "中英文语言切换完成，请重启插件!", vbOKOnly, "兰雅VBA代码分享"
+End Sub
 
+
+Private Sub Bt_SplitSegment_Click()
+  ModulePlus.SplitSegment
+End Sub
+
+Private Sub btn_square_hi_Click()
+  ModulePlus.square_hw "Height"
+End Sub
+
+Private Sub btn_square_wi_Click()
+  ModulePlus.square_hw "Width"
+End Sub
+
+'// 节点连接合并
+Private Sub btn_join_nodes_Click()
+    ActiveSelection.CustomCommand "ConvertTo", "JoinCurves"
+    Application.Refresh
+End Sub
+
+'// 节点优化减少
+Private Sub btn_nodes_reduce_Click()
+  ModulePlus.Nodes_Reduce
+End Sub
+
+'// 选择标注线 选择文字 删除或者解绑标准线
+Private Sub SelectText_Click()
+  ModulePlus.Dimension_Select_or_Delete 4
+End Sub
+Private Sub SelectLine_Click()
+  ModulePlus.Dimension_Select_or_Delete 1
+End Sub
+Private Sub Delete_Dimension_Click()
+  ModulePlus.Dimension_Select_or_Delete 2
+End Sub
+Private Sub bt_Untie_MarkLines_Click()
+  ModulePlus.Untie_MarkLines
+End Sub

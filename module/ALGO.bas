@@ -1,4 +1,3 @@
-Attribute VB_Name = "ALGO"
 '// Algorithm 模块
 #If VBA7 Then
 '// For CorelDRAW X6-2023  62bit

@@ -1,19 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmSelectSame 
-   Caption         =   "Similar Selection Plus"
-   ClientHeight    =   5745
-   ClientLeft      =   495
-   ClientTop       =   5895
-   ClientWidth     =   3255
-   OleObjectBlob   =   "frmSelectSame.frx":0000
-   ShowModal       =   0   'False
-End
-Attribute VB_Name = "frmSelectSame"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
-
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 

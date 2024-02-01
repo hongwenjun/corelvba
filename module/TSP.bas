@@ -1,4 +1,3 @@
-Attribute VB_Name = "TSP"
 '// 导出节点信息到数据文件
 Public Function CDR_TO_TSP()
   API.BeginOpt

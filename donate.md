@@ -1,5 +1,5 @@
 # 捐赠网友将送商业版注册激活码一份
-![image](https://github.com/hongwenjun/corelvba/assets/1762909/b2b46a28-ba9a-4488-9c95-35e723e4022b)![](https://lyvba.com/wp-content/uploads/2023/12/vlog_lanya.jpg)
+![](https://lyvba.com/wp-content/uploads/2023/12/vlog_lanya.jpg)
 ### 2022.12.13 庆祝蘭雅CorelVBA工具捐赠和收益总额达到3000元
 ### 2023.12.29 庆祝蘭雅CorelVBA工具捐赠和收益总额达到5000元
 ## 捐赠

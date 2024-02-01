@@ -1,17 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CQL_FIND_UI 
-   ClientHeight    =   7830
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   11610
-   OleObjectBlob   =   "CQL_FIND_UI.frx":0000
-   StartUpPosition =   1  '所有者中心
-End
-Attribute VB_Name = "CQL_FIND_UI"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 

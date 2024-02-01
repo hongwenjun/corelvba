@@ -1,20 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmEditPowerClip 
-   Caption         =   "容器便捷调整"
-   ClientHeight    =   3090
-   ClientLeft      =   120
-   ClientTop       =   465
-   ClientWidth     =   3510
-   OleObjectBlob   =   "frmEditPowerClip.frx":0000
-   ShowModal       =   0   'False
-   StartUpPosition =   2  '屏幕中心
-End
-Attribute VB_Name = "frmEditPowerClip"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
-
 Option Explicit
 Dim xzbj As Boolean
 Private Sub Frame2_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)

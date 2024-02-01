@@ -1,21 +1,3 @@
-VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ArrangeForm 
-   Caption         =   "蘭雅sRGB 自动拼版 │ 嘉盟赞助"
-   ClientHeight    =   2475
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   4650
-   OleObjectBlob   =   "ArrangeForm.frx":0000
-   ShowModal       =   0   'False
-   StartUpPosition =   2  '屏幕中心
-   WhatsThisButton =   -1  'True
-   WhatsThisHelp   =   -1  'True
-End
-Attribute VB_Name = "ArrangeForm"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
 '// 用户窗口初始化
 Private Sub UserForm_Initialize()
   ActiveDocument.Unit = cdrMillimeter
