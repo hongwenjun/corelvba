@@ -706,13 +706,14 @@ Private Function cutInHalf(Optional method As Integer)
 End Function
 
 
-'// 批量多页居中-遍历批量物件，放置物件到页面
+'// 批量多页居中-遍历批量物件，放置物件到页面  '杰开修改
 Public Function Batch_Align_Page_Center()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
   Set sr = ActiveSelectionRange
+'  sr.MoveToLayer ActiveDocument.DesktopLayer
   total = sr.Count
 
   '// 建立多页面
@@ -728,21 +729,24 @@ Public Function Batch_Align_Page_Center()
 
 
   Dim sh As Shape
-
-  '// 遍历批量物件，放置物件到页面
+'  MoveToLayer ActivePage.DesktopLayer
+  '// 遍历批量物件，放置物件到页面  InsertPagesEx   ActivePage
   For i = 1 To sr.Count
     doc.Pages(i).Activate
     Set sh = sr.Shapes(i)
     ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
  
    '// 物件居中页面
-#If VBA7 Then
-  ActiveDocument.ClearSelection
-  sh.AddToSelection
-  ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
-#Else
-  sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
-#End If
+    #If VBA7 Then
+      ActiveDocument.ClearSelection
+      sh.AddToSelection
+      sh.MoveToLayer ActivePage.ActiveLayer
+      
+      ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
+    #Else
+      sh.MoveToLayer doc.Pages(i).ActiveLayer
+      sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
+    #End If
 
   Next i
 ErrorHandler:
