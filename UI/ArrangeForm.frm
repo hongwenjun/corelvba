@@ -1,4 +1,22 @@
-'// ç”¨æˆ·çª—å£åˆå§‹åŒ–
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ArrangeForm 
+   Caption         =   "ÌmÑÅsRGB ×Ô¶¯Æ´°æ ©¦ ¼ÎÃËÔŞÖú"
+   ClientHeight    =   2475
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   4650
+   OleObjectBlob   =   "ArrangeForm.frx":0000
+   ShowModal       =   0   'False
+   StartUpPosition =   2  'CenterScreen
+   WhatsThisButton =   -1  'True
+   WhatsThisHelp   =   -1  'True
+End
+Attribute VB_Name = "ArrangeForm"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+'// ÓÃ»§´°¿Ú³õÊ¼»¯
 Private Sub UserForm_Initialize()
   ActiveDocument.Unit = cdrMillimeter
   Dim sr As ShapeRange
@@ -15,7 +33,7 @@ Private Sub UserForm_Initialize()
   If sr.Count > 0 Then
     ls = Int(sr.SizeWidth + 0.5)
     hs = Int(sr.SizeHeight + 0.5)
-    Label_Size.Caption = "å°ºå¯¸: " & ls & "Ã—" & hs & "mm"
+    Label_Size.Caption = "³ß´ç: " & ls & "¡Á" & hs & "mm"
     
     lj = Int(pw / ls)
     hj = Int(ph / hs)
@@ -62,9 +80,9 @@ Private Sub CommandButton1_Click()
     GoTo ErrorHandler
   End If
   
-  '// ä»£ç è¿è¡Œæ—¶å…³é—­çª—å£åˆ·æ–°
+  '// ´úÂëÔËĞĞÊ±¹Ø±Õ´°¿ÚË¢ĞÂ
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  '// æ‹¼ç‰ˆçŸ©é˜µ
+  '// Æ´°æ¾ØÕó
   arrange_Clone matrix, sr
   Unload Me
   
@@ -72,26 +90,31 @@ ErrorHandler:
   API.EndOpt
 End Sub
 
-'// æ‹¼ç‰ˆçŸ©é˜µ  matrix = Array(ls, hs, lj, hj)
+'// Æ´°æ¾ØÕó  matrix = Array(ls, hs, lj, hj)
 Private Function arrange_Clone(matrix As Variant, sr As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
-  x = sr.SizeWidth: Y = sr.SizeHeight
+  X = sr.SizeWidth: Y = sr.SizeHeight
   Set s1 = sr '// Set s1 = sr.Clone
-  '// StepAndRepeat æ–¹æ³•åœ¨èŒƒå›´å†…åˆ›å»ºå¤šä¸ªå½¢çŠ¶å‰¯æœ¬
-  Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
-  Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(hs - 1, 0#, -(Y + hj))
+  '// StepAndRepeat ·½·¨ÔÚ·¶Î§ÄÚ´´½¨¶à¸öĞÎ×´¸±±¾
+  
+'//  Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
+'//  Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(hs - 1, 0#, -(Y + hj))
+
+Set dup1 = s1.StepAndRepeat(hs - 1, 0#, -(Y + hj))
+Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(ls - 1, X + lj, 0#)
+
   '// s1.Delete
 End Function
 
 Private Function arrange_Clone_one(matrix As Variant, sr As ShapeRange)
   ls = matrix(0): hs = matrix(1)
   lj = matrix(2): hj = matrix(3)
-  x = sr.SizeWidth: Y = sr.SizeHeight
+  X = sr.SizeWidth: Y = sr.SizeHeight
   Set s1 = sr '// Set s1 = sr.Clone
-  '// StepAndRepeat æ–¹æ³•åœ¨èŒƒå›´å†…åˆ›å»ºå¤šä¸ªå½¢çŠ¶å‰¯æœ¬
+  '// StepAndRepeat ·½·¨ÔÚ·¶Î§ÄÚ´´½¨¶à¸öĞÎ×´¸±±¾
   If ls > 1 Then
-    Set dup1 = s1.StepAndRepeat(ls - 1, x + lj, 0#)
+    Set dup1 = s1.StepAndRepeat(ls - 1, X + lj, 0#)
   Else
     Set dup1 = s1
   End If

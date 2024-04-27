@@ -1,14 +1,31 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Replace_UI 
+   Caption         =   "Ê¹¼ôÌù°åÉÏµÄÎï¼þÌæ»»Ñ¡ÔñµÄÄ¿±êÎï¼þ"
+   ClientHeight    =   4560
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   7590
+   OleObjectBlob   =   "Replace_UI.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "Replace_UI"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+
+
 #If VBA7 Then
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -19,27 +36,27 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 
 
 Private Sub Close_Icon_Click()
-  Unload Me    '// å…³é—­
+  Unload Me    '// ¹Ø±Õ
 End Sub
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
-  Dim hWnd As Long
+  Dim hwnd As Long
   
-  hWnd = FindWindow("ThunderDFrame", Me.Caption)
+  hwnd = FindWindow("ThunderDFrame", Me.Caption)
 
-  IStyle = GetWindowLong(hWnd, GWL_STYLE)
+  IStyle = GetWindowLong(hwnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hWnd, GWL_STYLE, IStyle
-  DrawMenuBar hWnd
-  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hwnd, GWL_STYLE, IStyle
+  DrawMenuBar hwnd
+  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
   
   With Me
   '  .StartUpPosition = 0
   '  .Left = 500
   '  .Top = 200
-    .Width = 378
+    .width = 378
     .Height = 228
   End With
   
@@ -73,7 +90,7 @@ Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, By
   ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
     Call image_replace
   ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
-    API.WebHelp "https://262235.xyz/index.php/tag/vba/"
+ '//   API.WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
   Replace_UI.Hide
@@ -111,7 +128,7 @@ Private Sub image_replace()
   Next sh
 
 ErrorHandler:
-'//    MsgBox "è¯·å…ˆå¤åˆ¶å›¾ç‰‡çš„å®Œæ•´è·¯å¾„ï¼Œæœ¬å·¥å…·èƒ½è‡ªåŠ¨æ›¿æ¢å›¾ç‰‡!"
+'//    MsgBox "ÇëÏÈ¸´ÖÆÍ¼Æ¬µÄÍêÕûÂ·¾¶£¬±¾¹¤¾ßÄÜ×Ô¶¯Ìæ»»Í¼Æ¬!"
   API.EndOpt
 End Sub
 
@@ -141,7 +158,7 @@ Private Sub copy_shape_replace_resize()
   Next sh
 
 ErrorHandler:
-'// MsgBox "è¯·å…ˆå¤åˆ¶Ctrl+Cï¼Œç„¶åŽé€‰æ‹©è¦æ›¿æ¢çš„ç‰©ä»¶è¿è¡Œæœ¬å·¥å…·!"
+'// MsgBox "ÇëÏÈ¸´ÖÆCtrl+C£¬È»ºóÑ¡ÔñÒªÌæ»»µÄÎï¼þÔËÐÐ±¾¹¤¾ß!"
   API.EndOpt
 End Sub
 
@@ -168,7 +185,7 @@ Private Sub copy_shape_replace()
   Next sh
 
 ErrorHandler:
-'// MsgBox "è¯·å…ˆå¤åˆ¶Ctrl+Cï¼Œç„¶åŽé€‰æ‹©è¦æ›¿æ¢çš„ç‰©ä»¶è¿è¡Œæœ¬å·¥å…·!"
+'// MsgBox "ÇëÏÈ¸´ÖÆCtrl+C£¬È»ºóÑ¡ÔñÒªÌæ»»µÄÎï¼þÔËÐÐ±¾¹¤¾ß!"
   API.EndOpt
 End Sub
 

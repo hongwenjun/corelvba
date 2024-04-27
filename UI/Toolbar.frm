@@ -1,3 +1,17 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Toolbar 
+   Caption         =   "Toolbar"
+   ClientHeight    =   4230
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   6840
+   OleObjectBlob   =   "Toolbar.frx":0000
+End
+Attribute VB_Name = "Toolbar"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -54,7 +68,7 @@ End Sub
 
 Private Sub Change_UI_Close_Voice_Click()
   SaveSetting "LYVBA", "Settings", "SpeakHelp", "0"
-  MsgBox "è¯·ç»™æˆ‘æ”¯æŒ!" & vbNewLine & "æ‚¨çš„æ”¯æŒï¼Œæˆ‘æ‰èƒ½æœ‰åŠ¨åŠ›æ·»åŠ æ›´å¤šåŠŸèƒ½." & vbNewLine & "è˜­é›…CorelVBAå·¥å…· æ°¸ä¹…å…è´¹å¼€æº"
+  MsgBox "Çë¸øÎÒÖ§³Ö!" & vbNewLine & "ÄúµÄÖ§³Ö£¬ÎÒ²ÅÄÜÓĞ¶¯Á¦Ìí¼Ó¸ü¶à¹¦ÄÜ." & vbNewLine & "ÌmÑÅCorelVBA¹¤¾ß ÓÀ¾ÃÃâ·Ñ¿ªÔ´"
 End Sub
 
 Private Sub I18N_LNG_Click()
@@ -65,7 +79,7 @@ Private Sub I18N_LNG_Click()
     LNG_CODE = 1033
   End If
   SaveSetting "LYVBA", "Settings", "I18N_LNG", LNG_CODE
-  MsgBox "ä¸­è‹±æ–‡è¯­è¨€åˆ‡æ¢å®Œæˆï¼Œè¯·é‡å¯æ’ä»¶!", vbOKOnly, "å…°é›…VBAä»£ç åˆ†äº«"
+  MsgBox "ÖĞÓ¢ÎÄÓïÑÔÇĞ»»Íê³É£¬ÇëÖØÆô²å¼ş!", vbOKOnly, "À¼ÑÅVBA´úÂë·ÖÏí"
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -83,7 +97,7 @@ Private Sub UserForm_Initialize()
   
 With Me
   .StartUpPosition = 0
-  .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400"))  ' è®¾ç½®å·¥å…·æ ä½ç½®
+  .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400"))  ' ÉèÖÃ¹¤¾ßÀ¸Î»ÖÃ
   .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55"))
   .Height = 30
   .width = 336
@@ -92,14 +106,14 @@ End With
   OutlineKey = True
   OptKey = True
 
-  ' è¯»å–è§’çº¿è®¾ç½®
+  ' ¶ÁÈ¡½ÇÏßÉèÖÃ
   Bleed.text = API.GetSet("Bleed")
   Line_len.text = API.GetSet("Line_len")
   Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
   
   UIFile = Path & "GMS\LYVBA\" & HDPI.GetHDPIPercentage & "\ToolBar.jpg"
   If API.ExistsFile_UseFso(UIFile) Then
-    UI.Picture = LoadPicture(UIFile)   'æ¢UIå›¾
+    UI.Picture = LoadPicture(UIFile)   '»»UIÍ¼
     Set pic1 = LoadPicture(UIFile)
   End If
 
@@ -109,11 +123,11 @@ End With
     UIL_Key = True
   End If
 
-  ' çª—å£é€æ˜, æœ€å°åŒ–åªæ˜¾ç¤ºä¸€ä¸ªå›¾æ ‡
+  ' ´°¿ÚÍ¸Ã÷, ×îĞ¡»¯Ö»ÏÔÊ¾Ò»¸öÍ¼±ê
   #If VBA7 Then
     MakeUserFormTransparent Me, RGB(26, 22, 35)
   #Else
-  ' CorelDRAW X4 / Windows7 è‡ªç”¨å…³é—­é€æ˜
+  ' CorelDRAW X4 / Windows7 ×ÔÓÃ¹Ø±ÕÍ¸Ã÷
   #End If
 End Sub
 
@@ -159,7 +173,7 @@ Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVa
   ElseIf Shift = fmCtrlMask Then
       mx = X: my = Y
   Else
-    Unload Me   ' Ctrl + é¼ æ ‡ å…³é—­å·¥å…·
+    Unload Me   ' Ctrl + Êó±ê ¹Ø±Õ¹¤¾ß
   End If
 End Sub
 
@@ -172,152 +186,152 @@ End Sub
 
 Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim c As New Color
-  ' å®šä¹‰å›¾æ ‡åæ ‡pos
+  ' ¶¨ÒåÍ¼±ê×ø±êpos
   Dim pos_x As Variant, pos_y As Variant
   pos_y = Array(14)
   pos_x = Array(14, 41, 67, 94, 121, 148, 174, 201, 228, 254, 281, 308, 334, 361, 388, 415, 441, 468, 495)
 
-  '// æŒ‰ä¸‹Ctrlé”®ï¼Œæœ€ä¼˜å…ˆå¤„ç†å·¥å…·åŠŸèƒ½
+  '// °´ÏÂCtrl¼ü£¬×îÓÅÏÈ´¦Àí¹¤¾ß¹¦ÄÜ
   If Shift = 2 Then
     If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å®‰å…¨çº¿ï¼Œæ¸…é™¤è¾…åŠ©çº¿
-      Tools.guideangle ActiveSelectionRange, 3    ' å·¦é”® 3mm å‡ºè¡€
+      '// °²È«Ïß£¬Çå³ı¸¨ÖúÏß
+      Tools.guideangle ActiveSelectionRange, 3    ' ×ó¼ü 3mm ³öÑª
       
     ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// Adobe AI EPS INDD PDFå’ŒCorelDRAW ç¼©ç•¥å›¾å·¥å…·
+      '// Adobe AI EPS INDD PDFºÍCorelDRAW ËõÂÔÍ¼¹¤¾ß
       AdobeThumbnail_Click
       
     ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å¤šç‰©ä»¶æ‹†åˆ†çº¿æ®µ
+      '// ¶àÎï¼ş²ğ·ÖÏß¶Î
       Tools.Split_Segment
       
     ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æ™ºèƒ½æ‹†å­—
+      '// ÖÇÄÜ²ğ×Ö
       Tools.Take_Apart_Character
       
     ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æš‚æ—¶ç©º
+      '// ÔİÊ±¿Õ
       
     ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æš‚æ—¶ç©º
+      '// ÔİÊ±¿Õ
       
     ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æœ¨å¤´äººæ™ºèƒ½ç¾¤ç»„ï¼Œå¼‚å½¢ç¾¤ç»„
+      '// Ä¾Í·ÈËÖÇÄÜÈº×é£¬ÒìĞÎÈº×é
       autogroup("group", 1).CreateSelection
       
     ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// CTRLæ‰©å±•å·¥å…·æ 
+      '// CTRLÀ©Õ¹¹¤¾ßÀ¸
       Me.Height = 30 + 45
       
     ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      ' æ–‡æœ¬è½¬æ›²  å‚æ•° all=1 ï¼Œæ”¯æŒæ¡†é€‰å’Œå›¾æ¡†å‰ªè£å†…çš„æ–‡æœ¬
+      ' ÎÄ±¾×ªÇú  ²ÎÊı all=1 £¬Ö§³Ö¿òÑ¡ºÍÍ¼¿ò¼ô²ÃÄÚµÄÎÄ±¾
       ' Tools.TextShape_ConvertToCurves 1
     End If
     Exit Sub
   End If
 
 
-  '// é¼ æ ‡å³é”® æ‰©å±•é”®æŒ‰é’®ä¼˜å…ˆ  æ”¶ç¼©å·¥å…·æ   æ ‡è®°èŒƒå›´æ¡†  å±…ä¸­é¡µé¢ å°ºå¯¸å–æ•´æ•°  å•è‰²é»‘ä¸­çº¿æ ‡è®° æ‰©å±•å·¥å…·æ   æ’åˆ—å·¥å…·  æ‰©å±•å·¥å…·æ æ”¶ç¼©
+  '// Êó±êÓÒ¼ü À©Õ¹¼ü°´Å¥ÓÅÏÈ  ÊÕËõ¹¤¾ßÀ¸  ±ê¼Ç·¶Î§¿ò  ¾ÓÖĞÒ³Ãæ ³ß´çÈ¡ÕûÊı  µ¥É«ºÚÖĞÏß±ê¼Ç À©Õ¹¹¤¾ßÀ¸  ÅÅÁĞ¹¤¾ß  À©Õ¹¹¤¾ßÀ¸ÊÕËõ
   If Button = 2 Then
     If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æ”¶ç¼©å·¥å…·æ 
+      '// ÊÕËõ¹¤¾ßÀ¸
       Me.width = 30: Me.Height = 30
       UI.Visible = False: LOGO.Visible = True
 
     ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å±…ä¸­é¡µé¢
+      '// ¾ÓÖĞÒ³Ãæ
       Tools.Align_Page_Center
 
     ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     
       If Github_Version = 1 Then
-        '// å•çº¿æ¡è½¬è£åˆ‡çº¿ - æ”¾ç½®åˆ°é¡µé¢å››è¾¹
+        '// µ¥ÏßÌõ×ª²ÃÇĞÏß - ·ÅÖÃµ½Ò³ÃæËÄ±ß
         CutLines.SelectLine_to_Cropline
       Else
-        '// æ ‡è®°èŒƒå›´æ¡†
+        '// ±ê¼Ç·¶Î§¿ò
         Tools.Mark_Range_Box
       End If
 
     ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// æ‰¹é‡è®¾ç½®ç‰©ä»¶å°ºå¯¸æ•´æ•°
+      '// ÅúÁ¿ÉèÖÃÎï¼ş³ß´çÕûÊı
       Tools.Size_to_Integer
     
-    '//åˆ†åˆ†åˆåˆæŠŠå‡ ä¸ªåŠŸèƒ½æŒ‰é”®åˆå¹¶åˆ°ä¸€èµ·ï¼Œå®šä¹‰åˆ°å³é”®ä¸Š
+    '//·Ö·ÖºÏºÏ°Ñ¼¸¸ö¹¦ÄÜ°´¼üºÏ²¢µ½Ò»Æğ£¬¶¨Òåµ½ÓÒ¼üÉÏ
     ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-     '// Tools.åˆ†åˆ†åˆåˆ
+     '// Tools.·Ö·ÖºÏºÏ
 
     ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// è‡ªåŠ¨ä¸­çº¿è‰²é˜¶æ¡ é»‘ç™½
+      '// ×Ô¶¯ÖĞÏßÉ«½×Ìõ ºÚ°×
       AutoColorMark.Auto_ColorMark_K
 
     ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-     '// æ™ºèƒ½ç¾¤ç»„
+     '// ÖÇÄÜÈº×é
       SmartGroup.Smart_Group API.Create_Tolerance
       
     ElseIf Abs(X - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
       CQL_FIND_UI.Show 0
     Else
-      '// é€‰æ‹©ç›¸åŒå·¥å…·å¢å¼ºç‰ˆ
+      '// Ñ¡ÔñÏàÍ¬¹¤¾ßÔöÇ¿°æ
       frmSelectSame.Show 0
     End If
 
     ElseIf Abs(X - pos_x(8)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å³é”®æ‰©å±•å·¥å…·æ 
+      '// ÓÒ¼üÀ©Õ¹¹¤¾ßÀ¸
       Me.Height = 30 + 45
       
     ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-     '// æ–‡æœ¬ç»Ÿè®¡ä¿¡æ¯
+     '// ÎÄ±¾Í³¼ÆĞÅÏ¢
      Application.FrameWork.Automation.InvokeItem "bf3bd8fe-ca26-4fe0-91b0-3b5c99786fb6"
 
     ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å³é”®æ’åˆ—å·¥å…·
+      '// ÓÒ¼üÅÅÁĞ¹¤¾ß
       TOP_ALIGN_BT.Visible = True
       LEFT_ALIGN_BT.Visible = True
 
     ElseIf Abs(X - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-      '// å³é”®æ‰©å±•å·¥å…·æ æ”¶ç¼©
+      '// ÓÒ¼üÀ©Õ¹¹¤¾ßÀ¸ÊÕËõ
       Me.Height = 30
       
     End If
     Exit Sub
   End If
   
-  '// é¼ æ ‡å·¦é”® å•å‡»æŒ‰é’®åŠŸèƒ½  æŒ‰å·¥å…·æ ä¸Šå›¾æ ‡æ­£å¸¸åŠŸèƒ½
+  '// Êó±ê×ó¼ü µ¥»÷°´Å¥¹¦ÄÜ  °´¹¤¾ßÀ¸ÉÏÍ¼±êÕı³£¹¦ÄÜ
   If Abs(X - pos_x(0)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-   '// è£åˆ‡çº¿: æ‰¹é‡ç‰©ä»¶è£åˆ‡çº¿
+   '// ²ÃÇĞÏß: ÅúÁ¿Îï¼ş²ÃÇĞÏß
     CutLines.Batch_CutLines
     
   ElseIf Abs(X - pos_x(1)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-  '// å‰ªè´´æ¿å°ºå¯¸å»ºç«‹çŸ©å½¢
+  '// ¼ôÌù°å³ß´ç½¨Á¢¾ØĞÎ
     ClipbRectangle.Build_Rectangle
     
   ElseIf Abs(X - pos_x(2)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
       MakeSizePlus.Show 0
     Else
-      '// å•çº¿æ¡è½¬è£åˆ‡çº¿ - æ”¾ç½®åˆ°é¡µé¢å››è¾¹
+      '// µ¥ÏßÌõ×ª²ÃÇĞÏß - ·ÅÖÃµ½Ò³ÃæËÄ±ß
       CutLines.SelectLine_to_Cropline
     End If
   ElseIf Abs(X - pos_x(3)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    '// æ‹¼ç‰ˆ.Arrange
+    '// Æ´°æ.Arrange
     Arrange.Arrange
     
   ElseIf Abs(X - pos_x(4)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    '// æ‹¼ç‰ˆè£åˆ‡çº¿
+    '// Æ´°æ²ÃÇĞÏß
     CutLines.Draw_Lines
     
   ElseIf Abs(X - pos_x(5)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    '// è‡ªåŠ¨ä¸­çº¿è‰²é˜¶æ¡ å½©è‰²
+    '// ×Ô¶¯ÖĞÏßÉ«½×Ìõ ²ÊÉ«
     AutoColorMark.Auto_ColorMark
     
   ElseIf Abs(X - pos_x(6)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-   '// æ™ºèƒ½ç¾¤ç»„ æ²¡å®¹å·®
+   '// ÖÇÄÜÈº×é Ã»Èİ²î
     SmartGroup.Smart_Group
     
   ElseIf Abs(X - pos_x(7)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Github_Version = 1 Then
-       '// é€‰æ‹©ç›¸åŒå·¥å…·å¢å¼ºç‰ˆ
+       '// Ñ¡ÔñÏàÍ¬¹¤¾ßÔöÇ¿°æ
       frmSelectSame.Show 0
     Else
       CQL_FIND_UI.Show 0
@@ -327,54 +341,54 @@ Private Sub UI_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal 
     Replace_UI.Show 0
     
   ElseIf Abs(X - pos_x(9)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    ' ç®€å•æ–‡æœ¬è½¬æ›²
+    ' ¼òµ¥ÎÄ±¾×ªÇú
     Tools.TextShape_ConvertToCurves 0
     
   ElseIf Abs(X - pos_x(10)) < 14 And Abs(Y - pos_y(0)) < 14 Then
-    '// æ‰©å±•å·¥å…·æ 
+    '// À©Õ¹¹¤¾ßÀ¸
     Me.Height = 30 + 45
     
-    Speak_Msg "å·¦å³é”®æœ‰ä¸åŒåŠŸèƒ½"
+    Speak_Msg "×óÓÒ¼üÓĞ²»Í¬¹¦ÄÜ"
     
   ElseIf Abs(X - pos_x(11)) < 14 And Abs(Y - pos_y(0)) < 14 Then
     If Me.Height > 30 Then
       Me.Height = 30
     Else
-      '// æœ€å°åŒ–
+      '// ×îĞ¡»¯
       Me.width = 30
       Me.Height = 30
       OPEN_UI_BIG.Left = 31
       UI.Visible = False
       LOGO.Visible = True
   
-      ' ä¿å­˜å·¥å…·æ¡ä½ç½® Left å’Œ Top
+      ' ±£´æ¹¤¾ßÌõÎ»ÖÃ Left ºÍ Top
       SaveSetting "LYVBA", "Settings", "Left", Me.Left
       SaveSetting "LYVBA", "Settings", "Top", Me.Top
     
-      Speak_Msg "å·¦é”®ç¼©å° å³é”®æ”¶ç¼©"
+      Speak_Msg "×ó¼üËõĞ¡ ÓÒ¼üÊÕËõ"
     End If
   End If
 
 End Sub
 
 Private Sub X_EXIT_Click()
-  Unload Me    ' å…³é—­
+  Unload Me    ' ¹Ø±Õ
 End Sub
 
-'// å¤šé¡µåˆå¹¶å·¥å…·ï¼Œå·²ç»åˆå¹¶åˆ°ä¸»çº¿å·¥å…·
-' Private Sub è°ƒç”¨å¤šé¡µåˆå¹¶å·¥å…·()
+'// ¶àÒ³ºÏ²¢¹¤¾ß£¬ÒÑ¾­ºÏ²¢µ½Ö÷Ïß¹¤¾ß
+' Private Sub µ÷ÓÃ¶àÒ³ºÏ²¢¹¤¾ß()
 '  Dim value As Integer
-'  value = GMSManager.RunMacro("åˆå¹¶å¤šé¡µå·¥å…·", "åˆå¹¶å¤šé¡µè¿è¡Œ.run")
+'  value = GMSManager.RunMacro("ºÏ²¢¶àÒ³¹¤¾ß", "ºÏ²¢¶àÒ³ÔËĞĞ.run")
 ' End Sub
 
-'''///  è´ªå¿ƒå•†äººå’Œå¥½ç©å·¥å…·ç­‰  ///'''
+'''///  Ì°ĞÄÉÌÈËºÍºÃÍæ¹¤¾ßµÈ  ///'''
 Private Sub Cdr_Nodes_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     TSP.Nodes_To_TSP
   ElseIf Shift = fmCtrlMask Then
     TSP.CDR_TO_TSP
   Else
-    ' Ctrl + é¼ æ ‡  ç©º
+    ' Ctrl + Êó±ê  ¿Õ
   End If
 End Sub
 
@@ -400,7 +414,7 @@ Private Sub TSP2DRAW_LINE_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
   ElseIf Shift = fmCtrlMask Then
     TSP.TSP_TO_DRAW_LINES
   Else
-    ' Ctrl + é¼ æ ‡  ç©º
+    ' Ctrl + Êó±ê  ¿Õ
   End If
 End Sub
 
@@ -425,7 +439,7 @@ Private Sub BITMAP_MAKE_DOTS_Click()
   TSP.BITMAP_MAKE_DOTS
 End Sub
 
-'''///  Pythonè„šæœ¬å’ŒäºŒç»´ç ç­‰  ///'''
+'''///  Python½Å±¾ºÍ¶şÎ¬ÂëµÈ  ///'''
 Private Sub Organize_Size_Click()
   Tools.Python_Organize_Size
 End Sub
@@ -445,8 +459,8 @@ End Sub
 
 Private Sub OPEN_UI_BIG_Click()
   Unload Me
-  MsgBox "è¯·ç»™æˆ‘æ”¯æŒ!" & vbNewLine & "æ‚¨çš„æ”¯æŒï¼Œæˆ‘æ‰èƒ½æœ‰åŠ¨åŠ›æ·»åŠ æ›´å¤šåŠŸèƒ½." & vbNewLine & "è˜­é›…CorelVBAå·¥å…· æ°¸ä¹…å…è´¹å¼€æº" _
-       & vbNewLine & "æºç ç½‘å€:" & vbNewLine & "https://github.com/hongwenjun/corelvba"
+  MsgBox "Çë¸øÎÒÖ§³Ö!" & vbNewLine & "ÄúµÄÖ§³Ö£¬ÎÒ²ÅÄÜÓĞ¶¯Á¦Ìí¼Ó¸ü¶à¹¦ÄÜ." & vbNewLine & "ÌmÑÅCorelVBA¹¤¾ß ÓÀ¾ÃÃâ·Ñ¿ªÔ´" _
+       & vbNewLine & "Ô´ÂëÍøÖ·:" & vbNewLine & "https://github.com/hongwenjun/corelvba"
 End Sub
 
 Private Sub Settings_Click()
@@ -456,7 +470,7 @@ Private Sub Settings_Click()
    SaveSetting "LYVBA", "Settings", "Outline_Width", Outline_Width.text
   End If
 
-  ' ä¿å­˜å·¥å…·æ¡ä½ç½® Left å’Œ Top
+  ' ±£´æ¹¤¾ßÌõÎ»ÖÃ Left ºÍ Top
   SaveSetting "LYVBA", "Settings", "Left", Me.Left
   SaveSetting "LYVBA", "Settings", "Top", Me.Top
   
@@ -464,16 +478,16 @@ Private Sub Settings_Click()
 End Sub
 
 
-'''/////////  å›¾æ ‡é¼ æ ‡å·¦å³ç‚¹å‡»åŠŸèƒ½è°ƒç”¨   /////////'''
+'''/////////  Í¼±êÊó±ê×óÓÒµã»÷¹¦ÄÜµ÷ÓÃ   /////////'''
 
 Private Sub Tools_Icon_Click()
-  ' è°ƒç”¨è¯­å¥
+  ' µ÷ÓÃÓï¾ä
   i = GMSManager.RunMacro("ZeroBase", "Hello_VBA.run")
 End Sub
 
 Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    MsgBox "å·¦é”®æ‹†åˆ†çº¿æ®µï¼ŒCtrlåˆå¹¶çº¿æ®µ"
+    MsgBox "×ó¼ü²ğ·ÖÏß¶Î£¬CtrlºÏ²¢Ïß¶Î"
   ElseIf Shift = fmCtrlMask Then
     Tools.Split_Segment
   Else
@@ -481,10 +495,10 @@ Private Sub Split_Segment_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
     Application.Refresh
   End If
   
-  Speak_Msg "æ‹†åˆ†çº¿æ®µï¼ŒCtrlåˆå¹¶çº¿æ®µ"
+  Speak_Msg "²ğ·ÖÏß¶Î£¬CtrlºÏ²¢Ïß¶Î"
 End Sub
 
-'''////  CorelDRAW ä¸ Adobe_Illustrator å‰ªè´´æ¿è½¬æ¢  ////'''
+'''////  CorelDRAW Óë Adobe_Illustrator ¼ôÌù°å×ª»»  ////'''
 Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim value As Integer
   If Button = 2 Then
@@ -494,11 +508,11 @@ Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As 
   
   If Button Then
     value = GMSManager.RunMacro("AIClipboard", "CopyPaste.CopyAIFormat")
-    MsgBox "CorelDRAW ä¸ Adobe_Illustrator å‰ªè´´æ¿è½¬æ¢" & vbNewLine & "é¼ æ ‡å·¦é”®å¤åˆ¶ï¼Œé¼ æ ‡å³é”®ç²˜è´´"
+    MsgBox "CorelDRAW Óë Adobe_Illustrator ¼ôÌù°å×ª»»" & vbNewLine & "Êó±ê×ó¼ü¸´ÖÆ£¬Êó±êÓÒ¼üÕ³Ìù"
   End If
 End Sub
 
-'''////  æ ‡è®°ç”»æ¡† æ”¯æŒå®¹å·®  ////'''
+'''////  ±ê¼Ç»­¿ò Ö§³ÖÈİ²î  ////'''
 Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Mark_CreateRectangle True
@@ -507,10 +521,10 @@ Private Sub Mark_CreateRectangle_MouseDown(ByVal Button As Integer, ByVal Shift 
   Else
     Create_Tolerance
   End If
-  Speak_Msg "æ ‡è®°ç”»æ¡†  å³é”®æ”¯æŒå®¹å·®"
+  Speak_Msg "±ê¼Ç»­¿ò  ÓÒ¼üÖ§³ÖÈİ²î"
 End Sub
 
-'''////  ä¸€é”®æ‹†å¼€å¤šè¡Œç»„åˆçš„æ–‡å­—å­—ç¬¦  ////'''
+'''////  Ò»¼ü²ğ¿ª¶àĞĞ×éºÏµÄÎÄ×Ö×Ö·û  ////'''
 Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Batch_Combine
@@ -521,7 +535,7 @@ Private Sub Batch_Combine_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
   End If
 End Sub
 
-'''////  ç®€å•ä¸€åˆ€åˆ‡  ////'''
+'''////  ¼òµ¥Ò»µ¶ÇĞ  ////'''
 Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Single_Line_Vertical
@@ -532,7 +546,7 @@ Private Sub Single_Line_MouseDown(ByVal Button As Integer, ByVal Shift As Intege
   End If
 End Sub
 
-'''////  å‚»ç“œç«è½¦æ’åˆ—  ////'''
+'''////  Éµ¹Ï»ğ³µÅÅÁĞ  ////'''
 Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Simple_Train_Arrangement 3#
@@ -543,7 +557,7 @@ Private Sub TOP_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integ
   End If
 End Sub
 
-'''////  å‚»ç“œé˜¶æ¢¯æ’åˆ—  ////'''
+'''////  Éµ¹Ï½×ÌİÅÅÁĞ  ////'''
 Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Simple_Ladder_Arrangement 3#
@@ -555,28 +569,28 @@ Private Sub LEFT_ALIGN_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Inte
 End Sub
 
 
-'''////  å·¦é”®-å¤šé¡µåˆå¹¶ä¸€é¡µå·¥å…·   å³é”®-æ‰¹é‡å¤šé¡µå±…ä¸­ ////'''
+'''////  ×ó¼ü-¶àÒ³ºÏ²¢Ò»Ò³¹¤¾ß   ÓÒ¼ü-ÅúÁ¿¶àÒ³¾ÓÖĞ ////'''
 Private Sub UniteOne_BT_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     Tools.Batch_Align_Page_Center
   ElseIf Shift = fmCtrlMask Then
     UniteOne.Show 0
   Else
-    ' Ctrl + é¼ æ ‡  ç©º
+    ' Ctrl + Êó±ê  ¿Õ
   End If
 End Sub
 
-'''////  Adobe AI EPS INDD PDFå’ŒCorelDRAW ç¼©ç•¥å›¾å·¥å…·  ////'''
+'''////  Adobe AI EPS INDD PDFºÍCorelDRAW ËõÂÔÍ¼¹¤¾ß  ////'''
 Private Sub AdobeThumbnail_Click()
     Dim h As Long, r As Long
     mypath = Path & "GMS\LYVBA\"
     App = mypath & "GuiAdobeThumbnail.exe"
     
-    h = FindWindow(vbNullString, "CorelVBA é’å¹´èŠ‚ By è˜­é›…sRGB")
+    h = FindWindow(vbNullString, "CorelVBA ÇàÄê½Ú By ÌmÑÅsRGB")
     i = ShellExecute(h, "", App, "", mypath, 1)
 End Sub
 
-'''////  å¿«é€Ÿé¢œè‰²é€‰æ‹©  ////'''
+'''////  ¿ìËÙÑÕÉ«Ñ¡Ôñ  ////'''
 Private Sub Quick_Color_Select_Click()
   Tools.quickColorSelect
 End Sub
@@ -587,42 +601,42 @@ Private Sub Cut_Cake_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, 
   ElseIf Shift = fmCtrlMask Then
     Tools.divideHorizontally
   Else
-    ' Ctrl + é¼ æ ‡  ç©º
+    ' Ctrl + Êó±ê  ¿Õ
   End If
 End Sub
 
-'// å®‰å…¨è¾…åŠ©çº¿åŠŸèƒ½ï¼Œä¸‰é”®æ§åˆ¶ï¼Œè®¨åŒè¾…åŠ©çº¿çš„ä¹Ÿå¯ä»¥ç”¨æ¥åˆ é™¤è¾…åŠ©çº¿
+'// °²È«¸¨ÖúÏß¹¦ÄÜ£¬Èı¼ü¿ØÖÆ£¬ÌÖÑá¸¨ÖúÏßµÄÒ²¿ÉÒÔÓÃÀ´É¾³ı¸¨ÖúÏß
 Private Sub Safe_Guideangle_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Tools.guideangle ActiveSelectionRange, 0#   ' å³é”®0è·ç¦»è´´ç´§
+    Tools.guideangle ActiveSelectionRange, 0#   ' ÓÒ¼ü0¾àÀëÌù½ô
   ElseIf Shift = fmCtrlMask Then
-    Tools.guideangle ActiveSelectionRange, 3    ' å·¦é”® 3mm å‡ºè¡€
+    Tools.guideangle ActiveSelectionRange, 3    ' ×ó¼ü 3mm ³öÑª
   Else
-    Tools.guideangle ActiveSelectionRange, -Set_Space_Width     ' Ctrl + é¼ æ ‡å·¦é”® è‡ªå®šä¹‰é—´éš”
+    Tools.guideangle ActiveSelectionRange, -Set_Space_Width     ' Ctrl + Êó±ê×ó¼ü ×Ô¶¨Òå¼ä¸ô
   End If
 End Sub
 
-'// æ ‡å‡†å°ºå¯¸ï¼Œå·¦é”®å³é”®Ctrlä¸‰é”®æ§åˆ¶ï¼Œè°ƒç”¨ä¸‰ç§æ ·å¼
+'// ±ê×¼³ß´ç£¬×ó¼üÓÒ¼üCtrlÈı¼ü¿ØÖÆ£¬µ÷ÓÃÈıÖÖÑùÊ½
 Private Sub btn_makesizes_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-    Make_SIZE.Show 0   ' å³é”®
+    Make_SIZE.Show 0   ' ÓÒ¼ü
   ElseIf Shift = fmCtrlMask Then
     #If VBA7 Then
       MakeSizePlus.Show 0
-    #Else  ' X4 ä½¿ç”¨
+    #Else  ' X4 Ê¹ÓÃ
       Make_SIZE.Show 0
     #End If
   Else
-    Tools.Simple_Label_Numbers  ' Ctrl + é¼ æ ‡  æ‰¹é‡ç®€å•æ•°å­—æ ‡æ³¨
+    Tools.Simple_Label_Numbers  ' Ctrl + Êó±ê  ÅúÁ¿¼òµ¥Êı×Ö±ê×¢
   End If
 End Sub
 
-'// æ‰¹é‡è½¬å›¾ç‰‡å’Œå¯¼å‡ºå›¾ç‰‡æ–‡ä»¶
+'// ÅúÁ¿×ªÍ¼Æ¬ºÍµ¼³öÍ¼Æ¬ÎÄ¼ş
 Private Sub Photo_Form_Click()
   PhotoForm.Show 0
 End Sub
 
-'// ä¿®å¤åœ†è§’ç¼ºè§’åˆ°ç›´è§’
+'// ĞŞ¸´Ô²½ÇÈ±½Çµ½Ö±½Ç
 Private Sub btn_corners_off_Click()
   Tools.corner_off
 End Sub
@@ -648,7 +662,7 @@ Private Sub SwapShape_Click()
 End Sub
 
 
-'// å°å·¥å…·å¿«é€Ÿå¯åŠ¨
+'// Ğ¡¹¤¾ß¿ìËÙÆô¶¯
 Private Sub Open_Calc_Click()
   Launcher.START_Calc
 End Sub

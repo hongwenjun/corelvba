@@ -1,3 +1,18 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} MakeSizePlus 
+   Caption         =   "Batch Dimension Plus"
+   ClientHeight    =   3690
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   5115
+   OleObjectBlob   =   "MakeSizePlus.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "MakeSizePlus"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -20,7 +35,7 @@ Private Const GWL_EXSTYLE = (-20)
 Private Const WS_CAPTION As Long = &HC00000
 Private Const WS_EX_DLGMODALFRAME = &H1&
 
-'// æ’ä»¶åç§° VBA_UserForm
+'// ²å¼şÃû³Æ VBA_UserForm
 Private Const TOOLNAME As String = "LYVBA"
 Private Const SECTION As String = "MakeSizePlus"
 Private sreg As New ShapeRange
@@ -42,19 +57,19 @@ Private Sub UserForm_Initialize()
   Init_Translations Me, LNG_CODE
   Me.Caption = i18n("Batch Dimension Plus", LNG_CODE)
   
-   ' è¯»å–çº¿è®¾ç½®
+   ' ¶ÁÈ¡ÏßÉèÖÃ
   Bleed.text = API.GetSet("Bleed")
   Line_len.text = API.GetSet("Line_len")
   Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
   
 End Sub
 
-'// å…³é—­çª—å£æ—¶ä¿å­˜çª—å£ä½ç½®
+'// ¹Ø±Õ´°¿ÚÊ±±£´æ´°¿ÚÎ»ÖÃ
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     saveFormPos True
 End Sub
 
-'// ä¿å­˜çª—å£ä½ç½®å’ŒåŠ è½½çª—å£ä½ç½®
+'// ±£´æ´°¿ÚÎ»ÖÃºÍ¼ÓÔØ´°¿ÚÎ»ÖÃ
 Sub saveFormPos(bDoSave As Boolean)
   If bDoSave Then 'save position
     SaveSetting TOOLNAME, SECTION, "form_left", Me.Left
@@ -77,7 +92,7 @@ Private Sub btn_ExpandForm_Click()
 End Sub
 
 
-'// Minimizes the window and retains dimensioning functionality   '// æœ€å°åŒ–çª—å£å¹¶ä¿ç•™æ ‡æ³¨å°ºå¯¸åŠŸèƒ½
+'// Minimizes the window and retains dimensioning functionality   '// ×îĞ¡»¯´°¿Ú²¢±£Áô±ê×¢³ß´ç¹¦ÄÜ
 Private Function MiniForm()
 
   Dim IStyle As Long
@@ -92,7 +107,7 @@ Private Function MiniForm()
   IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
   SetWindowLong hwnd, GWL_EXSTYLE, IStyle
 
-  Dim ctl As Variant  '// CorelDRAW 2020 å®šä¹‰æˆ Variant æ‰ä¸ä¼šé”™è¯¯
+  Dim ctl As Variant  '// CorelDRAW 2020 ¶¨Òå³É Variant ²Å²»»á´íÎó
   For Each ctl In MakeSizePlus.Controls
       ctl.Visible = False
       ctl.Top = 2
@@ -129,7 +144,7 @@ Private Sub Settings_Click()
    SaveSetting "LYVBA", "Settings", "Bleed", Bleed.text
    SaveSetting "LYVBA", "Settings", "Line_len", Line_len.text
    SaveSetting "LYVBA", "Settings", "Outline_Width", Outline_Width.text
-   Call API.Set_Space_Width  '// è®¾ç½®ç©ºé—´é—´éš™
+   Call API.Set_Space_Width  '// ÉèÖÃ¿Õ¼ä¼äÏ¶
   End If
 End Sub
 
@@ -188,7 +203,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
   
   Dim border As Variant
   Dim Line_len As Double
-  Line_len = API.Set_Space_Width(True)  '// è¯»å–é—´éš”
+  Line_len = API.Set_Space_Width(True)  '// ¶ÁÈ¡¼ä¸ô
 
   border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
   cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
@@ -259,7 +274,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
             Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopRight)
             Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
         End Select
-        '// å°ºå¯¸æ ‡æ³¨è®¾ç½®å±æ€§
+        '// ³ß´ç±ê×¢ÉèÖÃÊôĞÔ
         Dimension_SetProperty sh, PresetProperty.value
         'ActiveDocument.ClearSelection
       Next i
@@ -357,12 +372,12 @@ ErrorHandler:
   API.EndOpt
 End Sub
 
-'// ä½¿ç”¨æ ‡è®°çº¿æ‰¹é‡å»ºç«‹å°ºå¯¸æ ‡æ³¨:   å·¦é”®ä¸Šæ ‡æ³¨ï¼Œå³é”®å³æ ‡æ³¨
+'// Ê¹ÓÃ±ê¼ÇÏßÅúÁ¿½¨Á¢³ß´ç±ê×¢:   ×ó¼üÉÏ±ê×¢£¬ÓÒ¼üÓÒ±ê×¢
 Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   Dim sr As ShapeRange
   Set sr = ActiveSelectionRange
   
-  '// å³é”®
+  '// ÓÒ¼ü
   If Button = 2 Then
     If chkOpposite.value = True Then
         CutLines.Dimension_MarkLines cdrAlignTop, True
@@ -372,7 +387,7 @@ Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As I
       make_sizes_sep "lfbx", Shift, True
     End If
   
-  '// å·¦é”®
+  '// ×ó¼ü
   ElseIf Button = 1 Then
     If chkOpposite.value = True Then
       CutLines.Dimension_MarkLines cdrAlignLeft, False
@@ -386,18 +401,18 @@ Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As I
   sr.CreateSelection
 End Sub
 
-'// ä½¿ç”¨æ‰‹å·¥é€‰èŠ‚ç‚¹å»ºç«‹å°ºå¯¸æ ‡æ³¨ï¼Œä½¿ç”¨Ctrlåˆ†ç¦»å°ºå¯¸æ ‡æ³¨
+'// Ê¹ÓÃÊÖ¹¤Ñ¡½Úµã½¨Á¢³ß´ç±ê×¢£¬Ê¹ÓÃCtrl·ÖÀë³ß´ç±ê×¢
 Private Sub Manual_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
-      '// å³é”®
+      '// ÓÒ¼ü
   ElseIf Shift = fmCtrlMask Then
-      Slanted_Makesize  '// æ‰‹åŠ¨æ ‡æ³¨å€¾æ–œå°ºå¯¸
+      Slanted_Makesize  '// ÊÖ¶¯±ê×¢ÇãĞ±³ß´ç
   Else
-      ModulePlus.Untie_MarkLines   '// è§£ç»‘å°ºå¯¸ï¼Œåˆ†ç¦»å°ºå¯¸
+      ModulePlus.Untie_MarkLines   '// ½â°ó³ß´ç£¬·ÖÀë³ß´ç
   End If
 End Sub
 
-'// æ‰‹åŠ¨æ ‡æ³¨å€¾æ–œå°ºå¯¸
+'// ÊÖ¶¯±ê×¢ÇãĞ±³ß´ç
 Private Function Slanted_Makesize()
   On Error GoTo ErrorHandler
   API.BeginOpt
@@ -410,7 +425,7 @@ Private Function Slanted_Makesize()
   Set nr = ActiveShape.Curve.Selection
   
   If chkOpposite.value = False Then
-    Slanted_Sort_Make sr  '// æ’åºæ ‡æ³¨å€¾æ–œå°ºå¯¸
+    Slanted_Sort_Make sr  '// ÅÅĞò±ê×¢ÇãĞ±³ß´ç
     Exit Function
   End If
   If nr.Count < 2 Then Exit Function
@@ -434,7 +449,7 @@ ErrorHandler:
   API.EndOpt
 End Function
 
-'// æ’åºæ ‡æ³¨å€¾æ–œå°ºå¯¸
+'// ÅÅĞò±ê×¢ÇãĞ±³ß´ç
 Private Function Slanted_Sort_Make(shs As ShapeRange)
   On Error GoTo ErrorHandler
   Dim sr As New ShapeRange
@@ -448,7 +463,7 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
     Next n
   Next sh
   
-  CutLines.RemoveDuplicates sr  '// ç®€å•åˆ é™¤é‡å¤ç®—æ³•
+  CutLines.RemoveDuplicates sr  '// ¼òµ¥É¾³ıÖØ¸´Ëã·¨
   Set sr = X4_Sort_ShapeRange(sr, stlx)
 
   For i = 1 To sr.Count - 1
@@ -473,15 +488,15 @@ ErrorHandler:
   API.EndOpt
 End Function
 
-'// å°ºå¯¸æ ‡æ³¨è®¾ç½®å±æ€§
+'// ³ß´ç±ê×¢ÉèÖÃÊôĞÔ
 Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As Boolean = False)
 #If VBA7 Then
   If Preset And sh_dim.Type = cdrLinearDimensionShape Then
     With sh_dim.Style.GetProperty("dimension")
-      .SetProperty "precision", 0 '       å°æ•°ä½æ•°
-      .SetProperty "showUnits", 0 '       æ˜¯å¦æ˜¾ç¤ºå•ä½ 0/1
-      .SetProperty "textPlacement", 0 '   0ã€ä¸Šæ–¹ï¼Œ1ã€ä¸‹æ–¹ï¼Œ2ã€ä¸­é—´
-    '  .SetProperty "dynamicText", 0 '    æ˜¯å¦å¯ä»¥ç¼–è¾‘å°ºå¯¸0/1
+      .SetProperty "precision", 0 '       Ğ¡ÊıÎ»Êı
+      .SetProperty "showUnits", 0 '       ÊÇ·ñÏÔÊ¾µ¥Î» 0/1
+      .SetProperty "textPlacement", 0 '   0¡¢ÉÏ·½£¬1¡¢ÏÂ·½£¬2¡¢ÖĞ¼ä
+    '  .SetProperty "dynamicText", 0 '    ÊÇ·ñ¿ÉÒÔ±à¼­³ß´ç0/1
     '  .SetProperty "overhang", 500000 '
     End With
   End If
@@ -492,7 +507,7 @@ Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As
 #End If
 End Function
 
-'// å°ºå¯¸æ ‡æ³¨å·¦è¾¹
+'// ³ß´ç±ê×¢×ó±ß
 Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, False
@@ -507,7 +522,7 @@ Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
   End If
 End Sub
 
-'// å°ºå¯¸æ ‡æ³¨å³è¾¹
+'// ³ß´ç±ê×¢ÓÒ±ß
 Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, True
@@ -523,7 +538,7 @@ Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integ
 
 End Sub
 
-'// å°ºå¯¸æ ‡æ³¨å‘ä¸Š
+'// ³ß´ç±ê×¢ÏòÉÏ
 Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, False
@@ -538,7 +553,7 @@ Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer,
   End If
 End Sub
 
-'// å°ºå¯¸æ ‡æ³¨å‘ä¸‹
+'// ³ß´ç±ê×¢ÏòÏÂ
 Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, True
@@ -558,16 +573,16 @@ Private Sub MakeRuler_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, B
   API.BeginOpt
   Set sreg = Nothing
   
-  If Button = 2 And Shift = 0 Then       '// é¼ æ ‡å³é”® æ ‡æ³¨å³è¾¹
+  If Button = 2 And Shift = 0 Then       '// Êó±êÓÒ¼ü ±ê×¢ÓÒ±ß
     Ruler_Align cdrAlignRight
     
-  ElseIf Button = 2 And Shift = 2 Then  '// Ctrl+é¼ æ ‡å³é”® æ ‡æ³¨å·¦è¾¹
+  ElseIf Button = 2 And Shift = 2 Then  '// Ctrl+Êó±êÓÒ¼ü ±ê×¢×ó±ß
     Ruler_Align cdrAlignLeft
  
-  ElseIf Shift = 0 Then    '// é¼ æ ‡å·¦é”®ï¼Œæ ‡æ³¨åœ¨ä¸Šè¾¹
+  ElseIf Shift = 0 Then    '// Êó±ê×ó¼ü£¬±ê×¢ÔÚÉÏ±ß
     Ruler_Align cdrAlignTop
     
-  ElseIf Shift = 2 Then  '// Ctrl+é¼ æ ‡å·¦é”®ï¼Œæ ‡æ³¨ä¸‹è¾¹
+  ElseIf Shift = 2 Then  '// Ctrl+Êó±ê×ó¼ü£¬±ê×¢ÏÂ±ß
     Ruler_Align cdrAlignBottom
   End If
   
@@ -583,7 +598,7 @@ Private Sub MakeRuler_Align_MouseUp(ByVal Button As Integer, ByVal Shift As Inte
    
   Dim ra As cdrAlignType
   ra = cdrAlignTop
-  ' å®šä¹‰æ–¹å‘ä¸Šä¸‹å·¦å³
+  ' ¶¨Òå·½ÏòÉÏÏÂ×óÓÒ
   Dim pos_x As Variant, pos_y As Variant
   pos_x = Array(27, 27, 12, 44)
   pos_y = Array(12, 44, 27, 27)
@@ -604,22 +619,22 @@ ErrorHandler:
 End Sub
 
 Private Function Ruler_Align(ra As cdrAlignType)
-  If ra = cdrAlignRight Then       '// æ ‡æ³¨å³è¾¹
+  If ra = cdrAlignRight Then       '// ±ê×¢ÓÒ±ß
     CutLines.Dimension_MarkLines cdrAlignLeft, True
     Add_Ruler_Text_Y True
-  ElseIf ra = cdrAlignLeft Then  '// æ ‡æ³¨å·¦è¾¹
+  ElseIf ra = cdrAlignLeft Then  '// ±ê×¢×ó±ß
     CutLines.Dimension_MarkLines cdrAlignLeft, False
     Add_Ruler_Text_Y True
-  ElseIf ra = cdrAlignTop Then    '// æ ‡æ³¨ä¸Šè¾¹
+  ElseIf ra = cdrAlignTop Then    '// ±ê×¢ÉÏ±ß
     CutLines.Dimension_MarkLines cdrAlignTop, False
     Add_Ruler_Text True
-  ElseIf ra = cdrAlignBottom Then  '// æ ‡æ³¨ä¸‹è¾¹
+  ElseIf ra = cdrAlignBottom Then  '// ±ê×¢ÏÂ±ß
     CutLines.Dimension_MarkLines cdrAlignTop, True
     Add_Ruler_Text True
   End If
 End Function
 
-  '// æ ‡å°ºçº¿è½¬æ¢æˆè·ç¦»æ•°å­—
+  '// ±ê³ßÏß×ª»»³É¾àÀëÊı×Ö
 Private Function Add_Ruler_Text(rm_lines As Boolean)
   On Error GoTo ErrorHandler
   API.BeginOpt
@@ -641,7 +656,7 @@ ErrorHandler:
   API.EndOpt
 End Function
 
-  '// æ ‡å°ºçº¿è½¬æ¢æˆè·ç¦»æ•°å­—
+  '// ±ê³ßÏß×ª»»³É¾àÀëÊı×Ö
 Private Function Add_Ruler_Text_Y(rm_lines As Boolean)
   On Error GoTo ErrorHandler
   API.BeginOpt
@@ -677,7 +692,7 @@ Private Sub I18N_LNG_Click()
     LNG_CODE = 1033
   End If
   SaveSetting "LYVBA", "Settings", "I18N_LNG", LNG_CODE
-  MsgBox "ä¸­è‹±æ–‡è¯­è¨€åˆ‡æ¢å®Œæˆï¼Œè¯·é‡å¯æ’ä»¶!", vbOKOnly, "å…°é›…VBAä»£ç åˆ†äº«"
+  MsgBox "ÖĞÓ¢ÎÄÓïÑÔÇĞ»»Íê³É£¬ÇëÖØÆô²å¼ş!", vbOKOnly, "À¼ÑÅVBA´úÂë·ÖÏí"
 End Sub
 
 
@@ -693,18 +708,18 @@ Private Sub btn_square_wi_Click()
   ModulePlus.square_hw "Width"
 End Sub
 
-'// èŠ‚ç‚¹è¿æ¥åˆå¹¶
+'// ½ÚµãÁ¬½ÓºÏ²¢
 Private Sub btn_join_nodes_Click()
     ActiveSelection.CustomCommand "ConvertTo", "JoinCurves"
     Application.Refresh
 End Sub
 
-'// èŠ‚ç‚¹ä¼˜åŒ–å‡å°‘
+'// ½ÚµãÓÅ»¯¼õÉÙ
 Private Sub btn_nodes_reduce_Click()
   ModulePlus.Nodes_Reduce
 End Sub
 
-'// é€‰æ‹©æ ‡æ³¨çº¿ é€‰æ‹©æ–‡å­— åˆ é™¤æˆ–è€…è§£ç»‘æ ‡å‡†çº¿
+'// Ñ¡Ôñ±ê×¢Ïß Ñ¡ÔñÎÄ×Ö É¾³ı»òÕß½â°ó±ê×¼Ïß
 Private Sub SelectText_Click()
   ModulePlus.Dimension_Select_or_Delete 4
 End Sub

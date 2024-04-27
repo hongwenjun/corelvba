@@ -1,17 +1,32 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CQL_FIND_UI 
+   ClientHeight    =   7830
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   11610
+   OleObjectBlob   =   "CQL_FIND_UI.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "CQL_FIND_UI"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
 #If VBA7 Then
-    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
     
 #Else
-    Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
     Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 #End If
@@ -23,22 +38,22 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
-  Dim hWnd As Long
+  Dim hwnd As Long
   
-  hWnd = FindWindow("ThunderDFrame", Me.Caption)
+  hwnd = FindWindow("ThunderDFrame", Me.Caption)
 
-  IStyle = GetWindowLong(hWnd, GWL_STYLE)
+  IStyle = GetWindowLong(hwnd, GWL_STYLE)
   IStyle = IStyle And Not WS_CAPTION
-  SetWindowLong hWnd, GWL_STYLE, IStyle
-  DrawMenuBar hWnd
-  IStyle = GetWindowLong(hWnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
-  SetWindowLong hWnd, GWL_EXSTYLE, IStyle
+  SetWindowLong hwnd, GWL_STYLE, IStyle
+  DrawMenuBar hwnd
+  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
 
   With Me
   '  .StartUpPosition = 0
   '  .Left = 500
   '  .Top = 200
-    .Width = 378
+    .width = 378
     .Height = 228
   End With
   
@@ -55,7 +70,7 @@ End Sub
 
 Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
   If Button Then
-  Debug.Print X, Y
+'//  Debug.Print X, Y
     Me.Left = Me.Left - mx + X
     Me.Top = Me.Top - my + Y
   End If
@@ -74,10 +89,10 @@ Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, By
   ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
     Call CQLSameSize
   ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
-    API.WebHelp "https://262235.xyz/index.php/tag/vba/"
+'//   WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
-    '// é¢„ç½®é¢œè‰²è½®å»“é€‰æ‹©    å’Œ '// å½©è›‹åŠŸèƒ½
+    '// Ô¤ÖÃÑÕÉ«ÂÖÀªÑ¡Ôñ    ºÍ '// ²Êµ°¹¦ÄÜ
   If Abs(X - 178) < 30 And Abs(Y - 118) < 30 = True Then
     Image1.Visible = False
     Close_Icon.Visible = False
@@ -88,7 +103,7 @@ Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, By
       .Left = Val(GetSetting("LYVBA", "Settings", "Left", "400")) + 318
       .Top = Val(GetSetting("LYVBA", "Settings", "Top", "55")) - 2
       .Height = 30
-      .Width = .Width - 20
+      .width = .width - 20
     End With
     
     If OptBt.value Then
@@ -163,7 +178,7 @@ Private Sub CQLSameSize()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      ' MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
+      ' MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@width = {" & s.SizeWidth & " mm} and @height ={" & s.SizeHeight & "mm}").CreateSelection
     End If
@@ -179,7 +194,7 @@ Private Sub CQLSameOutlineColor()
   If s Is Nothing Then Exit Sub
   colr.CopyAssign s.Outline.Color
   colr.ConvertToRGB
-  ' æŸ¥æ‰¾å¯¹è±¡
+  ' ²éÕÒ¶ÔÏó
   r = colr.RGBRed
   G = colr.RGBGreen
   b = colr.RGBBlue
@@ -194,7 +209,7 @@ Private Sub CQLSameOutlineColor()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      ' MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
+      ' MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
     End If
@@ -204,7 +219,7 @@ Private Sub CQLSameOutlineColor()
   
   Exit Sub
 err:
-    MsgBox "å¯¹è±¡è½®å»“ä¸ºç©ºã€‚"
+    MsgBox "¶ÔÏóÂÖÀªÎª¿Õ¡£"
 End Sub
 
 Private Sub CQLSameUniformColor()
@@ -212,10 +227,10 @@ Private Sub CQLSameUniformColor()
   Dim colr As New Color, s As Shape
   Set s = ActiveShape
   If s Is Nothing Then Exit Sub
-  If s.Fill.Type = cdrFountainFill Then MsgBox "ä¸æ”¯æŒæ¸å˜è‰²ã€‚": Exit Sub
+  If s.Fill.Type = cdrFountainFill Then MsgBox "²»Ö§³Ö½¥±äÉ«¡£": Exit Sub
   colr.CopyAssign s.Fill.UniformColor
   colr.ConvertToRGB
-  ' æŸ¥æ‰¾å¯¹è±¡
+  ' ²éÕÒ¶ÔÏó
   r = colr.RGBRed
   G = colr.RGBGreen
   b = colr.RGBBlue
@@ -230,7 +245,7 @@ Private Sub CQLSameUniformColor()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      ' MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
+      '// MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
     End If
@@ -239,13 +254,13 @@ Private Sub CQLSameUniformColor()
   End If
   Exit Sub
 err:
-  MsgBox "å¯¹è±¡å¡«å……ä¸ºç©ºã€‚"
+  MsgBox "¶ÔÏóÌî³äÎª¿Õ¡£"
 End Sub
 
 Private Sub X_EXIT_Click()
-  Unload Me    ' å…³é—­
+  Unload Me    '// ¹Ø±Õ
 End Sub
 
 Private Sub Close_Icon_Click()
-  Unload Me    ' å…³é—­
+  Unload Me    '// ¹Ø±Õ
 End Sub
