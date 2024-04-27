@@ -1,3 +1,4 @@
+Attribute VB_Name = "Tools"
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -13,7 +14,8 @@ Public Function Simple_Train_Arrangement(Space_Width As Double)
 '  ssr.sort " @shape1.top>@shape2.top"
   ssr.Sort " @shape1.left<@shape2.left"
 #Else
-' X4 不支持 ShapeRange.sort
+' X4 不支持 ShapeRange.sort  使用 lyvba32.dll 算法库排序   2023.07.08
+  Set ssr = X4_Sort_ShapeRange(ssr, stlx)
 #End If
 
   ActiveDocument.ReferencePoint = cdrTopLeft
@@ -38,10 +40,11 @@ Public Function Simple_Ladder_Arrangement(Space_Width As Double)
 
 #If VBA7 Then
   ssr.Sort " @shape1.top>@shape2.top"
-'  ssr.sort " @shape1.left<@shape2.left"
 #Else
-' X4 不支持 ShapeRange.sort
+' X4 不支持 ShapeRange.sort  使用 lyvba32.dll 算法库排序   2023.07.08
+  Set ssr = X4_Sort_ShapeRange(ssr, stty).ReverseRange
 #End If
+
 
   ActiveDocument.ReferencePoint = cdrTopLeft
   For Each s In ssr
@@ -706,47 +709,42 @@ Private Function cutInHalf(Optional method As Integer)
 End Function
 
 
-'// 批量多页居中-遍历批量物件，放置物件到页面  '杰开修改
+'// 批量多页居中-遍历批量物件，放置物件到页面
 Public Function Batch_Align_Page_Center()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
   Set sr = ActiveSelectionRange
-'  sr.MoveToLayer ActiveDocument.DesktopLayer
   total = sr.Count
 
   '// 建立多页面
   Set doc = ActiveDocument
   doc.AddPages (total - 1)
 
-
 #If VBA7 Then
   sr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
 #Else
 ' X4 不支持 ShapeRange.sort
+  Set sr = X4_Sort_ShapeRange(ssr, topWt_left).ReverseRange
 #End If
 
-
   Dim sh As Shape
-'  MoveToLayer ActivePage.DesktopLayer
-  '// 遍历批量物件，放置物件到页面  InsertPagesEx   ActivePage
+  '// 遍历批量物件，放置物件到页面
   For i = 1 To sr.Count
     doc.Pages(i).Activate
     Set sh = sr.Shapes(i)
     ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
  
+    sh.MoveToLayer ActivePage.ActiveLayer
    '// 物件居中页面
-    #If VBA7 Then
-      ActiveDocument.ClearSelection
-      sh.AddToSelection
-      sh.MoveToLayer ActivePage.ActiveLayer
-      
-      ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
-    #Else
-      sh.MoveToLayer doc.Pages(i).ActiveLayer
-      sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
-    #End If
+#If VBA7 Then
+    ActiveDocument.ClearSelection
+    sh.AddToSelection
+    ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
+#Else
+    sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
+#End If
 
   Next i
 ErrorHandler:
@@ -1080,12 +1078,12 @@ Public Function Mirror_ByGuide()
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
-  If nr.Count = 2 Then
+  If nr.Count >= 2 Then
     byshape = False
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2)  '// 参考线和水平的夹角 a
-    sr.Remove sr.Count
+    sr.remove sr.Count
     
     ang = 90 - a    '// 镜像的旋转角度
     For Each s In sr
@@ -1129,11 +1127,11 @@ Public Function Count_byArea(Space_Width As Double)
 ' X4 不支持 ShapeRange.sort
 #End If
 
-  Dim Str As String, size As String
+  Dim str As String, size As String
   For Each sh In ssr
     size = Int(sh.SizeWidth + 0.5) & "x" & Int(sh.SizeHeight + 0.5) & "mm"
     sh.SetSize Int(sh.SizeWidth + 0.5), Int(sh.SizeHeight + 0.5)
-    Str = Str & size & vbNewLine
+    str = str & size & vbNewLine
   Next sh
 
   ActiveDocument.ReferencePoint = cdrTopLeft
@@ -1147,26 +1145,26 @@ Public Function Count_byArea(Space_Width As Double)
 '  Set f = fs.CreateTextFile("D:\size.txt", True)
 '  f.WriteLine str: f.Close
 
-  Str = Subtotals(Str)
-  Debug.Print Str
+  str = Subtotals(str)
+  Debug.Print str
 
   Dim s1 As Shape
 ' Set s1 = ActiveLayer.CreateParagraphText(0, 0, 100, 150, Str, Font:="华文中宋")
   X = ssr.FirstShape.LeftX - 100
   Y = ssr.FirstShape.TopY
-  Set s1 = ActiveLayer.CreateParagraphText(X, Y, X + 90, Y - 150, Str, Font:="华文中宋")
+  Set s1 = ActiveLayer.CreateParagraphText(X, Y, X + 90, Y - 150, str, Font:="华文中宋")
 
   API.EndOpt
 End Function
  
 '// 实现Excel里分类汇总功能
-Private Function Subtotals(Str As String) As String
+Private Function Subtotals(str As String) As String
   Dim a, b, d, arr
-  Str = VBA.Replace(Str, vbNewLine, " ")
-  Do While InStr(Str, "  ")
-      Str = VBA.Replace(Str, "  ", " ")
+  str = VBA.Replace(str, vbNewLine, " ")
+  Do While InStr(str, "  ")
+      str = VBA.Replace(str, "  ", " ")
   Loop
-  arr = Split(Str)
+  arr = Split(str)
 
   Set d = CreateObject("Scripting.dictionary")
 
@@ -1178,13 +1176,13 @@ Private Function Subtotals(Str As String) As String
     End If
   Next
 
-  Str = "   规   格" & vbTab & vbTab & vbTab & "数量" & vbNewLine
+  str = "   规   格" & vbTab & vbTab & vbTab & "数量" & vbNewLine
 
   a = d.keys: b = d.items
   For i = 0 To d.Count - 1
     ' Debug.Print a(i), b(i)
-    Str = Str & a(i) & vbTab & vbTab & b(i) & "条" & vbNewLine
+    str = str & a(i) & vbTab & vbTab & b(i) & "条" & vbNewLine
   Next
 
-  Subtotals = Str & "合计总量:" & vbTab & vbTab & vbTab & UBound(arr) & "条" & vbNewLine
+  Subtotals = str & "合计总量:" & vbTab & vbTab & vbTab & UBound(arr) & "条" & vbNewLine
 End Function

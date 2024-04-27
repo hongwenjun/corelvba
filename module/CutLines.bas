@@ -18,17 +18,17 @@ Public Function Batch_CutLines()
 
   For Each s1 In OrigSelection
     lx = s1.LeftX:      rx = s1.RightX
-    By = s1.BottomY:    ty = s1.TopY
+    by = s1.BottomY:    ty = s1.TopY
     cx = s1.CenterX:    cy = s1.CenterY
     sw = s1.SizeWidth:  sh = s1.SizeHeight
     
     '//  添加裁切线，分别左下-右下-左上-右上
     Dim s2, s3, s4, s5, s6, s7, s8, s9 As Shape
-    Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, By, lx - (Bleed + Line_len), By)
-    Set s3 = ActiveLayer.CreateLineSegment(lx, By - Bleed, lx, By - (Bleed + Line_len))
+    Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
+    Set s3 = ActiveLayer.CreateLineSegment(lx, by - Bleed, lx, by - (Bleed + Line_len))
 
-    Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, By, rx + (Bleed + Line_len), By)
-    Set s5 = ActiveLayer.CreateLineSegment(rx, By - Bleed, rx, By - (Bleed + Line_len))
+    Set s4 = ActiveLayer.CreateLineSegment(rx + Bleed, by, rx + (Bleed + Line_len), by)
+    Set s5 = ActiveLayer.CreateLineSegment(rx, by - Bleed, rx, by - (Bleed + Line_len))
 
     Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
     Set s7 = ActiveLayer.CreateLineSegment(lx, ty + Bleed, lx, ty + (Bleed + Line_len))
@@ -64,7 +64,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
 
   For Each s1 In OrigSelection
     lx = s1.LeftX:      rx = s1.RightX
-    By = s1.BottomY:    ty = s1.TopY
+    by = s1.BottomY:    ty = s1.TopY
     
     '//  添加使用 左-上 标注尺寸标记线
     Dim s2, s6, s7, s8, s9 As Shape
@@ -74,7 +74,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
       Set s9 = ActiveLayer.CreateLineSegment(rx, ty + Bleed, rx, ty + (Bleed + Line_len))
       sr.Add s7: sr.Add s9
     Else
-      Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, By, lx - (Bleed + Line_len), By)
+      Set s2 = ActiveLayer.CreateLineSegment(lx - Bleed, by, lx - (Bleed + Line_len), by)
       Set s6 = ActiveLayer.CreateLineSegment(lx - Bleed, ty, lx - (Bleed + Line_len), ty)
       sr.Add s2: sr.Add s6
     End If
@@ -91,7 +91,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   
   '// 页面边缘对齐
   For Each s In sr
-    s.Name = "DMKLine"
+    s.name = "DMKLine"
     If mark = cdrAlignTop Then
       s.TopY = py + Line_len + Bleed
     Else
@@ -124,9 +124,9 @@ Public Function RemoveDuplicates(sr As ShapeRange)
   cnt = 1
   
   #If VBA7 Then
-     sr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
+    sr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
   #Else
-    ' X4 不支持 ShapeRange.sort
+    Set sr = X4_Sort_ShapeRange(sr, topWt_left)
   #End If
 
   For Each s In sr
@@ -232,14 +232,14 @@ Public Function Draw_Lines()
   For Each Target In OrigSelection
     Set s1 = Target
     lx = s1.LeftX:   rx = s1.RightX
-    By = s1.BottomY: ty = s1.TopY
+    by = s1.BottomY: ty = s1.TopY
     cx = s1.CenterX: cy = s1.CenterY
     
     '// 范围边界物件判断
-    If Abs(set_lx - lx) < radius Or Abs(set_rx - rx) < radius Or Abs(set_by - By) _
+    If Abs(set_lx - lx) < radius Or Abs(set_rx - rx) < radius Or Abs(set_by - by) _
       < radius Or Abs(set_ty - ty) < radius Then
       
-      arr = Array(lx, By, rx, By, lx, ty, rx, ty)  '// 物件左下-右下-左上-右上 四个顶点坐标数组
+      arr = Array(lx, by, rx, by, lx, ty, rx, ty)  '// 物件左下-右下-左上-右上 四个顶点坐标数组
       For i = 0 To 3
         dot.X = arr(2 * i)
         dot.Y = arr(2 * i + 1)

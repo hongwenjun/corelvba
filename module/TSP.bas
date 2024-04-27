@@ -1,3 +1,4 @@
+Attribute VB_Name = "TSP"
 '// 导出节点信息到数据文件
 Public Function CDR_TO_TSP()
   API.BeginOpt
@@ -45,8 +46,8 @@ Public Function Nodes_To_TSP()
   
   TSP = nr.Count & " " & 0 & vbNewLine
   For Each n In nr
-      X = round(n.PositionX, 3) & " "
-      Y = round(n.PositionY, 3) & vbNewLine
+      X = Round(n.PositionX, 3) & " "
+      Y = Round(n.PositionY, 3) & vbNewLine
       TSP = TSP & X & Y
   Next n
   
@@ -75,19 +76,19 @@ Public Function TSP_TO_DRAW_LINE()
 
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.OpenTextFile("C:\TSP\TSP.txt", 1, False)
-  Dim Str, arr, n
-  Str = f.ReadAll()
+  Dim str, arr, n
+  str = f.ReadAll()
   
-  Str = API.Newline_to_Space(Str)
-  arr = Split(Str)
+  str = API.Newline_to_Space(str)
+  arr = Split(str)
   total = Val(arr(0))
   
   ReDim ce(total) As CurveElement
   Dim crv As Curve
   
   ce(0).ElementType = cdrElementStart
-  ce(0).PositionX = Val(arr(2)) - 3    '// 线条起始坐标，偏移3mm方向指示
-  ce(0).PositionY = Val(arr(3)) - 3
+  ce(0).PositionX = Val(arr(2)) ' - 3    '// 线条起始坐标，偏移3mm方向指示
+  ce(0).PositionY = Val(arr(3)) ' - 3
   
   Dim X As Double
   Dim Y As Double
@@ -122,13 +123,13 @@ Public Function TSP_TO_DRAW_LINES()
   
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
-  Dim Str, arr, n
+  Dim str, arr, n
   Dim line As Shape
-  Str = f.ReadAll()
+  str = f.ReadAll()
   
-  Str = API.Newline_to_Space(Str)
+  str = API.Newline_to_Space(str)
   
-  arr = Split(Str)
+  arr = Split(str)
   For n = 2 To UBound(arr) - 1 Step 4
     X = Val(arr(n))
     Y = Val(arr(n + 1))
@@ -206,5 +207,5 @@ Private Function make_dots(X As Double, Y As Double)
   c = Array(0, 255, 0)
   Set s = ActiveLayer.CreateEllipse2(X, Y, 0.5, 0.5)
   s.Fill.UniformColor.RGBAssign c(Int(Rnd() * 2)), c(Int(Rnd() * 2)), c(Int(Rnd() * 2))
-  s.Outline.Width = 0#
+  s.Outline.width = 0#
 End Function

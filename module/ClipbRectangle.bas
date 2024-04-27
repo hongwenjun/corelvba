@@ -20,20 +20,20 @@ Public Function Build_Rectangle()
   O_O.Y = ost.BottomY - 50    '// 选择物件 下移动 50mm
   
   '// 建立矩形 Width  x Height 单位 mm
-  Dim Str, arr, n
-  Str = API.GetClipBoardString
+  Dim str, arr, n
+  str = API.GetClipBoardString
   
   '// 替换 mm x * 换行 TAB 为空格
-  Str = VBA.Replace(Str, "m", " ")
-  Str = VBA.Replace(Str, "x", " ")
-  Str = VBA.Replace(Str, "X", " ")
-  Str = VBA.Replace(Str, "*", " ")
-  Str = VBA.Replace(Str, vbNewLine, " ")
+  str = VBA.Replace(str, "m", " ")
+  str = VBA.Replace(str, "x", " ")
+  str = VBA.Replace(str, "X", " ")
+  str = VBA.Replace(str, "*", " ")
+  str = VBA.Replace(str, vbNewLine, " ")
   
-  Do While InStr(Str, "  ")     '// 多个空格换成一个空格
-      Str = VBA.Replace(Str, "  ", " ")
+  Do While InStr(str, "  ")     '// 多个空格换成一个空格
+      str = VBA.Replace(str, "  ", " ")
   Loop
-  arr = Split(Str)
+  arr = Split(str)
   
   API.BeginOpt
   Dim X As Double
@@ -51,14 +51,14 @@ Public Function Build_Rectangle()
 End Function
 
 '// 建立矩形 Width  x Height 单位 mm
-Private Function Rectangle(Width As Double, Height As Double)
+Private Function Rectangle(width As Double, Height As Double)
   ActiveDocument.Unit = cdrMillimeter
   Dim size As Shape
   Dim d As Document
   Dim s1 As Shape
 
   '// 建立矩形 Width  x Height 单位 mm
-  Set s1 = ActiveLayer.CreateRectangle(O_O.X, O_O.Y, O_O.X + Width, O_O.Y - Height)
+  Set s1 = ActiveLayer.CreateRectangle(O_O.X, O_O.Y, O_O.X + width, O_O.Y - Height)
   
   '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
   s1.Fill.ApplyNoFill
@@ -67,14 +67,14 @@ Private Function Rectangle(Width As Double, Height As Double)
   sw = s1.SizeWidth
   sh = s1.SizeHeight
 
-  text = Trim(Str(sw)) + "x" + Trim(Str(sh)) + "mm"
+  text = Trim(str(sw)) + "x" + Trim(str(sh)) + "mm"
   Set d = ActiveDocument
   Set size = d.ActiveLayer.CreateArtisticText(O_O.X + sw / 2 - 25, O_O.Y + 10, text, Font:="Tahoma")  '// O_O.y + 10  标注尺寸上移 10mm
   size.Fill.UniformColor.CMYKAssign 0, 100, 100, 0
 End Function
 
 '// 测试矩形变形
-Private Function setRectangle(Width As Double, Height As Double)
+Private Function setRectangle(width As Double, Height As Double)
   Dim s1 As Shape
   Set s1 = ActiveSelection
   ActiveDocument.Unit = cdrMillimeter
@@ -98,7 +98,7 @@ Public Function get_all_size()
   Set shs = ActiveSelection.Shapes
   Dim s As String
   For Each sh In shs
-    size = Trim(Str(Int(sh.SizeWidth + 0.5))) + "x" + Trim(Str(Int(sh.SizeHeight + 0.5))) + "mm"
+    size = Trim(str(Int(sh.SizeWidth + 0.5))) + "x" + Trim(str(Int(sh.SizeHeight + 0.5))) + "mm"
     f.WriteLine (size)
     s = s + size + vbNewLine
   Next sh

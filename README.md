@@ -1,12 +1,14 @@
 ### [捐赠 蘭雅CorelVBA工具 开源软件](https://github.com/hongwenjun/corelvba/blob/main/donate.md)
 - [![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/youtube.png)频道](https://www.youtube.com/sRGB18/videos) &nbsp;&nbsp;www.youtube.com/sRGB18 &nbsp;&nbsp;[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)赞赏支持!](https://paypal.me/sRGB18)&nbsp;&nbsp;https://paypal.me/sRGB18
 
+## 蘭雅CorelVBA工具 2024.5.1 测试版 永久免费开源开放
+
+![](https://lyvba.com/wp-content/uploads/2024/04/lyvba2024.webp)
 
 ## *LYVBA_MakeSizes.gms* :  Streamlining GMS files that only keep batch size features
 
 
 ![Batch_Dimension](https://raw.githubusercontent.com/hongwenjun/img/master/VBA/Batch_Dimension.webp)
-
 
 
 # [CorelDRAW VBA](https://262235.xyz/index.php/tag/vba/)
@@ -42,6 +44,39 @@
 ## 蘭雅CorelVBA工具中秋版 修复更新和添加的主要功能
 
 ```
+* 15a5e2c 蘭雅CorelDRAW插件 2024.5.1国际劳动节版
+* aa46161 批量多页居中-遍历批量物件，放置物件到页面  @杰开 修改
+* 1d915f7 CQL 曲线长度用法示例笔记
+* 2b5970b 捐赠网友将送商业版注册激活码一份
+* 261b65b 2023.12.29 庆祝蘭雅CorelVBA工具捐赠和收益总额达到5000元
+* e6ba429 Update CorelDRAW 物件排列拼版简单代码
+* 9852596 Update 智能群组 SmartGroup
+* 695af7a 容器选择代码更新
+* 89d3960 容器模块代码
+* a0fe673 zerobase.gms 源码分享
+* 2937724 智能群组和批量居中合并
+* 7b5322b 智能群组和批量居中分离的
+* 117525b 优化走刀算法，增加安装包iss脚本
+* ffb2b28 自动裁切线第一版算法
+* fafe547 2022.12.29 批量导图等多个功能合并主线
+* 7cad4ad 更新尺寸标注统一长宽节点合并
+* 0d7a938 蘭雅CorelVBA_五彩斑斓的黑更新_12.16
+* f7863ba 2022.12.13 庆祝蘭雅CorelVBA工具捐赠和收益总额达到3000元
+* 92a90b0 2022.12.09更新,增加安全辅助线和批量多页居中功能
+* 93670b7 贪心商人TSP升级
+* e1c342c 一刀切升级，Python工具源码加入
+* 2a8eb82 UI独立图片，工具栏三个皮肤，鼠标悬停五彩斑斓的黑
+* 8215267 蘭雅CorelVBA工具 UI独立图片 添加语音功能提示
+* 1457811 蘭雅CorelVBA工具-中秋版 更换UI图
+* 0f35182 简单一刀切_识别群组由群友宏瑞广告赞助发行
+* b2eb2c4 一键智能群组--功能由群友半缘君赞助发行
+* ae14f4f 一键智能拆字功能更新
+* 71bc9a1 添加功能: Adobe_Illustrator复制粘贴互转  标记画框  一键智能拆字 拆分线段
+* 32649bf 修改颜色条注册表控制
+* c568449 2022-08更新添加设置保存注册表
+* 17cb37e 蘭雅CorelVBA工具箱 0520完整版源码更新
+* cdf7194 Update CorelDRAW_VBA编程手册_学习笔记.bas
+* fa187b5 蘭雅CorelVBA工具箱工具栏UI功能导图
 * 2022.12.23 更新尺寸标注统一长宽节点合并
 * 92a90b0 2022.12.09更新,增加安全辅助线和批量多页居中功能
 * 93670b7 贪心商人TSP升级
