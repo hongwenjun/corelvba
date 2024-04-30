@@ -16,9 +16,12 @@ Private Sub GlobalMacroStorage_start()
   If creatTool Then
     SaveSetting "LYVBA", "Settings", "StartButton", "1"
     AddPluginCommand "LYVBA.CorelVBA.Start", "CorelVBA.Start", "CorelVBA.Start"
+    AddPluginCommand "LYVBA.CorelVBA.Start_Dimension", "CorelVBA.Start_Dimension", "CorelVBA.Start_Dimension"
+    AddPluginCommand "LinesTool.lines.start", "lines.start", "lines.start"
+    AddPluginCommand "ZeroBase.Hello_VBA.run", "Hello_VBA.run", "Hello_VBA.run"
     
     For Each Item In CommandBars
-      If Item.Name = "CorelVBA" Then
+      If Item.name = "CorelVBA" Then
           creatTool = False
       End If
     Next
@@ -26,11 +29,25 @@ Private Sub GlobalMacroStorage_start()
     
     With CommandBars.Item("CorelVBA")
       .Visible = True
+      
       Set ctl = .Controls.AddCustomButton(cdrCmdCategoryMacros, "LYVBA.CorelVBA.Start")
-      ' ctl.SetIcon2 ("guid://46327bd4-8bad-41c5-aba1-efa770b8e2c8")
-      ctl.SetCustomIcon "C:\TSP\LYVBA.ico"
+      ver = Val(Version)
+      If ver < 17 Then
+        ctl.SetCustomIcon "C:\TSP\LYVBA.ico"
+      Else
+        ctl.SetIcon2 ("guid://a8e62a7a-d5d2-4a05-8d5d-e07d6bd21993") '// 输出中心图标
+      End If
+
+      Set ctl2 = .Controls.AddCustomButton(cdrCmdCategoryMacros, "LYVBA.CorelVBA.Start_Dimension")
+      ctl2.SetIcon2 ("guid://b4b9632a-248b-4d80-a62d-88804e50a955") '// 标尺工具图标
+      
+      Set ctl3 = .Controls.AddCustomButton(cdrCmdCategoryMacros, "LinesTool.lines.start")
+      ctl3.SetIcon2 ("guid://d2fdc0d9-09f8-4948-944c-4297395c05b7")
+      
+      Set ctl4 = .Controls.AddCustomButton(cdrCmdCategoryMacros, "ZeroBase.Hello_VBA.run")
+      ctl4.SetIcon2 ("guid://1a0b1202-d0ef-4fe7-8a95-ac7617b30703")
+      
     End With
   End If
-  
 ErrorHandler:
 End Sub
