@@ -1,7 +1,7 @@
 Attribute VB_Name = "ChatGPT"
 Private Type Coordinate
     x As Double
-    y As Double
+    Y As Double
 End Type
 
 Sub Z序排列()
@@ -15,9 +15,9 @@ Sub Z序排列()
   ssr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
   
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     s.OrderToFront
-    puts dot.x, dot.y, cnt: cnt = cnt + 1
+    puts dot.x, dot.Y, cnt: cnt = cnt + 1
   Next s
 End Sub
 
@@ -34,9 +34,9 @@ Sub U序排列()
   ssr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
   
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     If xdict.Exists(Int(dot.x)) = False Then xdict.Add Int(dot.x), dot.x
-    If ydict.Exists(Int(dot.y)) = False Then ydict.Add Int(dot.y), dot.y
+    If ydict.Exists(Int(dot.Y)) = False Then ydict.Add Int(dot.Y), dot.Y
   Next s
   
   inverter = 1   ' 交流频率控制
@@ -53,9 +53,9 @@ Sub U序排列()
   
   cnt = 1
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     s.OrderToFront
-    puts dot.x, dot.y, cnt: cnt = cnt + 1
+    puts dot.x, dot.Y, cnt: cnt = cnt + 1
   Next s
   
 End Sub
@@ -73,14 +73,14 @@ Sub 计算行列()   ' 字典使用计算行列
   ' 当前选择物件的范围边界
   set_lx = ssr.LeftX: set_rx = ssr.RightX
   set_by = ssr.BottomY: set_ty = ssr.TopY
-  ssr(1).GetSize Offset.x, Offset.y
+  ssr(1).GetSize Offset.x, Offset.Y
   ' 当前选择物件 ShapeRange 初步排序
   ssr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
   
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     If xdict.Exists(Int(dot.x)) = False Then xdict.Add Int(dot.x), dot.x
-    If ydict.Exists(Int(dot.y)) = False Then ydict.Add Int(dot.y), dot.y
+    If ydict.Exists(Int(dot.Y)) = False Then ydict.Add Int(dot.Y), dot.Y
   Next s
   
 '  MsgBox "字典使用计算行列:" & xdict.Count & ydict.Count
@@ -90,24 +90,24 @@ Sub 计算行列()   ' 字典使用计算行列
   Dim key As Variant
   For Each key In xdict.keys
       dot.x = xdict(key)
-      puts dot.x, set_by - Offset.y / 2, cnt
+      puts dot.x, set_by - Offset.Y / 2, cnt
       cnt = cnt + 1
   Next key
   
   cnt = 1
   For Each key In ydict.keys
-      dot.y = ydict(key)
-      puts set_lx - Offset.x / 2, dot.y, cnt
+      dot.Y = ydict(key)
+      puts set_lx - Offset.x / 2, dot.Y, cnt
       cnt = cnt + 1
   Next key
   
 End Sub
 
-Private Sub puts(x, y, n)
+Private Sub puts(x, Y, n)
   Dim st As String
   st = str(n)
   Set s = ActiveLayer.CreateArtisticText(0, 0, st)
-  s.CenterX = x: s.CenterY = y
+  s.CenterX = x: s.CenterY = Y
 End Sub
 
 '// 对数组进行排序[单维]
@@ -218,9 +218,9 @@ Sub 正式U序排列()
   ssr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
   
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     If xdict.Exists(Int(dot.x)) = False Then xdict.Add Int(dot.x), dot.x
-    If ydict.Exists(Int(dot.y)) = False Then ydict.Add Int(dot.y), dot.y
+    If ydict.Exists(Int(dot.Y)) = False Then ydict.Add Int(dot.Y), dot.Y
   Next s
   
   inverter = 1   ' 交流频率控制
@@ -237,9 +237,9 @@ Sub 正式U序排列()
   
   cnt = 1
   For Each s In ssr
-    dot.x = s.CenterX: dot.y = s.CenterY
+    dot.x = s.CenterX: dot.Y = s.CenterY
     s.OrderToFront
-    puts dot.x, dot.y, cnt: cnt = cnt + 1
+    puts dot.x, dot.Y, cnt: cnt = cnt + 1
   Next s
   
     ActiveDocument.EndCommandGroup

@@ -174,7 +174,7 @@ End Function
 '''///  使用Python脚本 整理尺寸 提取条码数字 建立二维码 位图转文本 ///'''
 Public Function Python_Organize_Size()
   On Error GoTo ErrorHandler
-  mypy = Path & "GMS\LYVBA\Organize_Size.py"
+  mypy = path & "GMS\LYVBA\Organize_Size.py"
   cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
   Shell cmd_line
 ErrorHandler:
@@ -182,7 +182,7 @@ End Function
 
 Public Function Python_Get_Barcode_Number()
   On Error GoTo ErrorHandler
-  mypy = Path & "GMS\LYVBA\Get_Barcode_Number.py"
+  mypy = path & "GMS\LYVBA\Get_Barcode_Number.py"
   cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
   Shell cmd_line
 ErrorHandler:
@@ -190,7 +190,7 @@ End Function
 
 Public Function Python_BITMAP()
   On Error GoTo ErrorHandler
-  mypy = Path & "GMS\LYVBA\BITMAP.py"
+  mypy = path & "GMS\LYVBA\BITMAP.py"
   cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
   Shell cmd_line
 ErrorHandler:
@@ -206,7 +206,7 @@ End Function
 
 Public Function Python_Make_QRCode()
   On Error GoTo ErrorHandler
-  mypy = Path & "GMS\LYVBA\Make_QRCode.py"
+  mypy = path & "GMS\LYVBA\Make_QRCode.py"
   cmd_line = "pythonw " & Chr(34) & mypy & Chr(34)
   Shell cmd_line
 ErrorHandler:
@@ -715,6 +715,7 @@ Public Function Batch_Align_Page_Center()
   On Error GoTo ErrorHandler
   API.BeginOpt
   
+  Dim sr As ShapeRange
   Set sr = ActiveSelectionRange
   total = sr.Count
 
@@ -722,29 +723,26 @@ Public Function Batch_Align_Page_Center()
   Set doc = ActiveDocument
   doc.AddPages (total - 1)
 
-#If VBA7 Then
-  sr.Sort " @shape1.Top * 100 - @shape1.Left > @shape2.Top * 100 - @shape2.Left"
-#Else
-' X4 不支持 ShapeRange.sort
-  Set sr = X4_Sort_ShapeRange(ssr, topWt_left).ReverseRange
-#End If
+  Set sr = sorted(sr, topWt_left)
 
   Dim sh As Shape
-  '// 遍历批量物件，放置物件到页面
+  '// 遍历批量物件，放置物件到页面  InsertPagesEx   ActivePage
   For i = 1 To sr.Count
     doc.Pages(i).Activate
     Set sh = sr.Shapes(i)
     ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
  
-    sh.MoveToLayer ActivePage.ActiveLayer
    '// 物件居中页面
-#If VBA7 Then
-    ActiveDocument.ClearSelection
-    sh.AddToSelection
-    ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
-#Else
-    sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
-#End If
+    #If VBA7 Then
+      ActiveDocument.ClearSelection
+      sh.AddToSelection
+      sh.MoveToLayer ActivePage.ActiveLayer
+      
+      ActiveSelection.AlignAndDistribute 3, 3, 2, 0, False, 2
+    #Else
+      sh.MoveToLayer doc.Pages(i).ActiveLayer
+      sh.AlignToPageCenter cdrAlignHCenter + cdrAlignVCenter
+    #End If
 
   Next i
 ErrorHandler:

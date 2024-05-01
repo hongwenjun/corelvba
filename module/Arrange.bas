@@ -1,4 +1,5 @@
 Attribute VB_Name = "Arrange"
+'// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
 '// Attribute VB_Name = "物件排列拼版"   Arrange  2023.12.20
@@ -31,11 +32,11 @@ Public Function Arrange()
   arr = Split(str)
 
   Dim s1 As Shape
-  Dim x As Double, Y As Double
+  Dim X As Double, Y As Double
   
   If 0 = ActiveSelectionRange.Count Then
-    x = Val(arr(0)):    Y = Val(arr(1))
-    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    X = Val(arr(0)):    Y = Val(arr(1))
+    row = Int(ActiveDocument.Pages.First.SizeWidth / X)
     List = Int(ActiveDocument.Pages.First.SizeHeight / Y)
 
     If UBound(arr) > 2 Then
@@ -48,7 +49,7 @@ Public Function Arrange()
     End If
      
     '// 建立矩形 Width  x Height 单位 mm
-    Set s1 = ActiveLayer.CreateRectangle(0, 0, x, Y)
+    Set s1 = ActiveLayer.CreateRectangle(0, 0, X, Y)
     
     '// 填充颜色无，轮廓颜色 K100，线条粗细0.3mm
     s1.Fill.ApplyNoFill
@@ -58,12 +59,12 @@ Public Function Arrange()
   '// 如果当前选择物件，按当前物件拼版
   ElseIf 0 < ActiveSelectionRange.Count Then
     Set s1 = ActiveSelection
-    x = s1.SizeWidth:    Y = s1.SizeHeight
-    row = Int(ActiveDocument.Pages.First.SizeWidth / x)
+    X = s1.SizeWidth:    Y = s1.SizeHeight
+    row = Int(ActiveDocument.Pages.First.SizeWidth / X)
     List = Int(ActiveDocument.Pages.First.SizeHeight / Y)
   End If
   
-  sw = x:  sh = Y
+  sw = X:  sh = Y
 
   '// StepAndRepeat 方法在范围内创建多个形状副本
   Dim dup1 As ShapeRange, dup2 As ShapeRange
@@ -83,5 +84,6 @@ End Function
 '  Set dup1 = s1.StepAndRepeat(row - 1, sw + sp, 0#)
 '  Dim dup2 As ShapeRange
 '  Set dup2 = ActiveDocument.CreateShapeRangeFromArray(dup1, s1).StepAndRepeat(List - 1, 0#, (sh + sp))
+
 
 

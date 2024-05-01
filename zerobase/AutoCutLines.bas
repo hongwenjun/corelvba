@@ -9,55 +9,53 @@ Public Sub AutoCutLines()
   Nodes_TO_TSP
   START_Cut_Line_Algorithm 3#
   
-  'å»¶æ—¶500æ¯«ç§’ï¼Œå¦‚æœç”µè„‘å¤Ÿå¿«ï¼Œå¯ä»¥è°ƒæ•´åˆ°100ms
+  'ÑÓÊ±500ºÁÃë£¬Èç¹ûµçÄÔ¹»¿ì£¬¿ÉÒÔµ÷Õûµ½100ms
   Sleep 500
-  TSP_TO_DRAW_LINES
+ '// TSP_TO_DRAW_LINES
+  TSP_TO_DRAW_LINE
 End Sub
 
 Private Function Nodes_TO_TSP()
-    On Error GoTo ErrorHandler
-    ActiveDocument.BeginCommandGroup: Application.Optimization = True
-    ActiveDocument.Unit = cdrMillimeter
+  On Error GoTo ErrorHandler
+  API.BeginOpt "Nodes_TO_TSP"
+  
+  Set fs = CreateObject("Scripting.FileSystemObject")
+  Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
 
-    Set fs = CreateObject("Scripting.FileSystemObject")
-    Set f = fs.CreateTextFile("C:\TSP\CDR_TO_TSP", True)
+  Dim s As Shape, ssr As ShapeRange
+  Set ssr = ActiveSelectionRange
 
-    Dim s As Shape, ssr As ShapeRange
-    Set ssr = ActiveSelectionRange
+  Dim TSP As String
+  TSP = (ssr.Count * 4) & " " & 0 & vbNewLine
 
-    Dim TSP As String
-    TSP = (ssr.Count * 4) & " " & 0 & vbNewLine
-
-    For Each s In ssr
-        lx = s.LeftX:   rx = s.RightX
-        By = s.BottomY: ty = s.TopY
-        TSP = TSP & lx & " " & By & vbNewLine
-        TSP = TSP & lx & " " & ty & vbNewLine
-        TSP = TSP & rx & " " & By & vbNewLine
-        TSP = TSP & rx & " " & ty & vbNewLine
-    Next s
-    f.WriteLine TSP
-    f.Close
-    
-    '// åˆ·æ–°ä¸€ä¸‹æ–‡ä»¶æµï¼Œå»¶æ—¶çš„æ•ˆæœ
-    Set f = fs.OpenTextFile("C:\TSP\CDR_TO_TSP", 1, False)
-    Dim str
-    str = f.ReadAll()
-    f.Close
-    
-  ActiveDocument.EndCommandGroup: Application.Optimization = False
-  ActiveWindow.Refresh: Application.Refresh
+  For Each s In ssr
+      lx = s.LeftX:   rx = s.RightX
+      By = s.BottomY: ty = s.TopY
+      TSP = TSP & lx & " " & By & vbNewLine
+      TSP = TSP & lx & " " & ty & vbNewLine
+      TSP = TSP & rx & " " & By & vbNewLine
+      TSP = TSP & rx & " " & ty & vbNewLine
+  Next s
+  f.WriteLine TSP
+  f.Close
+  
+  '// Ë¢ĞÂÒ»ÏÂÎÄ¼şÁ÷£¬ÑÓÊ±µÄĞ§¹û
+  Set f = fs.OpenTextFile("C:\TSP\CDR_TO_TSP", 1, False)
+  Dim str
+  str = f.ReadAll()
+  f.Close
+  
+  API.EndOpt
 Exit Function
 ErrorHandler:
     Application.Optimization = False
     On Error Resume Next
 End Function
 
-'//  TSPåŠŸèƒ½ç”»çº¿-å¤šçº¿æ®µ
+'//  TSP¹¦ÄÜ»­Ïß-¶àÏß¶Î
 Private Function TSP_TO_DRAW_LINES()
   On Error GoTo ErrorHandler
-  ActiveDocument.BeginCommandGroup: Application.Optimization = True
-  ActiveDocument.Unit = cdrMillimeter
+  API.BeginOpt "TSP_TO_DRAW_LINES"
   
   Set fs = CreateObject("Scripting.FileSystemObject")
   Set f = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
@@ -76,43 +74,85 @@ Private Function TSP_TO_DRAW_LINES()
   arr = Split(str)
   For n = 2 To UBound(arr) - 1 Step 4
     x = Val(arr(n))
-    y = Val(arr(n + 1))
+    Y = Val(arr(n + 1))
     x1 = Val(arr(n + 2))
     y1 = Val(arr(n + 3))
 
-    Set line = ActiveLayer.CreateLineSegment(x, y, x1, y1)
+    Set line = ActiveLayer.CreateLineSegment(x, Y, x1, y1)
     set_line_color line
     
-    ' è°ƒè¯•çº¿æ¡é¡ºåº
-    puts x, y, (n + 2) / 4
+    ' µ÷ÊÔÏßÌõË³Ğò
+    puts x, Y, (n + 2) / 4
     
   Next
   
   ActivePage.Shapes.FindShapes(Query:="@colors.find(RGB(26, 22, 35))").CreateSelection
-  ActiveSelection.group
+  ActiveSelection.Group
   ActiveSelection.Outline.SetProperties 0.2, Color:=CreateCMYKColor(0, 100, 100, 0)
   
-  ActiveDocument.EndCommandGroup: Application.Optimization = False
-  ActiveWindow.Refresh: Application.Refresh
+  API.EndOpt
 Exit Function
 ErrorHandler:
     Application.Optimization = False
     On Error Resume Next
 End Function
 
-'// è¿è¡Œè£åˆ‡çº¿ç®—æ³• Cut_Line_Algorithm.py
+'// ÔËĞĞ²ÃÇĞÏßËã·¨ Cut_Line_Algorithm.py
 Private Function START_Cut_Line_Algorithm(Optional ext As Double = 3)
     cmd_line = "python C:\TSP\Cut_Line_Algorithm.py" & " " & ext
     Shell cmd_line
 End Function
 
-'// è®¾ç½®çº¿æ¡æ ‡è®°(é¢œè‰²)
+'// ÉèÖÃÏßÌõ±ê¼Ç(ÑÕÉ«)
 Private Function set_line_color(line As Shape)
   line.Outline.SetProperties Color:=CreateRGBColor(26, 22, 35)
 End Function
 
-Public Sub puts(x, y, n)
+Public Sub puts(x, Y, n)
   Dim st As String
   st = str(n)
-  Set s = ActiveLayer.CreateArtisticText(x, y, st)
+  Set s = ActiveLayer.CreateArtisticText(x, Y, st)
 End Sub
+
+
+'//  TSP¹¦ÄÜ»­Ïß-¹­ĞÎÏß
+
+Public Function TSP_TO_DRAW_LINE()
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+
+  Set fs = CreateObject("Scripting.FileSystemObject")
+  Set f = fs.OpenTextFile("C:\TSP\TSP2.txt", 1, False)
+  Dim str, arr, n
+  str = f.ReadAll()
+  
+  str = API.Newline_to_Space(str)
+  arr = Split(str)
+  total = Val(arr(0)) * 2
+  
+  ReDim ce(total) As CurveElement
+  Dim crv As Curve
+  
+  ce(0).ElementType = cdrElementStart
+  ce(0).PositionX = Val(arr(2)) ' - 3
+  ce(0).PositionY = Val(arr(3)) ' - 3
+  
+  Dim x As Double
+  Dim Y As Double
+  For n = 2 To UBound(arr) - 1 Step 2
+    x = Val(arr(n))
+    Y = Val(arr(n + 1))
+  
+    ce(n / 2).ElementType = cdrElementLine
+    ce(n / 2).PositionX = x
+    ce(n / 2).PositionY = Y
+  
+  Next
+  
+  Set crv = CreateCurve(ActiveDocument)
+  crv.CreateSubPathFromArray ce
+  ActiveLayer.CreateCurve crv
+  
+ErrorHandler:
+  API.EndOpt
+End Function

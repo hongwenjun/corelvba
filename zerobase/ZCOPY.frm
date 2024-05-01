@@ -6,7 +6,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ZCOPY
    ClientTop       =   330
    ClientWidth     =   4860
    OleObjectBlob   =   "ZCOPY.frx":0000
-   StartUpPosition =   1  '所有者中心
+   StartUpPosition =   1  'CenterOwner
 End
 Attribute VB_Name = "ZCOPY"
 Attribute VB_GlobalNameSpace = False
@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_square_hi", Shift, Button) = "exit" Then Exit Sub
     Set os = ActiveSelectionRange
     Set ss = os.Shapes
@@ -29,7 +29,7 @@ Private Sub btn_square_hi_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
 End Sub
 
 
-Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_square_wi", Shift, Button) = "exit" Then Exit Sub
     Set os = ActiveSelectionRange
     Set ss = os.Shapes
@@ -42,7 +42,7 @@ Private Sub btn_square_wi_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
     If ch_main_switch Then ActiveWindow.Activate
 End Sub
 
-Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_makesizes", Shift, Button) = "exit" Then Exit Sub
     Dim os As ShapeRange
     Dim s As Shape
@@ -84,36 +84,36 @@ Private Sub btn_makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
     Application.Refresh
 End Sub
 
-Private Sub btn_sizes_up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_up", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "up", Shift
 End Sub
-Private Sub btn_sizes_dn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_dn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_dn", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "dn", Shift
 End Sub
-Private Sub btn_sizes_lf_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_lf_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_lf", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "lf", Shift
 End Sub
-Private Sub btn_sizes_ri_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_ri_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_ri", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "ri", Shift
 End Sub
 
-Private Sub btn_sizes_btw_up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_btw_up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_btw_up", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "upb", Shift
 End Sub
-Private Sub btn_sizes_btw_dn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_btw_dn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_btw_dn", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "dnb", Shift
 End Sub
-Private Sub btn_sizes_btw_lf_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_btw_lf_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_btw_lf", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "lfb", Shift
 End Sub
-Private Sub btn_sizes_btw_ri_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+Private Sub btn_sizes_btw_ri_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal Y As Single)
     If get_events("btn_sizes_btw_ri", Shift, Button) = "exit" Then Exit Sub
     make_sizes_sep "rib", Shift
 End Sub

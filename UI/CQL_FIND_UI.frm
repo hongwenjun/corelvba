@@ -13,6 +13,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -57,7 +58,14 @@ Private Sub UserForm_Initialize()
     .Height = 228
   End With
   
-  txtInfo.text = "Usage: A->Left B->Right C->Ctrl"
+  LNG_CODE = API.GetLngCode
+  Init_Translations Me, LNG_CODE
+  
+  If LNG_CODE = 1033 Then
+    txtInfo.text = "Usage: A->Left B->Right C->Ctrl"
+  Else
+    txtInfo.text = "ä½¿ç”¨: A->å·¦é”® B->å³é”® C->Ctrlé”®"
+  End If
 End Sub
 
 Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -92,7 +100,7 @@ Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, By
 '//   WebHelp "https://262235.xyz/index.php/tag/vba/"
   End If
   
-    '// Ô¤ÖÃÑÕÉ«ÂÖÀªÑ¡Ôñ    ºÍ '// ²Êµ°¹¦ÄÜ
+    '// é¢„ç½®é¢œè‰²è½®å»“é€‰æ‹©    å’Œ '// å½©è›‹åŠŸèƒ½
   If Abs(X - 178) < 30 And Abs(Y - 118) < 30 = True Then
     Image1.Visible = False
     Close_Icon.Visible = False
@@ -178,7 +186,7 @@ Private Sub CQLSameSize()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      ' MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
+      ' MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@width = {" & s.SizeWidth & " mm} and @height ={" & s.SizeHeight & "mm}").CreateSelection
     End If
@@ -194,7 +202,7 @@ Private Sub CQLSameOutlineColor()
   If s Is Nothing Then Exit Sub
   colr.CopyAssign s.Outline.Color
   colr.ConvertToRGB
-  ' ²éÕÒ¶ÔÏó
+  ' æŸ¥æ‰¾å¯¹è±¡
   r = colr.RGBRed
   G = colr.RGBGreen
   b = colr.RGBBlue
@@ -209,7 +217,7 @@ Private Sub CQLSameOutlineColor()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      ' MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
+      ' MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@Outline.Color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
     End If
@@ -219,7 +227,7 @@ Private Sub CQLSameOutlineColor()
   
   Exit Sub
 err:
-    MsgBox "¶ÔÏóÂÖÀªÎª¿Õ¡£"
+    MsgBox "å¯¹è±¡è½®å»“ä¸ºç©ºã€‚"
 End Sub
 
 Private Sub CQLSameUniformColor()
@@ -227,10 +235,10 @@ Private Sub CQLSameUniformColor()
   Dim colr As New Color, s As Shape
   Set s = ActiveShape
   If s Is Nothing Then Exit Sub
-  If s.Fill.Type = cdrFountainFill Then MsgBox "²»Ö§³Ö½¥±äÉ«¡£": Exit Sub
+  If s.Fill.Type = cdrFountainFill Then MsgBox "ä¸æ”¯æŒæ¸å˜è‰²ã€‚": Exit Sub
   colr.CopyAssign s.Fill.UniformColor
   colr.ConvertToRGB
-  ' ²éÕÒ¶ÔÏó
+  ' æŸ¥æ‰¾å¯¹è±¡
   r = colr.RGBRed
   G = colr.RGBGreen
   b = colr.RGBBlue
@@ -245,7 +253,7 @@ Private Sub CQLSameUniformColor()
     Dim box As Boolean
     box = ActiveDocument.GetUserArea(x1, y1, x2, y2, Shift, 10, False, cdrCursorWeldSingle)
     If Not b Then
-      '// MsgBox "Ñ¡Çø·¶Î§: " & x1 & y1 & x2 & y2
+      '// MsgBox "é€‰åŒºèŒƒå›´: " & x1 & y1 & x2 & y2
       Set sh = ActivePage.SelectShapesFromRectangle(x1, y1, x2, y2, False)
       sh.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
     End If
@@ -254,13 +262,13 @@ Private Sub CQLSameUniformColor()
   End If
   Exit Sub
 err:
-  MsgBox "¶ÔÏóÌî³äÎª¿Õ¡£"
+  MsgBox "å¯¹è±¡å¡«å……ä¸ºç©ºã€‚"
 End Sub
 
 Private Sub X_EXIT_Click()
-  Unload Me    '// ¹Ø±Õ
+  Unload Me    '// å…³é—­
 End Sub
 
 Private Sub Close_Icon_Click()
-  Unload Me    '// ¹Ø±Õ
+  Unload Me    '// å…³é—­
 End Sub

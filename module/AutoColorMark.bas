@@ -19,7 +19,7 @@ Function Auto_ColorMark()
   px = ActiveDocument.ActivePage.CenterX
   py = ActiveDocument.ActivePage.CenterY
   '// 导入色阶条中线对准线标记文件 ColorMark.cdr 解散群组
-  doc.ActiveLayer.Import Path & "GMS\ColorMark.cdr"
+  doc.ActiveLayer.Import path & "GMS\ColorMark.cdr"
   ActiveDocument.ReferencePoint = cdrBottomMiddle
   ' ActiveDocument.Selection.SetPosition px, -100
   ActiveDocument.Selection.Ungroup
@@ -169,7 +169,7 @@ End Function
 Private Function put_page_size()
   ' 添加文字 页面大小和文件名
   Dim st As Shape
-  size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
+  size = Trim(str(Int(ActivePage.SizeWidth))) + "x" + Trim(str(Int(ActivePage.SizeHeight))) + "mm"
   size = size & " " & ActiveDocument.FileName & " " & Date '
   Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
 End Function
@@ -236,7 +236,7 @@ End Function
 Private Function put_page_size()
   ' 添加文字 页面大小
   Dim st As Shape
-  size = Trim(Str(Int(ActivePage.SizeWidth))) + "x" + Trim(Str(Int(ActivePage.SizeHeight))) + "mm"
+  size = Trim(str(Int(ActivePage.SizeWidth))) + "x" + Trim(str(Int(ActivePage.SizeHeight))) + "mm"
   Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
   st.AlignToPage cdrAlignRight + cdrAlignTop
   st.Move -3, -0.6
@@ -260,7 +260,7 @@ Function Auto_ColorMark_K()
   px = ActiveDocument.ActivePage.CenterX
   py = ActiveDocument.ActivePage.CenterY
   '// 导入色阶条中线对准线标记文件 ColorMark.cdr 解散群组
-  doc.ActiveLayer.Import Path & "GMS\ColorMark.cdr"
+  doc.ActiveLayer.Import path & "GMS\ColorMark.cdr"
   ActiveDocument.ReferencePoint = cdrBottomMiddle
   ' ActiveDocument.Selection.SetPosition px, -100
   ActiveDocument.Selection.Ungroup

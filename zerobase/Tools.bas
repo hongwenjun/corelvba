@@ -9,76 +9,77 @@ Public Function wait()
   Sleep 3000
 End Function
 
-Public Sub å¡«å…¥å±…ä¸­æ–‡å­—(str)
+
+Public Sub ÌîÈë¾ÓÖĞÎÄ×Ö(str)
   Dim s As Shape
-  Dim x As Double, y As Double, Shift As Long
+  Dim x As Double, Y As Double, Shift As Long
   Dim b As Boolean
-  b = ActiveDocument.GetUserClick(x, y, Shift, 10, False, cdrCursorIntersectSingle)
+  b = ActiveDocument.GetUserClick(x, Y, Shift, 10, False, cdrCursorIntersectSingle)
   
   str = VBA.Replace(str, vbNewLine, Chr(10))
   str = VBA.Replace(str, Chr(10), vbNewLine)
   Set s = ActiveLayer.CreateArtisticText(0, 0, str)
   s.CenterX = x
-  s.CenterY = y
+  s.CenterY = Y
 End Sub
 
-Public Sub å°ºå¯¸æ ‡æ³¨()
+Public Sub ³ß´ç±ê×¢()
   ActiveDocument.Unit = cdrMillimeter
   Set s = ActiveSelection
-  x = s.CenterX: y = s.TopY
+  x = s.CenterX: Y = s.TopY
   sw = s.SizeWidth: sh = s.SizeHeight
         
   text = Int(sw) & "x" & Int(sh) & "mm"
   Set s = ActiveLayer.CreateArtisticText(0, 0, text)
-  s.CenterX = x: s.BottomY = y + 5
+  s.CenterX = x: s.BottomY = Y + 5
 End Sub
 
-Public Sub æ‰¹é‡å±…ä¸­æ–‡å­—(str)
+Public Sub ÅúÁ¿¾ÓÖĞÎÄ×Ö(str)
   Dim s As Shape, sr As ShapeRange
   Set sr = ActiveSelectionRange
   
   For Each s In sr.Shapes
-    x = s.CenterX: y = s.CenterY
+    x = s.CenterX: Y = s.CenterY
     
     Set s = ActiveLayer.CreateArtisticText(0, 0, str)
-    s.CenterX = x: s.CenterY = y
+    s.CenterX = x: s.CenterY = Y
   Next
 End Sub
 
-Public Sub æ‰¹é‡æ ‡æ³¨()
+Public Sub ÅúÁ¿±ê×¢()
   ActiveDocument.Unit = cdrMillimeter
   Set sr = ActiveSelectionRange
   
   For Each s In sr.Shapes
-    x = s.CenterX: y = s.TopY
+    x = s.CenterX: Y = s.TopY
     sw = s.SizeWidth: sh = s.SizeHeight
           
     text = Int(sw + 0.5) & "x" & Int(sh + 0.5) & "mm"
     Set s = ActiveLayer.CreateArtisticText(0, 0, text)
-    s.CenterX = x: s.BottomY = y + 5
+    s.CenterX = x: s.BottomY = Y + 5
   Next
 End Sub
 
-Public Sub æ™ºèƒ½ç¾¤ç»„()
+Public Sub ÖÇÄÜÈº×é()
   Set s1 = ActiveSelectionRange.CustomCommand("Boundary", "CreateBoundary")
   Set brk1 = s1.BreakApartEx
 
   For Each s In brk1
     Set sh = ActivePage.SelectShapesFromRectangle(s.LeftX, s.TopY, s.RightX, s.BottomY, True)
-    sh.Shapes.All.group
+    sh.Shapes.All.Group
     s.Delete
   Next
 End Sub
 
 
-' å®è·µåº”ç”¨: é€‰æ‹©ç‰©ä»¶ç¾¤ç»„,é¡µé¢è®¾ç½®ç‰©ä»¶å¤§å°,ç‰©ä»¶é¡µé¢å±…ä¸­
-Public Function ç¾¤ç»„å±…ä¸­é¡µé¢()
+' Êµ¼ùÓ¦ÓÃ: Ñ¡ÔñÎï¼şÈº×é,Ò³ÃæÉèÖÃÎï¼ş´óĞ¡,Îï¼şÒ³Ãæ¾ÓÖĞ
+Public Function Èº×é¾ÓÖĞÒ³Ãæ()
   ActiveDocument.Unit = cdrMillimeter
   Dim OrigSelection As ShapeRange, sh As Shape
   Set OrigSelection = ActiveSelectionRange
-  Set sh = OrigSelection.group
+  Set sh = OrigSelection.Group
   
-  ' MsgBox "é€‰æ‹©ç‰©ä»¶å°ºå¯¸: " & sh.SizeWidth & "x" & sh.SizeHeight
+  ' MsgBox "Ñ¡ÔñÎï¼ş³ß´ç: " & sh.SizeWidth & "x" & sh.SizeHeight
   ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
   
 #If VBA7 Then
@@ -92,7 +93,7 @@ Public Function ç¾¤ç»„å±…ä¸­é¡µé¢()
 End Function
 
 
-Public Function æ‰¹é‡å¤šé¡µå±…ä¸­()
+Public Function ÅúÁ¿¶àÒ³¾ÓÖĞ()
   If 0 = ActiveSelectionRange.Count Then Exit Function
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -101,19 +102,19 @@ Public Function æ‰¹é‡å¤šé¡µå±…ä¸­()
   Set sr = ActiveSelectionRange
   total = sr.Count
 
-  '// å»ºç«‹å¤šé¡µé¢
+  '// ½¨Á¢¶àÒ³Ãæ
   Set doc = ActiveDocument
   doc.AddPages (total - 1)
 
   Dim sh As Shape
   
-  '// éå†æ‰¹é‡ç‰©ä»¶ï¼Œæ”¾ç½®ç‰©ä»¶åˆ°é¡µé¢
+  '// ±éÀúÅúÁ¿Îï¼ş£¬·ÅÖÃÎï¼şµ½Ò³Ãæ
   For i = 1 To sr.Count
     doc.Pages(i).Activate
     Set sh = sr.Shapes(i)
     ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
  
-   '// ç‰©ä»¶å±…ä¸­é¡µé¢
+   '// Îï¼ş¾ÓÖĞÒ³Ãæ
 #If VBA7 Then
   ActiveDocument.ClearSelection
   sh.AddToSelection
@@ -130,12 +131,12 @@ Exit Function
 
 ErrorHandler:
   Application.Optimization = False
-  MsgBox "è¯·å…ˆé€‰æ‹©ä¸€äº›ç‰©ä»¶"
+  MsgBox "ÇëÏÈÑ¡ÔñÒ»Ğ©Îï¼ş"
   On Error Resume Next
 End Function
 
 
-'// å®‰å…¨çº¿: ç‚¹å‡»ä¸€æ¬¡å»ºç«‹è¾…åŠ©çº¿ï¼Œå†è°ƒç”¨æ¸…é™¤å‚è€ƒçº¿
+'// °²È«Ïß: µã»÷Ò»´Î½¨Á¢¸¨ÖúÏß£¬ÔÙµ÷ÓÃÇå³ı²Î¿¼Ïß
 Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
   Dim sr As ShapeRange
   Set sr = ActiveDocument.MasterPage.GuidesLayer.FindShapes(Type:=cdrGuidelineShape)
@@ -164,11 +165,11 @@ End Function
 
 
 Public Function vba_cnt()
-  VBA_FORM.text1 = VBA_FORM.text1 & ">"
+  ' VBA_FORM.text1 = VBA_FORM.text1 & ">"
   Sleep 100
 End Function
 
-Public Function æŒ‰é¢ç§¯æ’åˆ—(space_width As Double)
+Public Function °´Ãæ»ıÅÅÁĞ(space_width As Double)
   If 0 = ActiveSelectionRange.Count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
   ActiveDocument.ReferencePoint = cdrCenter
@@ -179,7 +180,7 @@ Public Function æŒ‰é¢ç§¯æ’åˆ—(space_width As Double)
 #If VBA7 Then
   ssr.Sort "@shape1.width * @shape1.height < @shape2.width * @shape2.height"
 #Else
-' X4 ä¸æ”¯æŒ ShapeRange.sort
+' X4 ²»Ö§³Ö ShapeRange.sort
 #End If
 
   Dim str As String, size As String
@@ -200,23 +201,23 @@ Public Function æŒ‰é¢ç§¯æ’åˆ—(space_width As Double)
   Next s
 
 
-'  å†™æ–‡ä»¶ï¼Œå¯ä»¥EXCELé‡Œç»Ÿè®¡
+'  Ğ´ÎÄ¼ş£¬¿ÉÒÔEXCELÀïÍ³¼Æ
 '  Set fs = CreateObject("Scripting.FileSystemObject")
 '  Set f = fs.CreateTextFile("D:\size.txt", True)
 '  f.WriteLine str: f.Close
 
-  str = åˆ†ç±»æ±‡æ€»(str)
+  str = ·ÖÀà»ã×Ü(str)
   Debug.Print str
 
   Dim s1 As Shape
-' Set s1 = ActiveLayer.CreateParagraphText(0, 0, 100, 150, Str, Font:="åæ–‡ä¸­å®‹")
+' Set s1 = ActiveLayer.CreateParagraphText(0, 0, 100, 150, Str, Font:="»ªÎÄÖĞËÎ")
   x = ssr.FirstShape.LeftX - 100
-  y = ssr.FirstShape.TopY
-  Set s1 = ActiveLayer.CreateParagraphText(x, y, x + 90, y - 150, str, Font:="åæ–‡ä¸­å®‹")
+  Y = ssr.FirstShape.TopY
+  Set s1 = ActiveLayer.CreateParagraphText(x, Y, x + 90, Y - 150, str, Font:="»ªÎÄÖĞËÎ")
 End Function
  
-'// å®ç°Excelé‡Œåˆ†ç±»æ±‡æ€»åŠŸèƒ½
-Private Function åˆ†ç±»æ±‡æ€»(str As String) As String
+'// ÊµÏÖExcelÀï·ÖÀà»ã×Ü¹¦ÄÜ
+Private Function ·ÖÀà»ã×Ü(str As String) As String
   Dim a, b, d, arr
   str = VBA.Replace(str, vbNewLine, " ")
   Do While InStr(str, "  ")
@@ -234,30 +235,30 @@ Private Function åˆ†ç±»æ±‡æ€»(str As String) As String
     End If
   Next
 
-  str = "   è§„   æ ¼" & vbTab & vbTab & vbTab & "æ•°é‡" & vbNewLine
+  str = "   ¹æ   ¸ñ" & vbTab & vbTab & vbTab & "ÊıÁ¿" & vbNewLine
 
   a = d.keys: b = d.items
   For i = 0 To d.Count - 1
     ' Debug.Print a(i), b(i)
-    str = str & a(i) & vbTab & vbTab & b(i) & "æ¡" & vbNewLine
+    str = str & a(i) & vbTab & vbTab & b(i) & "Ìõ" & vbNewLine
   Next
 
-  åˆ†ç±»æ±‡æ€» = str & "åˆè®¡æ€»é‡:" & vbTab & vbTab & vbTab & UBound(arr) & "æ¡" & vbNewLine
+  ·ÖÀà»ã×Ü = str & "ºÏ¼Æ×ÜÁ¿:" & vbTab & vbTab & vbTab & UBound(arr) & "Ìõ" & vbNewLine
 End Function
 
 
-' ä¸¤ä¸ªç«¯ç‚¹çš„åæ ‡,ä¸º(x1,y1)å’Œ(x2,y2) é‚£ä¹ˆå…¶è§’åº¦açš„tanå€¼: tana=(y2-y1)/(x2-x1)
-' æ‰€ä»¥è®¡ç®—arctan(y2-y1)/(x2-x1), å¾—åˆ°å…¶è§’åº¦å€¼a
-' VBä¸­ç”¨atn(), è¿”å›å€¼æ˜¯å¼§åº¦ï¼Œéœ€è¦ ä¹˜ä»¥ PI /180
+' Á½¸ö¶ËµãµÄ×ø±ê,Îª(x1,y1)ºÍ(x2,y2) ÄÇÃ´Æä½Ç¶ÈaµÄtanÖµ: tana=(y2-y1)/(x2-x1)
+' ËùÒÔ¼ÆËãarctan(y2-y1)/(x2-x1), µÃµ½Æä½Ç¶ÈÖµa
+' VBÖĞÓÃatn(), ·µ»ØÖµÊÇ»¡¶È£¬ĞèÒª ³ËÒÔ PI /180
 Private Function lineangle(x1, y1, x2, y2) As Double
-  pi = 4 * VBA.Atn(1) ' è®¡ç®—åœ†å‘¨ç‡
+  pi = 4 * VBA.Atn(1) ' ¼ÆËãÔ²ÖÜÂÊ
   If x2 = x1 Then
     lineangle = 90: Exit Function
   End If
   lineangle = VBA.Atn((y2 - y1) / (x2 - x1)) / pi * 180
 End Function
 
-Public Function è§’åº¦è½¬å¹³()
+Public Function ½Ç¶È×ªÆ½()
   On Error GoTo ErrorHandler
 '  ActiveDocument.ReferencePoint = cdrCenter
   Set sr = ActiveSelectionRange
@@ -267,12 +268,12 @@ Public Function è§’åº¦è½¬å¹³()
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2): sr.Rotate -a
-    ' sr.LastShape.Delete   '// åˆ é™¤å‚è€ƒçº¿
+    ' sr.LastShape.Delete   '// É¾³ı²Î¿¼Ïß
   End If
 ErrorHandler:
 End Function
 
-Public Function è‡ªåŠ¨æ—‹è½¬è§’åº¦()
+Public Function ×Ô¶¯Ğı×ª½Ç¶È()
   On Error GoTo ErrorHandler
 '  ActiveDocument.ReferencePoint = cdrCenter
   Set sr = ActiveSelectionRange
@@ -282,22 +283,22 @@ Public Function è‡ªåŠ¨æ—‹è½¬è§’åº¦()
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2): sr.Rotate 90 + a
-    sr.LastShape.Delete   '// åˆ é™¤å‚è€ƒçº¿
+    sr.LastShape.Delete   '// É¾³ı²Î¿¼Ïß
   End If
 ErrorHandler:
 End Function
 
 
-Public Function äº¤æ¢å¯¹è±¡()
+Public Function ½»»»¶ÔÏó()
   Set sr = ActiveSelectionRange
   If sr.Count = 2 Then
-    x = sr.LastShape.CenterX: y = sr.LastShape.CenterY
+    x = sr.LastShape.CenterX: Y = sr.LastShape.CenterY
     sr.LastShape.CenterX = sr.FirstShape.CenterX: sr.LastShape.CenterY = sr.FirstShape.CenterY
-    sr.FirstShape.CenterX = x: sr.FirstShape.CenterY = y
+    sr.FirstShape.CenterX = x: sr.FirstShape.CenterY = Y
   End If
 End Function
 
-Public Function å‚è€ƒçº¿é•œåƒ()
+Public Function ²Î¿¼Ïß¾µÏñ()
   On Error GoTo ErrorHandler
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.All
@@ -307,26 +308,26 @@ Public Function å‚è€ƒçº¿é•œåƒ()
     byshape = False
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
-    a = lineangle(x1, y1, x2, y2)  '// å‚è€ƒçº¿å’Œæ°´å¹³çš„å¤¹è§’ a
+    a = lineangle(x1, y1, x2, y2)  '// ²Î¿¼ÏßºÍË®Æ½µÄ¼Ğ½Ç a
     sr.Remove sr.Count
     
-    ang = 90 - a  ' é•œåƒçš„æ—‹è½¬è§’åº¦
+    ang = 90 - a  ' ¾µÏñµÄĞı×ª½Ç¶È
     For Each s In sr
       With s
-        .Duplicate   ' // å¤åˆ¶ç‰©ä»¶ä¿ç•™ï¼Œç„¶åæŒ‰ x1,y1 ç‚¹ æ—‹è½¬
+        .Duplicate   ' // ¸´ÖÆÎï¼ş±£Áô£¬È»ºó°´ x1,y1 µã Ğı×ª
         .RotationCenterX = x1
         .RotationCenterY = y1
         .Rotate ang
         If Not byshape Then
             lx = .LeftX
-            .Stretch -1#, 1#    ' // é€šè¿‡æ‹‰ä¼¸å®Œæˆé•œåƒ
+            .Stretch -1#, 1#    ' // Í¨¹ıÀ­ÉìÍê³É¾µÏñ
             .LeftX = lx
             .Move (x1 - .LeftX) * 2 - .SizeWidth, 0
-            .RotationCenterX = x1   '// ä¹‹å‰å› ä¸ºé•œåƒï¼Œæ—‹è½¬ä¸­å¿ƒç‚¹åäº†ï¼Œé‡ç½®å›æ¥
+            .RotationCenterX = x1   '// Ö®Ç°ÒòÎª¾µÏñ£¬Ğı×ªÖĞĞÄµã·´ÁË£¬ÖØÖÃ»ØÀ´
             .RotationCenterY = y1
             .Rotate -ang
         End If
-        .RotationCenterX = .CenterX   '// é‡ç½®å›æ—‹è½¬ä¸­å¿ƒç‚¹ä¸ºç‰©ä»¶ä¸­å¿ƒ
+        .RotationCenterX = .CenterX   '// ÖØÖÃ»ØĞı×ªÖĞĞÄµãÎªÎï¼şÖĞĞÄ
         .RotationCenterY = .CenterY
       End With
     Next s
@@ -336,7 +337,7 @@ ErrorHandler:
 End Function
 
 
-Public Function autogroup(Optional group As String = "group", Optional shft = 0, Optional sss As Shapes = Nothing, Optional undogroup = True) As ShapeRange
+Public Function autogroup(Optional Group As String = "group", Optional shft = 0, Optional sss As Shapes = Nothing, Optional undogroup = True) As ShapeRange
   Dim sr As ShapeRange, sr_all As ShapeRange, os As ShapeRange
   Dim sp As SubPaths
   Dim arr()
@@ -396,8 +397,8 @@ Public Function autogroup(Optional group As String = "group", Optional shft = 0,
         End If
       Next j
       If inar > 1 Then
-        If group = "group" Then
-          If shft < 4 Then sr_all.Add sr.group
+        If Group = "group" Then
+          If shft < 4 Then sr_all.Add sr.Group
         End If
       Else
         If sr.Shapes.Count > 0 Then sr_all.AddRange sr
@@ -445,7 +446,7 @@ Sub Make_Sizes()
     End If
 End Sub
 
-'''////  é€‰æ‹©å¤šç‰©ä»¶ï¼Œç»„åˆç„¶åæ‹†åˆ†çº¿æ®µï¼Œä¸ºè§’çº¿çˆ¬è™«å‡†å¤‡  ////'''
+'''////  Ñ¡Ôñ¶àÎï¼ş£¬×éºÏÈ»ºó²ğ·ÖÏß¶Î£¬Îª½ÇÏßÅÀ³æ×¼±¸  ////'''
 Public Function Split_Segment()
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
@@ -475,7 +476,7 @@ ErrorHandler:
 End Function
 
 
-'// ä¿®å¤åœ†è§’ç¼ºè§’åˆ°ç›´è§’
+'// ĞŞ¸´Ô²½ÇÈ±½Çµ½Ö±½Ç
 Public Sub corner_off()
     Dim os As ShapeRange
     Dim s As Shape, fir As Shape, ci As Shape
@@ -620,37 +621,37 @@ End Sub
 Sub ExportNodePositions()
     Dim s As Shape, n As Node
     Dim srActiveLayer As ShapeRange
-    Dim x As Double, y As Double
+    Dim x As Double, Y As Double
     Dim strNodePositions As String
     
     ActiveDocument.Unit = cdrMillimeter
     
     'Get all the curve shapes on the Active Layer
-    'è·å–Active Layerä¸Šçš„æ‰€æœ‰æ›²çº¿å½¢çŠ¶
+    '»ñÈ¡Active LayerÉÏµÄËùÓĞÇúÏßĞÎ×´
     Set srActiveLayer = ActiveLayer.Shapes.FindShapes(Query:="@type='curve'")
     'This is another way you can get only the curve shapes
-    'è¿™æ˜¯å¦ä¸€ç§ä½ åªèƒ½å¾—åˆ°æ›²çº¿å½¢çŠ¶çš„æ–¹æ³•
+    'ÕâÊÇÁíÒ»ÖÖÄãÖ»ÄÜµÃµ½ÇúÏßĞÎ×´µÄ·½·¨
     'Set srActiveLayer = ActiveLayer.Shapes.FindShapes.FindAnyOfType(cdrCurveShape)
     
     'Loop through each curve
-    'éå†æ¯æ¡æ›²çº¿
+    '±éÀúÃ¿ÌõÇúÏß
     For Each s In srActiveLayer.Shapes
         'Loop though each node in the curve and get the position
-        'éå†æ›²çº¿ä¸­çš„æ¯ä¸ªèŠ‚ç‚¹å¹¶è·å–ä½ç½®
+        '±éÀúÇúÏßÖĞµÄÃ¿¸ö½Úµã²¢»ñÈ¡Î»ÖÃ
         For Each n In s.Curve.Nodes
-            n.GetPosition x, y
-            strNodePositions = strNodePositions & "x: " & x & " y: " & y & vbCrLf
+            n.GetPosition x, Y
+            strNodePositions = strNodePositions & "x: " & x & " y: " & Y & vbCrLf
         Next n
     Next s
     
     'Save the node positions to a file
-    'å°†èŠ‚ç‚¹ä½ç½®ä¿å­˜åˆ°æ–‡ä»¶
+    '½«½ÚµãÎ»ÖÃ±£´æµ½ÎÄ¼ş
     Open "C:\Temp\NodePositions.txt" For Output As #1
         Print #1, strNodePositions
     Close #1
 End Sub
 
-Sub æœåŠ¡å™¨T()
+Sub ·şÎñÆ÷T()
    Dim mark As Shape
    Dim sr As ShapeRange
    
@@ -659,9 +660,9 @@ Sub æœåŠ¡å™¨T()
         sr.Shapes.FindShapes(Query:="@type ='rectangle'or @type ='curve'or @type ='Ellipse'or @type ='Polygon'").ConvertToCurves
    If sr.Count = 0 Then Exit Sub
    
-    ' CorelDRAWè®¾ç½®åŸç‚¹æ ‡è®°å¯¼å‡ºDXFä½¿ç”¨
+    ' CorelDRAWÉèÖÃÔ­µã±ê¼Çµ¼³öDXFÊ¹ÓÃ
     
-    ' æ›´æ–°åŸç‚¹æ ‡è®°ï¼Œç°åœ¨èƒ½è®¾ç½®ä»»æ„åæ ‡ç‚¹
+    ' ¸üĞÂÔ­µã±ê¼Ç£¬ÏÖÔÚÄÜÉèÖÃÈÎÒâ×ø±êµã
     Dim MarkPos_Array() As Double
     MarkPos_Array = Get_MarkPosition
     AtOrigin MarkPos_Array(0), MarkPos_Array(1)
@@ -702,50 +703,50 @@ Sub SaveDXF(FileName As String)
     End With
 End Sub
 
-' æ›´æ–°åŸç‚¹æ ‡è®°å‡½æ•°ï¼Œç°åœ¨èƒ½è®¾ç½®ä»»æ„åæ ‡ç‚¹
+' ¸üĞÂÔ­µã±ê¼Çº¯Êı£¬ÏÖÔÚÄÜÉèÖÃÈÎÒâ×ø±êµã
 Sub AtOrigin(Optional px As Double = 0#, Optional py As Double = 0#)
   Dim doc As Document: Set doc = ActiveDocument
   doc.Unit = cdrMillimeter
 
-  '// å¯¼å…¥åŸç‚¹æ ‡è®°æ ‡è®°æ–‡ä»¶ OriginMark.cdr è§£æ•£ç¾¤ç»„
+  '// µ¼ÈëÔ­µã±ê¼Ç±ê¼ÇÎÄ¼ş OriginMark.cdr ½âÉ¢Èº×é
   doc.ActiveLayer.Import path & "GMS\OriginMark.cdr"
   doc.ReferencePoint = cdrCenter
   doc.Selection.Ungroup
 
   Dim sh As Shape, shs As Shapes
   Set shs = ActiveSelection.Shapes
-  '// æŒ‰ MarkName åç§°æŸ¥æ‰¾ æ ‡è®°ç‰©ä»¶
+  '// °´ MarkName Ãû³Æ²éÕÒ ±ê¼ÇÎï¼ş
   For Each sh In shs
     If "AtOrigin" = sh.ObjectData("MarkName").Value Then
       sh.SetPosition px, py
     Else
-      sh.Delete   ' ä¸éœ€è¦çš„æ ‡è®°åˆ é™¤
+      sh.Delete   ' ²»ĞèÒªµÄ±ê¼ÇÉ¾³ı
     End If
   Next sh
 End Sub
 
-' ä½¿ç”¨ GlobalUserData å¯¹è±¡ä¿å­˜ Markæ ‡è®°åæ ‡æ–‡æœ¬ï¼Œè°ƒç”¨å‡½æ•°èƒ½è®¾ç½®æ–‡æœ¬
+' Ê¹ÓÃ GlobalUserData ¶ÔÏó±£´æ Mark±ê¼Ç×ø±êÎÄ±¾£¬µ÷ÓÃº¯ÊıÄÜÉèÖÃÎÄ±¾
 Public Function Mark_SetPosition() As String
   Dim text As String
   If GlobalUserData.Exists("MarkPosition", 1) Then
     text = GlobalUserData("MarkPosition", 1)
   End If
-  text = InputBox("è¯·è¾“å…¥Markæ ‡è®°åæ ‡(x,y),ç©ºæ ¼æˆ–é€—å·é—´éš”", "è®¾ç½®Markæ ‡è®°åæ ‡(x,y),å•ä½(mm)", text)
+  text = InputBox("ÇëÊäÈëMark±ê¼Ç×ø±ê(x,y),¿Õ¸ñ»ò¶ººÅ¼ä¸ô", "ÉèÖÃMark±ê¼Ç×ø±ê(x,y),µ¥Î»(mm)", text)
   If text = "" Then Exit Function
   GlobalUserData("MarkPosition", 1) = text
   Mark_SetPosition = text
 End Function
 
-' è°ƒç”¨è®¾ç½®Markæ ‡è®°åæ ‡åŠŸèƒ½ï¼Œè¿”å› æ•°ç»„(x,y)
+' µ÷ÓÃÉèÖÃMark±ê¼Ç×ø±ê¹¦ÄÜ£¬·µ»Ø Êı×é(x,y)
 Public Function Get_MarkPosition() As Double()
   Dim MarkPos_Array(0 To 1) As Double
   Dim str, arr
   
   str = Mark_SetPosition
 
-  ' æ›¿æ¢ é€—å· ä¸ºç©ºæ ¼
+  ' Ìæ»» ¶ººÅ Îª¿Õ¸ñ
   str = VBA.Replace(str, ",", " ")
-  Do While InStr(str, "  ") 'å¤šä¸ªç©ºæ ¼æ¢æˆä¸€ä¸ªç©ºæ ¼
+  Do While InStr(str, "  ") '¶à¸ö¿Õ¸ñ»»³ÉÒ»¸ö¿Õ¸ñ
       str = VBA.Replace(str, "  ", " ")
   Loop
   arr = Split(str)
@@ -753,7 +754,7 @@ Public Function Get_MarkPosition() As Double()
   MarkPos_Array(0) = Val(arr(0))
   MarkPos_Array(1) = Val(arr(1))
   
-  Debug.Print MarkPos_Array(0), MarkPos_Array(1)  ' è§†å›¾->ç«‹å³çª—å£ï¼Œè°ƒè¯•æ˜¾ç¤º
+  Debug.Print MarkPos_Array(0), MarkPos_Array(1)  ' ÊÓÍ¼->Á¢¼´´°¿Ú£¬µ÷ÊÔÏÔÊ¾
   
   Get_MarkPosition = MarkPos_Array
   
@@ -766,12 +767,12 @@ Public Function SetNames()
 #If VBA7 Then
   ssr.Sort " @shape1.left<@shape2.left"
 #Else
-' X4 ä¸æ”¯æŒ ShapeRange.sort
+' X4 ²»Ö§³Ö ShapeRange.sort
 #End If
 
   Dim text As String
   Dim lines() As String
-  ' æå–æ–‡æœ¬ä¿¡æ¯ï¼Œåˆ‡å‰²æ–‡æœ¬
+  ' ÌáÈ¡ÎÄ±¾ĞÅÏ¢£¬ÇĞ¸îÎÄ±¾
   If ssr(1).Type = cdrTextShape Then
     If ssr(1).text.Type = cdrArtistic Then
       text = ssr(1).text.Story.text
@@ -780,25 +781,25 @@ Public Function SetNames()
   #If VBA7 Then
       ssr.Sort " @shape1.top>@shape2.top"
   #Else
-  ' X4 ä¸æ”¯æŒ ShapeRange.sort
+  ' X4 ²»Ö§³Ö ShapeRange.sort
   #End If
     End If
   Else
-      MsgBox "è¯·æŠŠå¤šè¡Œæ–‡æœ¬æ”¾æœ€å·¦è¾¹"
+      MsgBox "Çë°Ñ¶àĞĞÎÄ±¾·Å×î×ó±ß"
       Exit Function
   End If
     
 ' Debug.Print ssr.Count, UBound(lines), LBound(lines)
-' ç»™ç‰©ä»¶è®¾ç½®åç§°ï¼Œç”¨å¤„:æ‰¹é‡å¯¼å‡ºå¯ä»¥æœ‰ä¸€ä¸ªåç§°
+' ¸øÎï¼şÉèÖÃÃû³Æ£¬ÓÃ´¦:ÅúÁ¿µ¼³ö¿ÉÒÔÓĞÒ»¸öÃû³Æ
   i = 0
   If ssr.Count <= UBound(lines) + 1 Then
     For Each s In ssr
-      s.Name = lines(i)
+      s.name = lines(i)
       i = i + 1
     Next s
   End If
   
-  If ssr.Count <> UBound(lines) + 1 Then MsgBox "æ–‡æœ¬è¡Œ:" & (UBound(lines) + 1) & vbNewLine & "å³è¾¹ç‰©ä»¶:" & ssr.Count
+  If ssr.Count <> UBound(lines) + 1 Then MsgBox "ÎÄ±¾ĞĞ:" & (UBound(lines) + 1) & vbNewLine & "ÓÒ±ßÎï¼ş:" & ssr.Count
     
 End Function
 
@@ -825,12 +826,4 @@ Sub Nodes_TO_TSP()
     f.Close
 End Sub
 
-'// è·å¾—å‰ªè´´æ¿æ–‡æœ¬å­—ç¬¦
-Public Function GetClipBoardString() As String
-  On Error Resume Next
-  Dim MyData As New DataObject
-  GetClipBoardString = ""
-  MyData.GetFromClipboard
-  GetClipBoardString = MyData.GetText
-  Set MyData = Nothing
-End Function
+

@@ -25,10 +25,33 @@
 深蓝*浅蓝    壹方-渐变牙刷    zdj168    99彩印    JZ捷众广告    醉后的最后    骑着"蜗牛"撵娘们    
 极速龙广告装饰图文快印②    a-嘉盟    幼儿园最亮的仔    舞    方华广告    肥崽很忙    
 Thanh Van    友佳友汇    创忆电脑    李凯    晋畅迷你字    cdr_插件 鼠标哥    w啊啊    上善若水    
-肇庆博洋文化传媒    hi    夏夜里的荷花与星星    无风
+肇庆博洋文化传媒    hi    夏夜里的荷花与星星    无风   风雅广告
 ```
 ### 会员群福利: 
 ```
 1. 本工具免费开源，捐赠会员有得到最新内测版软件，和有限技术支持
 2. 捐赠网友将送商业版注册激活码一份
 ```
+
+## CorelDRAW Tools - Lanya Corelvba Plug-In For Coreldraw X4-2023
+
+## https://youtu.be/WL0EcMo09A0
+
+## https://www.bilibili.com/video/BV1PE42157uM
+
+
+I am Lanya, an open-source software author, and I have been working in graphic design for 23 years.
+
+My hobbies include writing and sharing code, sharing learning experiences, driving manual transmission vehicles, and sharing driving experiences.
+
+As we approach the Labor Day holiday in 2024, I am honored to introduce a piece of open-source software that I have developed: Lanya CorelDRAW Plugin International Labor Day Edition. This plugin combines my years of experience in graphic design and the guidance of many industry experts in the community. It represents a significant amount of wisdom and effort, taking two years to develop. I would also like to express my gratitude to the many generous donors who have contributed to the development and continuous improvement of open-source software projects, helping to maintain the freedom and openness of the plugin.
+
+Now, let me introduce the installation and basic usage of this permanently free, open-source software. As shown in the video, you simply need to click on "Lanya_CorelVBA.exe" to install it in the GMS directory of CorelDRAW. Then, open the script management panel, locate "Start" under the LYVBA project, and you will be able to access the main toolbar of the plugin. You can also set "Start" as an icon and place it on the toolbar of the CDR software. Additionally, you can directly double-click on other modules under the LYVBA project to launch separate tools. For example, double-clicking on "Start_Dimension" will directly open the enhanced version of batch dimension annotation.
+
+The Lanya CorelVBA plugin currently supports both Chinese and English languages, and you can click on the colorful multilingual icon to switch between them. This introduction video demonstrates the installation and usage testing on a Windows 11 English system.
+
+This open-source software project is available on GitHub and incorporates many innovations while maintaining simplicity and conciseness compared to similar software. It is suitable for hobbyist programmers who want to learn and improve their skills.
+
+Finally, I would like to express my gratitude for your support as it will contribute to the future development of "Lanya CorelVBA Tool." Thank you once again for your support.
+
+Lanya (hongwenjun)

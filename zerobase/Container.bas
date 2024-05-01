@@ -1,39 +1,39 @@
 Attribute VB_Name = "Container"
-' â‘  æ ‡è®°å®¹å™¨ç›’å­
+' ¢Ù ±ê¼ÇÈİÆ÷ºĞ×Ó
 Public Function SetBoxName()
-  API.BeginOpt "æ ‡è®°å®¹å™¨ç›’å­"
+  API.BeginOpt "±ê¼ÇÈİÆ÷ºĞ×Ó"
   
-  Dim box As ShapeRange, S As Shape
+  Dim box As ShapeRange, s As Shape
   Set box = ActiveSelectionRange
   
-  ' è®¾ç½®ç‰©ä»¶åå­—ï¼Œä»¥ä¾›CQLæŸ¥è¯¢
-  For Each S In box
-    S.Name = "Container"
-  Next S
+  ' ÉèÖÃÎï¼şÃû×Ö£¬ÒÔ¹©CQL²éÑ¯
+  For Each s In box
+    s.name = "Container"
+  Next s
   
   API.EndOpt
-  MsgBox "æ ‡è®°å®¹å™¨ç›’å­" & vbNewLine & "åå­—: Container"
+  MsgBox "±ê¼ÇÈİÆ÷ºĞ×Ó" & vbNewLine & "Ãû×Ö: Container"
 End Function
 
-' å›¾ç‰‡æ‰¹é‡ç½®å…¥å®¹å™¨
+' Í¼Æ¬ÅúÁ¿ÖÃÈëÈİÆ÷
 Public Sub Batch_ToPowerClip()
-  API.BeginOpt "æ‰¹é‡ç½®å…¥å®¹å™¨"
-  Dim S As Shape, ssr As ShapeRange, box As ShapeRange
-  Set ssr = Smart_Group(0.5) ' æ™ºèƒ½ç¾¤ç»„å®¹å·® 0.5mm
+  API.BeginOpt "ÅúÁ¿ÖÃÈëÈİÆ÷"
+  Dim s As Shape, ssr As ShapeRange, box As ShapeRange
+  Set ssr = Smart_Group(0.5) ' ÖÇÄÜÈº×éÈİ²î 0.5mm
   
-  For Each S In ssr
-    Image_ToPowerClip S
-  Next S
+  For Each s In ssr
+    Image_ToPowerClip s
+  Next s
 
   API.EndOpt
 End Sub
 
-' å›¾ç‰‡ç½®å…¥å®¹å™¨ï¼ŒåŸºæœ¬å‡½æ•°
+' Í¼Æ¬ÖÃÈëÈİÆ÷£¬»ù±¾º¯Êı
 Public Function Image_ToPowerClip(arg As Shape)
   Dim box As ShapeRange
   Dim ssr As New ShapeRange, rmsr As New ShapeRange
   Set ssr = arg.UngroupEx
-  ' CQLæŸ¥æ‰¾å®¹å™¨ç›’ç‰©ä»¶
+  ' CQL²éÕÒÈİÆ÷ºĞÎï¼ş
   Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
   ssr.RemoveRange box
   
@@ -41,224 +41,149 @@ Public Function Image_ToPowerClip(arg As Shape)
   
   box.SetOutlineProperties Width:=0, Color:=Nothing
   ssr.AddToPowerClip box(1), 0
-  box(1).Name = "powerclip_ok"
+  box(1).name = "powerclip_ok"
 
 End Function
 
-' å›¾ç‰‡OneKeyç½®å…¥å®¹å™¨
+' Í¼Æ¬OneKeyÖÃÈëÈİÆ÷
 Public Sub OneKey_ToPowerClip()
-  API.BeginOpt "å›¾ç‰‡OneKeyç½®å…¥å®¹å™¨"
-  Dim S As Shape, ssr As ShapeRange, box As ShapeRange
+  API.BeginOpt "Í¼Æ¬OneKeyÖÃÈëÈİÆ÷"
+  Dim s As Shape, ssr As ShapeRange, box As ShapeRange
   
-  ' æ ‡è®°å®¹å™¨ï¼Œè®¾ç½®é€æ˜
+  ' ±ê¼ÇÈİÆ÷£¬ÉèÖÃÍ¸Ã÷
   Set box = ActiveSelectionRange
-  For Each S In box
-    If S.Type <> cdrBitmapShape Then S.Name = "Container"
-  Next S
+  For Each s In box
+    If s.Type <> cdrBitmapShape Then s.name = "Container"
+  Next s
   
-  Set ssr = Smart_Group(0.5) ' æ™ºèƒ½ç¾¤ç»„å®¹å·® 0.5mm
+  Set ssr = Smart_Group(0.5) ' ÖÇÄÜÈº×éÈİ²î 0.5mm
   
   Application.Optimization = True
-  For Each S In ssr
-    Image_ToPowerClip S
-  Next S
+  For Each s In ssr
+    Image_ToPowerClip s
+  Next s
 
   API.EndOpt
 End Sub
 
-' â‘¡ åˆ é™¤å®¹å™¨ç›’å­è¾¹ç•Œå¤–é¢çš„ç‰©ä»¶    â‘¢â‘£
-Public Function Remove_OutsideBox(radius As Double)
-  API.BeginOpt "åˆ é™¤å®¹å™¨ç›’å­è¾¹ç•Œå¤–é¢çš„ç‰©"
-  On Error GoTo ErrorHandler
-  Dim S As Shape, bc As Shape
+' ¢Ú É¾³ıÈİÆ÷ºĞ×Ó±ß½çÍâÃæµÄÎï¼ş    ¢Û¢Ü
+Public Function Remove_OutsideBox()
+  Dim s As Shape
   Dim ssr As ShapeRange, box As ShapeRange
   Dim rmsr As New ShapeRange
   Dim x As Double, Y As Double
   
   Set ssr = ActiveSelectionRange
-  ' CQLæŸ¥æ‰¾å®¹å™¨ç›’ç‰©ä»¶
+  ' CQL²éÕÒÈİÆ÷ºĞÎï¼ş
   Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
   ssr.RemoveRange box
   
-  If box.Count = 0 Then GoTo ErrorHandler
-  Set bc = box(1).Duplicate(0, 0)
-  If bc.Type = cdrTextShape Then bc.ConvertToCurves
+  If box.Count = 0 Then Exit Function
   
-  For Each S In ssr
-    x = S.CenterX: Y = S.CenterY
-    If bc.IsOnShape(x, Y, radius) = cdrOutsideShape Then rmsr.Add S
-  Next S
-  
-  rmsr.Add bc: rmsr.Delete: API.EndOpt
-  
-Exit Function
+  ActiveDocument.Unit = cdrMillimeter
+  For Each s In ssr
+    x = s.CenterX: Y = s.CenterY
+    If box(1).IsOnShape(x, Y) = cdrOutsideShape Then rmsr.Add s
+  Next s
 
-ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
-
+  rmsr.Delete
 End Function
 
-Public Function Select_OutsideBox(radius As Double)
-  On Error GoTo ErrorHandler
-  API.BeginOpt "é€‰æ‹©å®¹å™¨å¤–é¢å¯¹è±¡"
-  Dim S As Shape, bc As Shape
+
+Public Function Remove_OnMargin()
+  Dim s As Shape
+  Dim ssr As ShapeRange, box As ShapeRange
+  Dim rmsr As New ShapeRange
+  Dim x As Double, Y As Double
+  
+  Set ssr = ActiveSelectionRange
+  ' CQL²éÕÒÈİÆ÷ºĞÎï¼ş
+  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
+  ssr.RemoveRange box
+  
+  If box.Count = 0 Then Exit Function
+  
+  ActiveDocument.Unit = cdrMillimeter
+  For Each s In ssr
+    x = s.CenterX: Y = s.CenterY
+    If box(1).IsOnShape(x, Y) = cdrOnMarginOfShape Then rmsr.Add s
+  Next s
+
+  rmsr.Delete
+End Function
+
+
+Public Function Select_OutsideBox()
+  Dim s As Shape
   Dim ssr As ShapeRange, box As ShapeRange
   Dim SelSr As New ShapeRange
-  Dim x As Double, Y As Double
+  Dim x As Double, Y As Double, radius
   
   Set ssr = ActiveSelectionRange
-  ' CQLæŸ¥æ‰¾å®¹å™¨ç›’ç‰©ä»¶
+  ' CQL²éÕÒÈİÆ÷ºĞÎï¼ş
   Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
   ssr.RemoveRange box
   
-  If box.Count = 0 Then GoTo ErrorHandler
-  Set bc = box(1).Duplicate(0, 0)
-  If bc.Type = cdrTextShape Then bc.ConvertToCurves
+  If box.Count = 0 Then Exit Function
   
-  ActiveDocument.unit = cdrMillimeter
-  For Each S In ssr
-    x = S.CenterX: Y = S.CenterY
-    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOutsideShape Then SelSr.Add S
-  Next S
-  
-  ActiveDocument.ClearSelection
-  bc.Delete: SelSr.AddToSelection: API.EndOpt
-  
-Exit Function
-
-ErrorHandler:
-  Application.Optimization = False
-End Function
-
-Public Function Select_by_BlendGroup(radius As Double)
-  On Error GoTo ErrorHandler
-  API.BeginOpt "ä½¿ç”¨è°ƒå’Œç¾¤ç»„é€‰æ‹©"
-  Dim S As Shape, bc As Shape
-  Dim ssr As ShapeRange, box As ShapeRange, gp As ShapeRange
-  Dim SelSr As New ShapeRange
-  Dim x As Double, Y As Double
-  
-  Set ssr = ActiveSelectionRange
-  ' CQLæŸ¥æ‰¾å®¹å™¨ç›’ç‰©ä»¶
-  Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
-  ssr.RemoveRange box
-  
-  If box.Count = 0 Then GoTo ErrorHandler
-  Set gp = box.Duplicate(0, 0).UngroupAllEx
-  Set bc = gp.BreakApartEx.UngroupAllEx.Combine
-
-  ActiveDocument.unit = cdrMillimeter
-  For Each S In ssr
-    x = S.CenterX: Y = S.CenterY
-    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOnMarginOfShape Then SelSr.Add S
-  Next S
+  ActiveDocument.Unit = cdrMillimeter
+  For Each s In ssr
+    x = s.CenterX: Y = s.CenterY
+    radius = s.SizeWidth / 2
+    If box(1).IsOnShape(x, Y, radius) = cdrOutsideShape Then SelSr.Add s
+  Next s
   
   ActiveDocument.ClearSelection
-  bc.Delete: SelSr.AddToSelection: API.EndOpt
-  
-Exit Function
+  SelSr.AddToSelection
 
-ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
 End Function
 
-Public Function Select_OnMargin(radius As Double)
-  On Error GoTo ErrorHandler
-  API.BeginOpt "é€‰æ‹©å®¹å™¨è¾¹ç•Œå¯¹è±¡"
-  Dim S As Shape, bc As Shape
+
+Public Function Select_OnMargin()
+  Dim s As Shape
   Dim ssr As ShapeRange, box As ShapeRange
   Dim SelSr As New ShapeRange
-  Dim x As Double, Y As Double
+  Dim x As Double, Y As Double, radius
   
   Set ssr = ActiveSelectionRange
-  ' CQLæŸ¥æ‰¾å®¹å™¨ç›’ç‰©ä»¶
+  ' CQL²éÕÒÈİÆ÷ºĞÎï¼ş
   Set box = ssr.Shapes.FindShapes(Query:="@name ='Container'")
   ssr.RemoveRange box
   
-  If box.Count = 0 Then GoTo ErrorHandler
-  Set bc = box(1).Duplicate(0, 0)
-  If bc.Type = cdrTextShape Then bc.ConvertToCurves  ' å¦‚æœæ˜¯æ–‡æœ¬è½¬æ›²
-
+  If box.Count = 0 Then Exit Function
   
-  ActiveDocument.unit = cdrMillimeter
-  For Each S In ssr
-    x = S.CenterX: Y = S.CenterY
-    If bc.IsOnShape(x, Y, S.SizeWidth / 2 * radius) = cdrOnMarginOfShape Then SelSr.Add S
-  Next S
+  ActiveDocument.Unit = cdrMillimeter
+  For Each s In ssr
+    x = s.CenterX: Y = s.CenterY
+    radius = s.SizeWidth / 2
+    If box(1).IsOnShape(x, Y, radius) = cdrOnMarginOfShape Then SelSr.Add s
+  Next s
   
   ActiveDocument.ClearSelection
-  bc.Delete: SelSr.AddToSelection: API.EndOpt
-  
-Exit Function
+  SelSr.AddToSelection
 
-ErrorHandler:
-  Application.Optimization = False
-  On Error Resume Next
-  
 End Function
 
 
-Private Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
-If 0 = ActiveSelectionRange.Count Then Exit Function
-  On Error GoTo ErrorHandler
-  Application.Optimization = True
-  ActiveDocument.ReferencePoint = cdrBottomLeft
-  ActiveDocument.unit = cdrMillimeter
-  
-  Dim OrigSelection As ShapeRange, sr As New ShapeRange
-  Dim s1 As Shape, sh As Shape, S As Shape
-  Dim x As Double, Y As Double, w As Double, h As Double
-  Dim eff1 As Effect
-  
-  Set OrigSelection = ActiveSelectionRange
+' Õâ¸ö×Ó³ÌĞò±éÀú¶ÔÏó£¬µ÷ÓÃ½âÉ¢Îï¼şºÍ¾ÓÖĞ
+Public Sub Batch_Center()
+    Dim s As Shape, ssr As ShapeRange
+    Set ssr = Smart_Group
+    For Each s In ssr
+      Ungroup_Center s
+    Next s
+End Sub
 
-  '// éå†ç‰©ä»¶ç”»çŸ©å½¢
-  For Each sh In OrigSelection
-    sh.GetBoundingBox x, Y, w, h
-    If w * h > 4 Then
-      Set S = ActiveLayer.CreateRectangle2(x - tr, Y - tr, w + 2 * tr, h + 2 * tr)
-      sr.Add S
 
-    '// è½´çº¿ åˆ›å»ºè½®å»“å¤„ç†
-    ElseIf w * h < 0.3 Then
-    ' Debug.Print w * h
-      Set eff1 = sh.CreateContour(cdrContourOutside, 0.5, 1, cdrDirectFountainFillBlend, CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), CreateRGBColor(26, 22, 35), 0, 0, cdrContourSquareCap, cdrContourCornerMiteredOffsetBevel, 15#)
-      eff1.Separate
-    End If
-  Next sh
-
-  '// æŸ¥æ‰¾è½´çº¿è½®å»“
-  ActivePage.Shapes.FindShapes(Query:="@Outline.Color=RGB(26, 22, 35)").CreateSelection
-  ActivePage.Shapes.FindShapes(Query:="@fill.Color=RGB(26, 22, 35)").AddToSelection
-  For Each sh In ActiveSelection.Shapes
-     sr.Add sh
-  Next sh
-  
-  '// æ–°çŸ©å½¢å¯»æ‰¾è¾¹ç•Œï¼Œæ•£å¼€ï¼Œåˆ é™¤åˆšæ‰ç”»çš„æ–°çŸ©å½¢
-  Set s1 = sr.CustomCommand("Boundary", "CreateBoundary")
-  Set brk1 = s1.BreakApartEx
-  sr.Delete
-
-  '// çŸ©å½¢è¾¹ç•Œæ™ºèƒ½ç¾¤ç»„, retsr è¿”å›ç¾¤ç»„ å’Œ åˆ é™¤çŸ©å½¢s
-  Dim retsr As New ShapeRange, rmsr As New ShapeRange
-  For Each S In brk1
-    Set sh = ActivePage.SelectShapesFromRectangle(S.LeftX, S.TopY, S.RightX, S.BottomY, False)
-    S.Delete
-    retsr.Add sh.Shapes.All.group
-  Next
-
-  Set Smart_Group = retsr
-  
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-Exit Function
-
-ErrorHandler:
-  Application.Optimization = False
-  MsgBox "è¯·å…ˆé€‰æ‹©ä¸€äº›ç‰©ä»¶æ¥ç¡®å®šç¾¤ç»„èŒƒå›´!"
-  On Error Resume Next
-
+' ÒÔÏÂº¯Êı£¬½âÉ¢Îï¼ş£¬ÒÔÃæ»ıÅÅĞò¾ÓÖĞ
+Private Function Ungroup_Center(os As Shape)
+    Set grp = os.UngroupEx
+    grp.Sort "@shape1.Width * @shape1.Height> @shape2.Width * @shape2.Height"
+    cx = grp(1).CenterX
+    cy = grp(1).CenterY
+    For Each s In grp
+      s.CenterX = cx
+      s.CenterY = cy
+    Next s
 End Function
 

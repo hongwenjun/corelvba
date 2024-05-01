@@ -1,3 +1,22 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} PhotoForm 
+   Caption         =   "Batch Convert Img Or Export JPEG"
+   ClientHeight    =   1755
+   ClientLeft      =   45
+   ClientTop       =   375
+   ClientWidth     =   3855
+   OleObjectBlob   =   "PhotoForm.frx":0000
+   ShowModal       =   0   'False
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "PhotoForm"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+
+
+
 Private Sub UserForm_Initialize()
     On Error Resume Next
     ComboBox1.AddItem "灰度"
@@ -75,13 +94,14 @@ Private Sub Export_JPEG_Click()
     opt.ResolutionY = dpi
     opt.ImageType = Color
     
+    Dim path$: path = CorelScriptTools.GetFolder
     '// 批处理导出图片
     For Each sh In shs
         ActiveDocument.ClearSelection
         sh.CreateSelection
 
         ' 导出图片 JPEG格式
-        f = d.FilePath & "Link_" & sh.StaticID & ".jpg"
+        f = path & "\" & d.FileName & "_ID" & sh.StaticID & ".jpg"
         d.Export f, cdrJPEG, cdrSelection, opt
     Next sh
 End Sub

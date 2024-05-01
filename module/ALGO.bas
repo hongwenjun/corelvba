@@ -1,3 +1,4 @@
+Attribute VB_Name = "ALGO"
 '// Algorithm 模块
 #If VBA7 Then
 '// For CorelDRAW X6-2023  62bit
@@ -6,6 +7,7 @@ Private Declare PtrSafe Function sort_byitem Lib "C:\TSP\lyvba.dll" (ByRef sr_Ar
                       ByVal Sort_By As SortItem, ByRef ret_Array As Long) As Long
 #Else
 '// For CorelDRAW X4  32bit
+Declare Function i18n Lib "C:\TSP\lyvba32.dll" (ByVal str As String, ByVal code As Long) As String
 Declare Function sort_byitem Lib "C:\TSP\lyvba32.dll" (ByRef sr_Array As ShapeProperties, ByVal size As Long, _
                       ByVal Sort_By As SortItem, ByRef ret_Array As Long) As Long
 #End If
@@ -54,6 +56,10 @@ Public Function X4_Sort_ShapeRange(ByRef sr As ShapeRange, ByRef Sort_By As Sort
   Set X4_Sort_ShapeRange = ShapeRange_To_Sort_Array(sr, Sort_By)
 End Function
 
+Public Function sorted(ByRef sr As ShapeRange, ByRef Sort_By As SortItem) As ShapeRange
+  Set sorted = ShapeRange_To_Sort_Array(sr, Sort_By)
+End Function
+
 '// 映射 ShapeRange 到 Array 然后调用 DLL库排序
 Private Function ShapeRange_To_Sort_Array(ByRef sr As ShapeRange, ByRef Sort_By As SortItem) As ShapeRange
   On Error GoTo ErrorHandler
@@ -82,10 +88,12 @@ Private Function ShapeRange_To_Sort_Array(ByRef sr As ShapeRange, ByRef Sort_By 
   '// sr_Array首地址，size 长度， Sort_By 排序方式, 返回数组 ret_Array
   ret = sort_byitem(sr_Array(1), size, Sort_By, ret_Array(1))
   
+'  Debug.Print ret, size
   If ret = size Then
     Dim srcp As New ShapeRange, i As Integer
     For i = 1 To size
       srcp.Add sr(ret_Array(i))
+'     Debug.Print i
     Next i
     
     Set ShapeRange_To_Sort_Array = srcp

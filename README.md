@@ -1,7 +1,12 @@
 ### [捐赠 蘭雅CorelVBA工具 开源软件](https://github.com/hongwenjun/corelvba/blob/main/donate.md)
 - [![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/youtube.png)频道](https://www.youtube.com/sRGB18/videos) &nbsp;&nbsp;www.youtube.com/sRGB18 &nbsp;&nbsp;[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)赞赏支持!](https://paypal.me/sRGB18)&nbsp;&nbsp;https://paypal.me/sRGB18
 
-## 蘭雅CorelVBA工具 2024.5.1 测试版 永久免费开源开放
+## [蘭雅CorelVBA工具 2024.5.1](https://lyvba.com/LYVBA_2024.7z) 永久免费开源开放 [下载](https://lyvba.com/LYVBA_2024.7z)
+## CorelDRAW Tools - Lanya Corelvba Plug-In For Coreldraw X4-2023   [Download](https://lyvba.com/LYVBA_2024.7z)
+
+## https://youtu.be/WL0EcMo09A0
+
+## https://www.bilibili.com/video/BV1PE42157uM
 
 ![](https://lyvba.com/wp-content/uploads/2024/04/lyvba2024.webp)
 

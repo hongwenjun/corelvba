@@ -36,5 +36,5 @@ Public Function GetHDPIPercentage() As Integer
 End Function
 
 Sub MSG_HDPIPercentage()
-  MsgBox GetHDPIPercentage
+  MsgBox "HDPI Percentage:" & GetHDPIPercentage
 End Sub

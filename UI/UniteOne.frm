@@ -1,130 +1,55 @@
-Option Explicit
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} UniteOne 
+   Caption         =   "Merge Multiple Pages Into One"
+   ClientHeight    =   4005
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   5220
+   OleObjectBlob   =   "UniteOne.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "UniteOne"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+
 #If VBA7 Then
-    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
 #Else
-    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+    Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
     Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
 #End If
 
- Dim iHang, iLie, iPages As Integer     '定义行数(Y) 列数(X)
- Dim iYouyi, iXiayi As Single   '右移(R) 下移(B)
-                                'txtHang, txtLie, txtYouyi, txtXiayi ,txtInfo
- Dim LogoFile As String         'Logo
- 
- Dim s(1 To 255) As Shape   '定义对象用于存放每页的群组
- Dim P As Page          '定义多页
- 
+Dim iHang, iLie, iPages As Integer     '// 定义行数(Y) 列数(X)
+Dim iYouyi, iXiayi As Single           '// 右移(R) 下移(B)
+                                       '// txtHang, txtLie, txtYouyi, txtXiayi ,txtInfo
+Dim LogoFile As String                 '// Logo
 
-'**** 主程序  执行
-Private Sub cmdRun_Click()
-  '// 代码运行时关闭窗口刷新
-  Application.Optimization = True
-  ActiveDocument.BeginCommandGroup  '一步撤消'
-
- Dim x_M, y_M
- ActiveDocument.Unit = cdrMillimeter
- ActiveDocument.EditAcrossLayers = False    '跨图层编辑禁止
+Dim s(1 To 255) As Shape   '// 定义对象用于存放每页的群组
+Dim P As Page              '// 定义多页
  
- For Each P In ActiveDocument.Pages
-    P.Activate                    '激活每页
-    P.Shapes.all.CreateSelection          '每页全选
-    Set s(P.index) = ActiveSelection.Group    '存放每页的群组
- Next P
- 
- ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
- 
-  x_M = y_M = 0
-  
-  For Each P In ActiveDocument.Pages
-    P.Activate
-       
-    s(P.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(P.index).Move (iYouyi * x_M), -(300 + iXiayi * y_M) '排列对象  右偏移，下偏移
-  
-  y_M = y_M + 1
-  
-  If y_M = iLie Then
-  x_M = x_M + 1
-  y_M = 0
-  End If
-  
- Next P
- 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh
-  Application.Refresh
- Unload Me '执行完成关闭
-End Sub
-
-
-'**** 主程序 副本 横排序
-Private Sub cmdRunX_Click()
-  '// 代码运行时关闭窗口刷新
-  Application.Optimization = True
-  ActiveDocument.BeginCommandGroup  '一步撤消'
-
- Dim x_M, y_M
- ActiveDocument.Unit = cdrMillimeter
- ActiveDocument.EditAcrossLayers = False    '跨图层编辑禁止
- 
- For Each P In ActiveDocument.Pages
-    P.Activate                    '激活每页
-    P.Shapes.all.CreateSelection          '每页全选
-    Set s(P.index) = ActiveSelection.Group    '存放每页的群组
- Next P
- 
- ActiveDocument.EditAcrossLayers = True     '跨图层编辑开启
- 
-  x_M = y_M = 0
-  
-  For Each P In ActiveDocument.Pages
-    P.Activate
-       
-    s(P.index).MoveToLayer ActivePage.DesktopLayer    '每页对象移动到桌面层
-    s(P.index).Move (iYouyi * y_M), -(600 + iXiayi * x_M) '排列对象  右偏移，下偏移
-  
-  y_M = y_M + 1
-  
-  If y_M = iHang Then
-  x_M = x_M + 1
-  y_M = 0
-  End If
-  
- Next P
- 
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh
-  Application.Refresh
- 
- Unload Me '执行完成关闭
-End Sub
-
-
-'*********** 初始化程序 ***************
+'// *********** 初始化程序 ***************
 Private Sub UserForm_Initialize()
-
- Dim s As Shape
-ActiveDocument.Unit = cdrMillimeter '本文档单位为mm
-
- For Each P In ActiveDocument.Pages
- iPages = P.index
- If iPages = 1 Then
-  P.Activate
-  P.Shapes.all.CreateSelection
-
- Set s = ActiveDocument.Selection
-        If s.Shapes.Count = 0 Then
-            MsgBox "当前文件第一页空白没有物件！"
-            Exit Sub
-        End If
+  Dim s As Shape
+  ActiveDocument.Unit = cdrMillimeter '// 本文档单位为mm
+  
+  For Each P In ActiveDocument.Pages
+    iPages = P.index
+    If iPages = 1 Then
+      P.Activate
+      P.Shapes.all.CreateSelection
+      
+      Set s = ActiveDocument.Selection
+      If s.Shapes.Count = 0 Then
+       MsgBox i18n("The current document's first page is blank and has no objects.", LNG_CODE)
+      Exit Sub
+    End If
+    
+    End If
+  Next P
  
- End If
- Next P
- 
-
  txtLie.text = 5
  txtHang.text = Int(iPages / CInt(txtLie.text) + 0.9)
  txtLie.text = Int(iPages / CInt(txtHang.text) + 0.9)
@@ -139,39 +64,99 @@ ActiveDocument.Unit = cdrMillimeter '本文档单位为mm
  txtYouyi.text = iYouyi
  txtXiayi.text = iXiayi
  
-  LogoFile = Path & "GMS\262235.xyz\LOGO.jpg"
+  LogoFile = path & "GMS\LYVBA\LOGO.jpg"
   If API.ExistsFile_UseFso(LogoFile) Then
-    LogoPic.Picture = LoadPicture(LogoFile)   '换LOGO图
+    LogoPic.Picture = LoadPicture(LogoFile)   '// 换LOGO图
   End If
-  
- txtInfo.text = "本文档共 " & iPages & " 页，首页物件尺寸(mm):" & s.SizeWidth & "×" & s.SizeHeight
-  
+
+  LNG_CODE = API.GetLngCode
+  Init_Translations Me, LNG_CODE
+  Me.Caption = i18n("Merge Multiple Pages Into One", LNG_CODE)
+  Me.Matrix.Caption = i18n("Matrix", LNG_CODE)
+  Me.OffsetSelection.Caption = i18n("Offset Selection", LNG_CODE)
+ 
+  txtInfo.text = i18n("Total Pages:", LNG_CODE) & iPages & "  " & i18n("Home Page Shape Size(mm):", LNG_CODE) & s.SizeWidth & "x" & s.SizeHeight
 End Sub
 
-
-
-'帮助
-
-Private Sub cmdHelp_Click()
-
-WebHelp
-
-txtInfo.text = "点击访问 https://262235.xyz 详细帮助,寻找更多的视频教程！"
-txtInfo.ForeColor = &HFF0000
-cmdHelp.Caption = "在线帮助"
-cmdHelp.ForeColor = &HFF0000
-
-
+'**** 主程序  执行
+Private Sub cmdRun_Click()
+  API.BeginOpt
+  
+  Dim x_M, y_M
+  ActiveDocument.EditAcrossLayers = False    '// 跨图层编辑禁止
+  
+  For Each P In ActiveDocument.Pages
+    P.Activate                              '// 激活每页
+    P.Shapes.all.CreateSelection            '// 每页全选
+    Set s(P.index) = ActiveSelection.Group  '// 存放每页的群组
+  Next P
+  
+  ActiveDocument.EditAcrossLayers = True     '// 跨图层编辑开启
+  
+  x_M = y_M = 0
+  
+  For Each P In ActiveDocument.Pages
+    P.Activate
+      
+    s(P.index).MoveToLayer ActivePage.DesktopLayer         '// 每页对象移动到桌面层
+    s(P.index).Move (iYouyi * x_M), -(300 + iXiayi * y_M)  '// 排列对象  右偏移，下偏移
+    
+    y_M = y_M + 1
+    
+    If y_M = iLie Then
+      x_M = x_M + 1
+      y_M = 0
+    End If
+  
+  Next P
+  
+  Unload Me
+  API.EndOpt
 End Sub
 
+'**** 主程序 副本 横排序
+Private Sub cmdRunX_Click()
+  API.BeginOpt
 
-'关闭
+  Dim x_M, y_M
+  ActiveDocument.Unit = cdrMillimeter
+  ActiveDocument.EditAcrossLayers = False
+  
+  For Each P In ActiveDocument.Pages
+    P.Activate
+    P.Shapes.all.CreateSelection
+    Set s(P.index) = ActiveSelection.Group
+  Next P
+  
+  ActiveDocument.EditAcrossLayers = True
+  
+  x_M = y_M = 0
+  
+  For Each P In ActiveDocument.Pages
+    P.Activate
+    
+    s(P.index).MoveToLayer ActivePage.DesktopLayer
+    s(P.index).Move (iYouyi * y_M), -(600 + iXiayi * x_M)
+    
+    y_M = y_M + 1
+    
+    If y_M = iHang Then
+      x_M = x_M + 1
+      y_M = 0
+    End If
+  
+  Next P
+  
+  Unload Me
+  API.EndOpt
+End Sub
+
+'// 关闭
 Private Sub cmdClose_Click()
-Unload Me
+  Unload Me
 End Sub
 
-
-'VB限制文本框只能输入数字和小数点
+'// VB限制文本框只能输入数字和小数点
 Private Sub txtHang_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
 Dim Numbers As String
 Numbers = "1234567890"
@@ -214,10 +199,8 @@ Private Sub txtHang_Change()
  
  txtHang.text = iHang
  txtLie.text = Int(iPages / iHang + 0.9)
- 
   
   iLie = CInt(txtLie.text)
-    
 End Sub
 
 Private Sub HangSpin_Change()
@@ -258,14 +241,4 @@ Private Sub txtYouyi_Change()
         iYouyi = n
     End If
 End Sub
-
-Function WebHelp()
- Dim h As Long, r As Long
- 
- If cmdHelp.Caption = "在线帮助" Then
- h = FindWindow(vbNullString, "CorelDRAW 合并多页为一页 蘭雅sRGB 2010-2022")
- r = ShellExecute(h, "", "https://262235.xyz/index.php/tag/vba/", "", "", 1)
- End If
-End Function
-
 

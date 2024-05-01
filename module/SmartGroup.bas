@@ -1,3 +1,4 @@
+Attribute VB_Name = "SmartGroup"
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -10,16 +11,16 @@ Public Function Smart_Group(Optional ByVal tr As Double = 0) As ShapeRange
 
   Dim OrigSelection As ShapeRange, sr As New ShapeRange
   Dim s1 As Shape, sh As Shape, s As Shape
-  Dim x As Double, Y As Double, w As Double, h As Double
+  Dim X As Double, Y As Double, w As Double, h As Double
   Dim eff1 As Effect
   
   Set OrigSelection = ActiveSelectionRange
 
   '// 遍历物件画矩形
   For Each sh In OrigSelection
-    sh.GetBoundingBox x, Y, w, h
+    sh.GetBoundingBox X, Y, w, h
     If w * h > 4 Then
-      Set s = ActiveLayer.CreateRectangle2(x - tr, Y - tr, w + 2 * tr, h + 2 * tr)
+      Set s = ActiveLayer.CreateRectangle2(X - tr, Y - tr, w + 2 * tr, h + 2 * tr)
       sr.Add s
 
     '// 轴线 创建轮廓处理

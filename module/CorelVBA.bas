@@ -2,7 +2,17 @@ Attribute VB_Name = "CORELVBA"
 Public Sub Start()
   Toolbar.Show 0
 '  CorelVBA.show 0
-'  MsgBox "è¯·ç»™æˆ‘æ”¯æŒ!" & vbNewLine & "æ‚¨çš„æ”¯æŒï¼Œæˆ‘æ‰èƒ½æœ‰åŠ¨åŠ›æ·»åŠ æ›´å¤šåŠŸèƒ½." & vbNewLine & "è˜­é›…CorelVBAä¸­ç§‹èŠ‚ç‰ˆ" & vbNewLine & "coreldrawvbaæ’ä»¶äº¤æµç¾¤  8531411"
-'  Speak_Msg "æ„Ÿè°¢æ‚¨ä½¿ç”¨ è˜­é›…VBAå·¥å…·"
+'  MsgBox "Çë¸øÎÒÖ§³Ö!" & vbNewLine & "ÄúµÄÖ§³Ö£¬ÎÒ²ÅÄÜÓĞ¶¯Á¦Ìí¼Ó¸ü¶à¹¦ÄÜ." & vbNewLine & "ÌmÑÅCorelVBAÖĞÇï½Ú°æ" & vbNewLine & "coreldrawvba²å¼ş½»Á÷Èº  8531411"
+'  Speak_Msg "¸ĞĞ»ÄúÊ¹ÓÃ ÌmÑÅVBA¹¤¾ß"
+End Sub
+
+Sub Start_Dimension()
+  '// ³ß´ç±ê×¢ÔöÇ¿°æ
+  MakeSizePlus.Show 0
+End Sub
+
+Public Sub Init_StartButton()
+  SaveSetting "LYVBA", "Settings", "StartButton", "0"
+  MsgBox "Please Restart CorelDRAW!"
 End Sub
 

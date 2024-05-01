@@ -55,12 +55,19 @@ Public Function GetSet(s As String)
   
 End Function
 
+Public Function GetLngCode() As Long
+  GetLngCode = Val(GetSetting("LYVBA", "Settings", "I18N_LNG", "1033"))
+End Function
+
+
 Public Function Create_Tolerance() As Double
   Dim text As String
   If GlobalUserData.Exists("Tolerance", 1) Then
     text = GlobalUserData("Tolerance", 1)
   End If
-  text = InputBox("请输入容差值 0.1 --> 9.9", "容差值(mm)", text)
+  
+  LNG_CODE = API.GetLngCode
+  text = InputBox(i18n("Please enter a tolerance value 0.1 --> 9.9", LNG_CODE), i18n("Tolerance(mm)", LNG_CODE), text)
   If text = "" Then Exit Function
   GlobalUserData("Tolerance", 1) = text
   Create_Tolerance = Val(text)
@@ -75,7 +82,8 @@ Public Function Set_Space_Width(Optional ByVal OnlyRead As Boolean = False) As D
       Exit Function
     End If
   End If
-  text = InputBox("请输入间隔宽度值 -99 --> 99", "设置间隔宽度(mm)", text)
+  LNG_CODE = API.GetLngCode
+  text = InputBox(i18n("Please enter a gap width value -99 --> 99", LNG_CODE), i18n("Set Space Width(mm)", LNG_CODE), text)
   If text = "" Then Exit Function
   GlobalUserData("SpaceWidth", 1) = text
   Set_Space_Width = Val(text)
@@ -201,14 +209,14 @@ Public Function pFootInXY(P, a, b)
     If a(1) = b(1) Then
         pFootInXY = Array(P(0), a(1), 0#): Exit Function
     End If
-    Dim aa, bb, c, d, x, Y
+    Dim aa, bb, c, d, X, Y
     aa = (a(1) - b(1)) / (a(0) - b(0))
     bb = a(1) - aa * a(0)
     c = -(a(0) - b(0)) / (a(1) - b(1))
     d = P(1) - c * P(0)
-    x = (d - bb) / (aa - c)
-    Y = aa * x + bb
-    pFootInXY = Array(x, Y, 0#)
+    X = (d - bb) / (aa - c)
+    Y = aa * X + bb
+    pFootInXY = Array(X, Y, 0#)
 End Function
 
 

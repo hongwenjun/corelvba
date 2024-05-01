@@ -31,10 +31,10 @@ def ReadDirectoryFile(rootdir):
           	#递归函数，遍历所有子文件夹
             ReadDirectoryFile(dirname)
         for filename in filenames:
-            if filename.endswith(".bas"):
+            if filename.endswith(".frm"):
                 GBK_2_UTF8(os.path.join(parent, filename),
                            os.path.join(parent, filename))
 
 if __name__ == "__main__":
-    src_path = "C:/Soft/Git/srgb/corelvba/module"
+    src_path = "C:/Soft/Git/srgb/corelvba/UI"
     ReadDirectoryFile(src_path)

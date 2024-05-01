@@ -6,7 +6,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} splash
    ClientTop       =   330
    ClientWidth     =   8100
    OleObjectBlob   =   "splash.frx":0000
-   StartUpPosition =   1  'æ‰€æœ‰è€…ä¸­å¿ƒ
+   StartUpPosition =   1  'CenterOwner
 End
 Attribute VB_Name = "splash"
 Attribute VB_GlobalNameSpace = False
@@ -38,6 +38,10 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 Private switch As Boolean
 
 
+Private Sub Image1_Click()
+
+End Sub
+
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
   Dim hWnd As Long
@@ -53,15 +57,15 @@ Private Sub UserForm_Initialize()
 
 End Sub
 
-' ç»è¿‡ä¼˜åŒ–æ”¹å†™ï¼Œå‹‰å¼ºå¤Ÿç”¨äº†
+' ¾­¹ıÓÅ»¯¸ÄĞ´£¬ÃãÇ¿¹»ÓÃÁË
 Private Sub UserForm_Activate()
-  Me.text1 = Me.text1 + "åŠŸèƒ½:æŒ‰é¢ç§¯æ’åˆ—"
+  Me.text1 = Me.text1 + "¹¦ÄÜ:°´Ãæ»ıÅÅÁĞ"
   
   Unload VBA_FORM
   ActiveWindow.Refresh:    Application.Refresh
   DoEvents
 
-  Tools.æŒ‰é¢ç§¯æ’åˆ— 50
+  Tools.°´Ãæ»ıÅÅÁĞ 50
   
   'Close the window.
   Unload Me
