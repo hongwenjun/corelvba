@@ -2,10 +2,11 @@
 ![](https://lyvba.com/wp-content/uploads/2023/12/vlog_lanya.jpg)
 ### 2022.12.13 庆祝蘭雅CorelVBA工具捐赠和收益总额达到3000元
 ### 2023.12.29 庆祝蘭雅CorelVBA工具捐赠和收益总额达到5000元
+### 2024.06.15 蘭雅 CorelDRAW CPG 开源项目发布
 ## 捐赠
-感谢您使用 "蘭雅CorelVBA工具"
+感谢您使用 "蘭雅CorelVBA工具" 和 蘭雅 CorelDRAW CPG 工具
 
-感谢您的捐赠，它将有助于 "蘭雅CorelVBA工具" 的后续开发。
+感谢您的捐赠，它将有助于 "蘭雅CorelVBA工具" 和 蘭雅CPG插件 的后续开发。
 
 捐赠将用于硬件、软件、服务器托管和其他费用。
 
@@ -13,7 +14,7 @@
 
 蘭雅sRGB(蘭公子)
 
-
+[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)
 | 微信支付 | 支付宝 |
 | ------- | ------- |
 | ![](https://lyvba.com/donate/WXPay.png) | ![](https://lyvba.com/donate/AliPay.jpg) |
@@ -24,8 +25,8 @@
 [%ĀĀÙ]客服中心    溜溜    A    顶天办公    廣告标识    大白    √奋斗吧√    哈哈  
 深蓝*浅蓝    壹方-渐变牙刷    zdj168    99彩印    JZ捷众广告    醉后的最后    骑着"蜗牛"撵娘们    
 极速龙广告装饰图文快印②    a-嘉盟    幼儿园最亮的仔    舞    方华广告    肥崽很忙    
-Thanh Van    友佳友汇    创忆电脑    李凯    晋畅迷你字    cdr_插件 鼠标哥    w啊啊    上善若水    
-肇庆博洋文化传媒    hi    夏夜里的荷花与星星    无风   风雅广告
+Thanh Van    友佳友汇    创忆电脑    李凯    晋畅迷你字    cdr插件鼠标哥    w啊啊    上善若水    
+肇庆博洋文化传媒    hi    夏夜里的荷花与星星    无风   风雅广告  告别原来的自己 
 ```
 ### 会员群福利: 
 ```
