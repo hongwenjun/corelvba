@@ -10,11 +10,10 @@
 
 捐赠将用于硬件、软件、服务器托管和其他费用。
 
-再次感谢您的支持，
+再次感谢您的支持!            
 
-蘭雅sRGB(蘭公子)
+蘭雅sRGB(蘭公子)[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)](https://paypal.me/sRGB18)
 
-[![](https://raw.githubusercontent.com/hongwenjun/vps_setup/master/img/paypal.png)
 | 微信支付 | 支付宝 |
 | ------- | ------- |
 | ![](https://lyvba.com/donate/WXPay.png) | ![](https://lyvba.com/donate/AliPay.jpg) |
