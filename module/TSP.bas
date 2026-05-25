@@ -10,7 +10,7 @@ Public Function CDR_TO_TSP()
   Set shs = ActiveSelection.Shapes
   
   Dim TSP As String
-  TSP = shs.Count & " " & 0 & vbNewLine
+  TSP = shs.count & " " & 0 & vbNewLine
   For Each sh In shs
     X = sh.CenterX
     Y = sh.CenterY
@@ -44,7 +44,7 @@ Public Function Nodes_To_TSP()
   Set s = ssr.UngroupAllEx.Combine
   Set nr = s.Curve.Nodes.all
   
-  TSP = nr.Count & " " & 0 & vbNewLine
+  TSP = nr.count & " " & 0 & vbNewLine
   For Each n In nr
       X = Round(n.PositionX, 3) & " "
       Y = Round(n.PositionY, 3) & vbNewLine

@@ -6,7 +6,7 @@ Attribute VB_Name = "CutLines"
 
 '// 选中多个物件批量制作四角裁切线
 Public Function Batch_CutLines()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   Bleed = API.GetSet("Bleed")
   Line_len = API.GetSet("Line_len")
@@ -18,7 +18,7 @@ Public Function Batch_CutLines()
 
   For Each s1 In OrigSelection
     lx = s1.LeftX:      rx = s1.RightX
-    by = s1.BottomY:    ty = s1.TopY
+    by = s1.BottomY:    ty = s1.topY
     cx = s1.CenterX:    cy = s1.CenterY
     sw = s1.SizeWidth:  sh = s1.SizeHeight
     
@@ -52,7 +52,7 @@ End Function
 
 '// 标注尺寸标记线
 Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAlignTop, Optional ByVal mirror As Boolean = False)
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   Bleed = API.GetSet("Bleed")
   Line_len = API.GetSet("Line_len")
@@ -64,7 +64,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
 
   For Each s1 In OrigSelection
     lx = s1.LeftX:      rx = s1.RightX
-    by = s1.BottomY:    ty = s1.TopY
+    by = s1.BottomY:    ty = s1.topY
     
     '//  添加使用 左-上 标注尺寸标记线
     Dim s2, s6, s7, s8, s9 As Shape
@@ -85,7 +85,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
 '  py = ActiveDocument.Pages.First.CenterY
   '// 物件范围边界
   px = OrigSelection.LeftX
-  py = OrigSelection.TopY
+  py = OrigSelection.topY
   mpx = OrigSelection.RightX
   mpy = OrigSelection.BottomY
   
@@ -93,7 +93,7 @@ Public Function Dimension_MarkLines(Optional ByVal mark As cdrAlignType = cdrAli
   For Each s In sr
     s.name = "DMKLine"
     If mark = cdrAlignTop Then
-      s.TopY = py + Line_len + Bleed
+      s.topY = py + Line_len + Bleed
     Else
       s.LeftX = px - Line_len - Bleed
     End If
@@ -156,7 +156,7 @@ End Function
 
 '// 单线条转裁切线 - 放置到页面四边
 Public Function SelectLine_to_Cropline()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   
   '// 获得页面中心点 x,y , 设置新绘制线属性
@@ -206,7 +206,7 @@ End Function
 
 '// 拼版裁切线
 Public Function Draw_Lines()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   
   Dim OrigSelection As ShapeRange, sr As ShapeRange
@@ -217,7 +217,7 @@ Public Function Draw_Lines()
   
   ' 当前选择物件的范围边界
   set_lx = OrigSelection.LeftX:   set_rx = OrigSelection.RightX
-  set_by = OrigSelection.BottomY: set_ty = OrigSelection.TopY
+  set_by = OrigSelection.BottomY: set_ty = OrigSelection.topY
   set_cx = OrigSelection.CenterX: set_cy = OrigSelection.CenterY
   radius = 8
   Bleed = API.GetSet("Bleed")
@@ -232,7 +232,7 @@ Public Function Draw_Lines()
   For Each Target In OrigSelection
     Set s1 = Target
     lx = s1.LeftX:   rx = s1.RightX
-    by = s1.BottomY: ty = s1.TopY
+    by = s1.BottomY: ty = s1.topY
     cx = s1.CenterX: cy = s1.CenterY
     
     '// 范围边界物件判断

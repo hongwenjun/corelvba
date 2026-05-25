@@ -27,7 +27,7 @@ Dim iYouyi, iXiayi As Single           '// 右移(R) 下移(B)
                                        '// txtHang, txtLie, txtYouyi, txtXiayi ,txtInfo
 Dim LogoFile As String                 '// Logo
 
-Dim s(1 To 255) As Shape   '// 定义对象用于存放每页的群组
+Dim s(1 To 1024) As Shape   '// 定义对象用于存放每页的群组
 Dim P As Page              '// 定义多页
  
 '// *********** 初始化程序 ***************
@@ -42,7 +42,7 @@ Private Sub UserForm_Initialize()
       P.Shapes.all.CreateSelection
       
       Set s = ActiveDocument.Selection
-      If s.Shapes.Count = 0 Then
+      If s.Shapes.count = 0 Then
        MsgBox i18n("The current document's first page is blank and has no objects.", LNG_CODE)
       Exit Sub
     End If

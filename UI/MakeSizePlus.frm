@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} MakeSizePlus 
    Caption         =   "Batch Dimensions Plus"
-   ClientHeight    =   3690
+   ClientHeight    =   3630
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   5115
@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
 
@@ -58,7 +57,7 @@ Private Sub UserForm_Initialize()
   Bleed.text = API.GetSet("Bleed")
   Line_len.text = API.GetSet("Line_len")
   Outline_Width.text = GetSetting("LYVBA", "Settings", "Outline_Width", "0.2")
-
+  Font_Size.text = GetSetting("LYVBA", "Settings", "Font_Size", "18")
 End Sub
 
 '// 关闭窗口时保存窗口位置
@@ -141,6 +140,7 @@ Private Sub Settings_Click()
    SaveSetting "LYVBA", "Settings", "Bleed", Bleed.text
    SaveSetting "LYVBA", "Settings", "Line_len", Line_len.text
    SaveSetting "LYVBA", "Settings", "Outline_Width", Outline_Width.text
+   SaveSetting "LYVBA", "Settings", "Font_Size", Font_Size.text
    Call API.Set_Space_Width  '// 设置空间间隙
   End If
 End Sub
@@ -176,7 +176,7 @@ Private Sub btn_Makesizes_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
       If s.Type = cdrLinearDimensionShape Then sr.Add s
     Next s
     sr.Delete
-    If os.Count > 0 Then
+    If os.count > 0 Then
       os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
       ActiveSelectionRange.Delete
     End If
@@ -202,7 +202,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
   Dim Line_len As Double
   Line_len = API.Set_Space_Width(True)  '// 读取间隔
 
-  border = Array(cdrBottomRight, cdrBottomLeft, os.TopY + Line_len, os.TopY + 2 * Line_len, _
+  border = Array(cdrBottomRight, cdrBottomLeft, os.topY + Line_len, os.topY + 2 * Line_len, _
   cdrBottomRight, cdrTopRight, os.LeftX - Line_len, os.LeftX - 2 * Line_len)
   
   If mirror = True Then border = Array(cdrTopRight, cdrTopLeft, os.BottomY - Line_len, os.BottomY - 2 * Line_len, _
@@ -211,9 +211,9 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
   If dr = "upbx" Or dr = "upb" Or dr = "dnb" Or dr = "up" Or dr = "dn" Then Set os = X4_Sort_ShapeRange(os, stlx)
   If dr = "lfbx" Or dr = "lfb" Or dr = "rib" Or dr = "lf" Or dr = "ri" Then Set os = X4_Sort_ShapeRange(os, stty).ReverseRange
 
-  If os.Count > 0 Then
-    If os.Count > 1 And Len(dr) > 2 And os.Shapes.Count > 1 Then
-      For i = 1 To os.Shapes.Count - 1
+  If os.count > 0 Then
+    If os.count > 1 And Len(dr) > 2 And os.Shapes.count > 1 Then
+      For i = 1 To os.Shapes.count - 1
         Select Case dr
           Case "upbx"
 #If VBA7 Then
@@ -222,11 +222,12 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
             Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(2), cdrDimensionStyleEngineering)
             
             If shft > 0 And i = 1 Then
-              Dimension_SetProperty sh, PresetProperty.value
+              Dimension_SetProperty sh, PresetProperty.value, mirror
               Set pts = os.FirstShape.SnapPoints.BBox(border(0))
               Set pte = os.LastShape.SnapPoints.BBox(border(1))
               Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, 0, border(3), cdrDimensionStyleEngineering)
             End If
+          
           
           Case "lfbx"
             Set pts = os.Shapes(i).SnapPoints.BBox(border(4))
@@ -234,7 +235,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
             Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(6), 0, cdrDimensionStyleEngineering)
             
             If shft > 0 And i = 1 Then
-              Dimension_SetProperty sh, PresetProperty.value
+              Dimension_SetProperty sh, PresetProperty.value, mirror
               Set pts = os.FirstShape.SnapPoints.BBox(border(4))
               Set pte = os.LastShape.SnapPoints.BBox(border(5))
               Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, border(7), 0, cdrDimensionStyleEngineering)
@@ -254,7 +255,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
           Case "upb"
             Set pts = os.Shapes(i).SnapPoints.BBox(cdrTopRight)
             Set pte = os.Shapes(i + 1).SnapPoints.BBox(cdrTopLeft)
-            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.topY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
             
           Case "dnb"
             Set pts = os.Shapes(i).SnapPoints.BBox(cdrBottomRight)
@@ -272,7 +273,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
             Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
         End Select
         '// 尺寸标注设置属性
-        Dimension_SetProperty sh, PresetProperty.value
+        Dimension_SetProperty sh, PresetProperty.value, mirror
         'ActiveDocument.ClearSelection
       Next i
     Else
@@ -281,7 +282,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
           Case "up"
             Set pts = os.FirstShape.SnapPoints.BBox(cdrTopLeft)
             Set pte = os.LastShape.SnapPoints.BBox(cdrTopRight)
-            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.TopY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
+            Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, os.LeftX + os.SizeWidth / 10, os.topY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
 
           Case "dn"
             Set pts = os.FirstShape.SnapPoints.BBox(cdrBottomLeft)
@@ -298,14 +299,14 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
             Set pte = os.LastShape.SnapPoints.BBox(cdrBottomRight)
             Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, os.RightX + os.SizeWidth / 10, os.BottomY + os.SizeHeight / 10, cdrDimensionStyleEngineering)
         End Select
-        Dimension_SetProperty sh, PresetProperty.value
+        Dimension_SetProperty sh, PresetProperty.value, mirror
       Else
         For Each s In os.Shapes
           Select Case dr
             Case "up"
               Set pts = s.SnapPoints.BBox(cdrTopLeft)
               Set pte = s.SnapPoints.BBox(cdrTopRight)
-              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
+              Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, s.LeftX + s.SizeWidth / 10, s.topY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
             
             Case "dn"
               Set pts = s.SnapPoints.BBox(cdrBottomLeft)
@@ -322,7 +323,7 @@ Sub make_sizes_sep(dr, Optional shft = 0, Optional ByVal mirror As Boolean = Fal
               Set pte = s.SnapPoints.BBox(cdrBottomRight)
               Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, pte, True, s.RightX + s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering)
           End Select
-          Dimension_SetProperty sh, PresetProperty.value
+          Dimension_SetProperty sh, PresetProperty.value, mirror
         Next s
       End If
     End If
@@ -342,7 +343,7 @@ Sub make_sizes(Optional shft = 0)
   Dim pts As SnapPoint, pte As SnapPoint
   Dim os As ShapeRange
   Set os = ActiveSelectionRange
-  If os.Count > 0 Then
+  If os.count > 0 Then
   For Each s In os.Shapes
 #If VBA7 Then
       Set pts = s.SnapPoints.BBox(cdrTopLeft)
@@ -351,7 +352,7 @@ Sub make_sizes(Optional shft = 0)
       If shft <> 6 Then Dimension_SetProperty ActiveLayer.CreateLinearDimension(cdrDimensionVertical, pts, ptle, True, _
                                               s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
       If shft <> 3 Then Dimension_SetProperty ActiveLayer.CreateLinearDimension(cdrDimensionHorizontal, pts, pte, True, _
-                                          s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
+                                          s.LeftX + s.SizeWidth / 10, s.topY + s.SizeHeight / 10, cdrDimensionStyleEngineering), PresetProperty.value
 #Else
 ' X4  There is a difference
       Set pts = s.SnapPoints(cdrTopLeft)
@@ -360,7 +361,7 @@ Sub make_sizes(Optional shft = 0)
       If shft <> 6 Then ActiveLayer.CreateLinearDimension cdrDimensionVertical, pts, ptle, True, _
                       s.LeftX - s.SizeWidth / 10, s.BottomY + s.SizeHeight / 10, cdrDimensionStyleEngineering, Textsize:=18
       If shft <> 3 Then ActiveLayer.CreateLinearDimension cdrDimensionHorizontal, pts, pte, True, _
-                      s.LeftX + s.SizeWidth / 10, s.TopY + s.SizeHeight / 10, cdrDimensionStyleEngineering, Textsize:=18
+                      s.LeftX + s.SizeWidth / 10, s.topY + s.SizeHeight / 10, cdrDimensionStyleEngineering, Textsize:=18
 #End If
   Next s
   End If
@@ -371,9 +372,7 @@ End Sub
 
 '// 使用标记线批量建立尺寸标注:   左键上标注，右键右标注
 Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-  Dim sr As ShapeRange
-  Set sr = ActiveSelectionRange
-  
+  SRMInst 3, "sw"
   '// 右键
   If Button = 2 Then
     If chkOpposite.value = True Then
@@ -394,9 +393,78 @@ Private Sub MarkLines_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As I
         make_sizes_sep "upbx", Shift, False
     End If
   End If
-  
-  sr.CreateSelection
+  SRMInst 3, "lw"
 End Sub
+
+'// 自动酷炫风格标注
+Private Sub CoolStyle_Click()
+  SRMInst 3, "sw"
+
+  CutLines.Dimension_MarkLines cdrAlignTop, False
+  make_sizes_sep "upbx", Shift, False
+
+  SRMInst 3, "lw"
+  CutLines.Dimension_MarkLines cdrAlignLeft, False
+  make_sizes_sep "lfbx", Shift, False
+
+  SRMInst 3, "lw"
+  CutLines.Dimension_MarkLines cdrAlignTop, True
+  make_sizes_sep "upbx", Shift, True
+
+  SRMInst 3, "lw"
+  CutLines.Dimension_MarkLines cdrAlignLeft, True
+  make_sizes_sep "lfbx", Shift, True
+  SRMInst 3, "lw"
+  
+End Sub
+
+'// 快速标注尺寸样式
+Private Sub QuickStyle_Click()
+  Dim os As ShapeRange
+  Set os = ActiveSelectionRange
+  SRMInst 3, "sw"
+  
+  CutLines.Dimension_MarkLines cdrAlignTop, True
+  make_sizes_sep "upbx", 2, True
+  SRMInst 4, "sw"
+  
+  SRMInst 3, "lw"
+  CutLines.Dimension_MarkLines cdrAlignLeft, False
+  make_sizes_sep "lfbx", Shift, False
+
+  SRMInst 4, "lw"
+  
+  Dim sr As ShapeRange
+  Set sr = ActiveSelectionRange
+  sr.Sort "@shape1.left<@shape2.left"
+  If sr.count > 5 And IsAllSameSize(os) Then
+    n = sr.count
+    sr.Remove n: sr.Remove (n - 1)
+    sr.Remove 3: sr.Remove 2: sr.Remove 1
+    sr.Delete
+  End If
+  
+  SRMInst 3, "lw"
+End Sub
+
+'// 标注文字红色，分离标注
+Private Sub QuickRedText_Click()
+  SRMInst 3, "sw"
+  
+  '// 选择文本，改成红色
+  ModulePlus.Dimension_Select_or_Delete 4
+  Dim sr As ShapeRange
+  Set sr = ActiveSelectionRange
+  sr.ApplyUniformFill CreateCMYKColor(0, 100, 100, 0)
+  
+  '// 解绑标注线
+  SRMInst 3, "lw"
+  ModulePlus.Untie_MarkLines
+  
+  SRMInst 3, "lw"
+  
+End Sub
+
 
 '// 使用手工选节点建立尺寸标注，使用Ctrl分离尺寸标注
 Private Sub Manual_Makesize_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -425,9 +493,9 @@ Private Function Slanted_Makesize()
     Slanted_Sort_Make sr  '// 排序标注倾斜尺寸
     Exit Function
   End If
-  If nr.Count < 2 Then Exit Function
+  If nr.count < 2 Then Exit Function
 
-  cnt = nr.Count
+  cnt = nr.count
   While cnt > 1
     x1 = nr(cnt).PositionX
     y1 = nr(cnt).PositionY
@@ -438,7 +506,7 @@ Private Function Slanted_Makesize()
     Set pte = CreateSnapPoint(x2, y2)
     Set sh = ActiveLayer.CreateLinearDimension(cdrDimensionSlanted, pts, pte, True, x1 - 20, y1 + 20, cdrDimensionStyleEngineering)
     
-    Dimension_SetProperty sh, PresetProperty.value
+    Dimension_SetProperty sh, PresetProperty.value, mirror
     cnt = cnt - 1
   Wend
 
@@ -463,7 +531,7 @@ Private Function Slanted_Sort_Make(shs As ShapeRange)
   CutLines.RemoveDuplicates sr  '// 简单删除重复算法
   Set sr = X4_Sort_ShapeRange(sr, stlx)
 
-  For i = 1 To sr.Count - 1
+  For i = 1 To sr.count - 1
     x1 = sr(i + 1).CenterX
     y1 = sr(i + 1).CenterY
     x2 = sr(i).CenterX
@@ -486,19 +554,25 @@ ErrorHandler:
 End Function
 
 '// 尺寸标注设置属性
-Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As Boolean = False)
+Private Function Dimension_SetProperty(sh_dim As Shape, Optional ByVal Preset As Boolean = False, Optional ByVal mirror As Boolean = False)
 #If VBA7 Then
+  plt = 0: If periphery.value And mirror Then plt = 1
+  
   If Preset And sh_dim.Type = cdrLinearDimensionShape Then
     With sh_dim.Style.GetProperty("dimension")
       .SetProperty "precision", 0 '       小数位数
       .SetProperty "showUnits", 0 '       是否显示单位 0/1
-      .SetProperty "textPlacement", 0 '   0、上方，1、下方，2、中间
+      
+      .SetProperty "textPlacement", plt  '   0、上方，1、下方，2、中间
+
     '  .SetProperty "dynamicText", 0 '    是否可以编辑尺寸0/1
     '  .SetProperty "overhang", 500000 '
     End With
   End If
   
   sh_dim.Outline.width = API.GetSet("Outline_Width")
+  sh_dim.Dimension.TextShape.text.Story.size = Font_Size.value
+  
 #Else
 ' X4  There is a difference
 #End If
@@ -506,6 +580,7 @@ End Function
 
 '// 尺寸标注左边
 Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  SRMInst 3, "sw"
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, False
     make_sizes_sep "lfbx", Button, False
@@ -517,10 +592,12 @@ Private Sub Makesize_Left_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
     '// Ctrl Key
     make_sizes_sep "lfb"
   End If
+  SRMInst 3, "lw"
 End Sub
 
 '// 尺寸标注右边
 Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  SRMInst 3, "sw"
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignLeft, True
     make_sizes_sep "lfbx", Button, True
@@ -532,11 +609,12 @@ Private Sub Makesize_Right_MouseUp(ByVal Button As Integer, ByVal Shift As Integ
     '// Ctrl Key
     make_sizes_sep "rib"
   End If
-
+  SRMInst 3, "lw"
 End Sub
 
 '// 尺寸标注向上
 Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  SRMInst 3, "sw"
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, False
     make_sizes_sep "upbx", Button, False
@@ -548,10 +626,12 @@ Private Sub Makesize_Up_MouseUp(ByVal Button As Integer, ByVal Shift As Integer,
    '// Ctrl Key
     make_sizes_sep "upb"
   End If
+  SRMInst 3, "lw"
 End Sub
 
 '// 尺寸标注向下
 Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  SRMInst 3, "sw"
   If Button = 2 Then
     CutLines.Dimension_MarkLines cdrAlignTop, True
     make_sizes_sep "upbx", Button, True
@@ -563,6 +643,7 @@ Private Sub Makesize_Down_MouseUp(ByVal Button As Integer, ByVal Shift As Intege
    '// Ctrl Key
     make_sizes_sep "dnb"
   End If
+  SRMInst 3, "lw"
 End Sub
 
 Private Sub MakeRuler_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -643,7 +724,7 @@ Private Function Add_Ruler_Text(rm_lines As Boolean)
   For Each s In sr
     X = s.CenterX: Y = s.CenterY
     text = str(Int(X - sr.FirstShape.CenterX + 0.5))
-    Set t = ActiveLayer.CreateArtisticText(X, Y, text)
+    Set t = ActiveLayer.CreateArtisticText(X, Y, text, size:=Font_Size.value)
     t.CenterX = X: t.CenterY = Y
     sreg.Add t
   Next
@@ -665,7 +746,7 @@ Private Function Add_Ruler_Text_Y(rm_lines As Boolean)
   For Each s In sr
     X = s.CenterX: Y = s.CenterY
     text = str(Int(Y - sr.FirstShape.CenterY + 0.5))
-    Set t = ActiveLayer.CreateArtisticText(X, Y, text)
+    Set t = ActiveLayer.CreateArtisticText(X, Y, text, size:=Font_Size.value)
     t.Rotate 90
     t.CenterX = X: t.CenterY = Y
     sreg.Add t
@@ -729,4 +810,38 @@ Private Sub Delete_Dimension_Click()
 End Sub
 Private Sub bt_Untie_MarkLines_Click()
   ModulePlus.Untie_MarkLines
+End Sub
+
+'// Select_Range 工具组合按钮
+Private Sub MADD_Click()
+  SRMInst 1, "add"
+End Sub
+Private Sub MSUB_Click()
+  SRMInst 1, "sub"
+End Sub
+Private Sub MRLW_Click()
+  SRMInst 1, "lw"
+End Sub
+Private Sub MZERO_Click()
+    SRMInst 1, "zero"
+    MsgBox "Selection Range is Removed!"
+End Sub
+
+'''////  CorelDRAW 与 Adobe_Illustrator 剪贴板转换  ////'''
+Private Sub Adobe_Illustrator_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  Dim value As Integer
+  If Button = 2 Then
+    savePDFtoClip.AICopyToCdr
+    Exit Sub
+  End If
+  
+  If Button Then
+    savePDFtoClip.CdrCopyToAI
+    MsgBox "CorelDRAW 与 Adobe_Illustrator 剪贴板转换" & vbNewLine & "鼠标左键复制，鼠标右键粘贴"
+  End If
+End Sub
+
+'// 修复圆角缺角到直角
+Private Sub btn_corners_off_Click()
+  Tools.corner_off
 End Sub

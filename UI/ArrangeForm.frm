@@ -36,7 +36,7 @@ Private Sub UserForm_Initialize()
   Init_Translations Me, LNG_CODE
   
   Set sr = ActiveSelectionRange
-  If sr.Count > 0 Then
+  If sr.count > 0 Then
     ls = Int(sr.SizeWidth + 0.5)
     hs = Int(sr.SizeHeight + 0.5)
     

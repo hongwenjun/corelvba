@@ -6,7 +6,7 @@ Attribute VB_Name = "AutoColorMark"
 
 '// 请先选择要印刷的物件群组，本插件完成设置页面大小，自动中线色阶条对准线功能
 Function Auto_ColorMark()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
 
@@ -170,8 +170,11 @@ Private Function put_page_size()
   ' 添加文字 页面大小和文件名
   Dim st As Shape
   size = Trim(str(Int(ActivePage.SizeWidth))) + "x" + Trim(str(Int(ActivePage.SizeHeight))) + "mm"
-  size = size & " " & ActiveDocument.FileName & " " & Date '
+'//  size = size & " " & ActiveDocument.FileName & " " & Date '
   Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
+  st.AlignAndDistribute 1, 1, 1, 0, False, 2
+  st.Move -3, -0.6
+  st.ConvertToCurves
 End Function
 
 #Else
@@ -240,6 +243,7 @@ Private Function put_page_size()
   Set st = ActiveLayer.CreateArtisticText(0, 0, size, , , "Arial", 7)
   st.AlignToPage cdrAlignRight + cdrAlignTop
   st.Move -3, -0.6
+  st.ConvertToCurves
 End Function
 
 #End If
@@ -247,7 +251,7 @@ End Function
 
 ' 自动中线 For 黑白产品版
 Function Auto_ColorMark_K()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   

@@ -4,6 +4,7 @@ Attribute VB_Name = "Tools"
 
 '// 简易火车排列
 Public Function Simple_Train_Arrangement(Space_Width As Double)
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
@@ -23,7 +24,7 @@ Public Function Simple_Train_Arrangement(Space_Width As Double)
     '// 底对齐 If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX, ssr(cnt - 1).BottomY
     '// 改成顶对齐 2022-08-10
     ActiveDocument.ReferencePoint = cdrTopLeft + cdrBottomTop
-    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX + Space_Width, ssr(cnt - 1).TopY
+    If cnt > 1 Then s.SetPosition ssr(cnt - 1).RightX + Space_Width, ssr(cnt - 1).topY
     cnt = cnt + 1
   Next s
 
@@ -32,6 +33,7 @@ End Function
 
 '// 简易阶梯排列
 Public Function Simple_Ladder_Arrangement(Space_Width As Double)
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   Dim ssr As ShapeRange, s As Shape
   Dim cnt As Integer
@@ -87,6 +89,7 @@ End Function
 
 '// 旋转物件角度
 Public Function Rotate_Shapes(n As Double)
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   
   Dim sh As Shape, shs As Shapes
@@ -112,6 +115,7 @@ End Function
 
 '// 批量设置物件尺寸
 Public Function Set_Shapes_size(ByRef sx As Double, ByRef sy As Double)
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   ActiveDocument.ReferencePoint = cdrCenter
   
@@ -128,7 +132,7 @@ End Function
 
 '// 批量设置物件尺寸整数
 Public Function Size_to_Integer()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   '// 修改变形尺寸基准
   ActiveDocument.ReferencePoint = cdrCenter
@@ -150,7 +154,7 @@ End Function
 
 '// 设置物件页面居中
 Public Function Align_Page_Center()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   '// 实践应用: 选择物件群组,页面设置物件大小,物件页面居中
   API.BeginOpt
   
@@ -407,7 +411,7 @@ Public Function Take_Apart_Character()
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   ssr.Delete
   
-  Set sh = ActivePage.SelectShapesFromRectangle(s1.LeftX, s1.TopY, s1.RightX, s1.BottomY, False)
+  Set sh = ActivePage.SelectShapesFromRectangle(s1.LeftX, s1.topY, s1.RightX, s1.BottomY, False)
 ' sh.Shapes.All.Group
   s1.Delete
   
@@ -423,7 +427,7 @@ End Function
 
 '''//// 简单一刀切 识别群组 ////''' ''' 本功能由群友宏瑞广告赞助发行 '''
 Public Function Single_Line()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
@@ -437,7 +441,7 @@ Public Function Single_Line()
   Dim cnt As Integer
   cnt = 1
   
-  If 1 = ActiveSelectionRange.Count Then
+  If 1 = ActiveSelectionRange.count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
     Set ssr = ActiveSelectionRange
@@ -464,7 +468,7 @@ Public Function Single_Line()
   For Each s In ssr
     If cnt > 1 Then
       s.ConvertToCurves
-      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.LeftX, s.TopY - s.SizeHeight)
+      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.topY, s.LeftX, s.topY - s.SizeHeight)
       line.Outline.SetProperties Color:=cm(1)
       SrNew.Add line
     End If
@@ -478,7 +482,7 @@ ErrorHandler:
 End Function
 
 Public Function Single_Line_Vertical()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
@@ -492,7 +496,7 @@ Public Function Single_Line_Vertical()
   Dim cnt As Integer
   cnt = 1
   
-  If 1 = ActiveSelectionRange.Count Then
+  If 1 = ActiveSelectionRange.count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
     Set ssr = ActiveSelectionRange
@@ -515,7 +519,7 @@ Public Function Single_Line_Vertical()
   For Each s In ssr
     If cnt > 1 Then
       s.ConvertToCurves
-      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY, s.RightX, s.TopY)
+      Set line = ActiveLayer.CreateLineSegment(s.LeftX, s.topY, s.RightX, s.topY)
       line.Outline.SetProperties Color:=cm(1)
       SrNew.Add line
     End If
@@ -529,7 +533,7 @@ ErrorHandler:
 End Function
 
 Public Function Single_Line_LastNode()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
@@ -544,7 +548,7 @@ Public Function Single_Line_LastNode()
   cnt = 1
   
 
-  If 1 = ActiveSelectionRange.Count Then
+  If 1 = ActiveSelectionRange.count Then
     Set ssr = ActiveSelectionRange(1).UngroupAllEx
   Else
     Set ssr = ActiveSelectionRange
@@ -584,7 +588,7 @@ End Function
 
 '''//// 选择范围画框 ////'''
 Public Function Mark_Range_Box()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
   Dim s1 As Shape, ssr As ShapeRange
   
@@ -635,7 +639,7 @@ End Function
 
 '''//// 切割图形-垂直分割-水平分割 ////'''
 Function divideVertically()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   
@@ -652,7 +656,7 @@ ErrorHandler:
 End Function
 
 Function divideHorizontally()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   ActiveDocument.BeginCommandGroup:  Application.Optimization = True
   
@@ -711,13 +715,13 @@ End Function
 
 '// 批量多页居中-遍历批量物件，放置物件到页面
 Public Function Batch_Align_Page_Center()
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   On Error GoTo ErrorHandler
   API.BeginOpt
   
   Dim sr As ShapeRange
   Set sr = ActiveSelectionRange
-  total = sr.Count
+  total = sr.count
 
   '// 建立多页面
   Set doc = ActiveDocument
@@ -727,7 +731,7 @@ Public Function Batch_Align_Page_Center()
 
   Dim sh As Shape
   '// 遍历批量物件，放置物件到页面  InsertPagesEx   ActivePage
-  For i = 1 To sr.Count
+  For i = 1 To sr.count
     doc.Pages(i).Activate
     Set sh = sr.Shapes(i)
     ActivePage.SetSize Int(sh.SizeWidth + 0.9), Int(sh.SizeHeight + 0.9)
@@ -754,16 +758,16 @@ End Function
 Public Function guideangle(actnumber As ShapeRange, cardblood As Integer)
   Dim sr As ShapeRange
   Set sr = ActiveDocument.MasterPage.GuidesLayer.FindShapes(Type:=cdrGuidelineShape)
-  If sr.Count <> 0 Then
+  If sr.count <> 0 Then
     sr.Delete
     Exit Function
   End If
   
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   ActiveDocument.Unit = cdrMillimeter
 
   With actnumber
-    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .TopY - cardblood, 0#)
+    Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .topY - cardblood, 0#)
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(0, .BottomY + cardblood, 0#)
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(.LeftX + cardblood, 0, 90#)
     Set s1 = ActiveDocument.MasterPage.GuidesLayer.CreateGuideAngle(.RightX - cardblood, 0, 90#)
@@ -777,7 +781,7 @@ Public Function Simple_Label_Numbers()
   Set sr = ActiveSelectionRange
   
   For Each s In sr.Shapes
-    X = s.CenterX: Y = s.TopY
+    X = s.CenterX: Y = s.topY
     sw = s.SizeWidth: sh = s.SizeHeight
           
     text = Int(sw + 0.5) & "x" & Int(sh + 0.5) & "mm"
@@ -798,7 +802,7 @@ Public Function corner_off()
 
 On Error GoTo errn
     selec = False
-    If os.Shapes.Count = 1 Then
+    If os.Shapes.count = 1 Then
         Set s = os.FirstShape
         If Not s.Curve Is Nothing Then
             For Each nd In s.Curve.Nodes
@@ -810,14 +814,14 @@ On Error GoTo errn
         End If
     End If
     
-    If os.Shapes.Count > 1 Or Not selec Then
+    If os.Shapes.count > 1 Or Not selec Then
         os.ConvertToCurves
         For Each s In os.Shapes
             Set nds = Nothing
             Set nde = Nothing
             For k = 1 To 3
-            For i = 1 To s.Curve.Nodes.Count
-                If i <= s.Curve.Nodes.Count Then
+            For i = 1 To s.Curve.Nodes.count
+                If i <= s.Curve.Nodes.count Then
                     Set nd = s.Curve.Nodes(i)
                     If Not nd.NextSegment Is Nothing And Not nd.PrevSegment Is Nothing Then
                         If Abs(nd.PrevSegment.Length - nd.NextSegment.Length) < (nd.PrevSegment.Length + nd.NextSegment.Length) / 30 And nd.PrevSegment.Type = cdrCurveSegment And nd.NextSegment.Type = cdrCurveSegment Then
@@ -836,14 +840,14 @@ On Error GoTo errn
             
              
         Next s
-    ElseIf os.Shapes.Count = 1 And selec Then
+    ElseIf os.Shapes.count = 1 And selec Then
         Set nds = Nothing
         Set nde = Nothing
         For Each nd In s.Curve.Nodes
             If Not nd.Selected And Not nd.Next.Selected Then Exit For
         Next nd
         If Not nd Is s.Curve.Nodes.Last Then
-            For i = 1 To s.Curve.Nodes.Count
+            For i = 1 To s.Curve.Nodes.count
                 Set nd = nd.Next
                 If Not nde Is Nothing And Not nds Is Nothing And Not nd.Selected Then Exit For
                 If Not nds Is Nothing And nd.Selected Then Set nde = nd
@@ -875,7 +879,7 @@ Private Function corner_off_make(s As Shape, nds As Node, nde As Node)
     l2.RotationAngle = nde.NextSegment.StartingControlPointAngle + 180
     
     Set lcross = l2.Curve.Segments.First.GetIntersections(l1.Curve.Segments.First)
-    If lcross.Count > 0 Then
+    If lcross.count > 0 Then
         cx = lcross(1).PositionX
         cy = lcross(1).PositionY
         sx = nds.PositionX
@@ -890,7 +894,7 @@ Private Function corner_off_make(s As Shape, nds As Node, nde As Node)
         
         s.Curve.Nodes.Range(Array(nds.AbsoluteIndex, nde.AbsoluteIndex)).BreakApart
         Set os = s.BreakApartEx
-        oscnt = os.Shapes.Count
+        oscnt = os.Shapes.count
         For Each ss In os.Shapes
             If ss.Curve.Nodes.First.PositionX = ex And ss.Curve.Nodes.First.PositionY = ey Then Set s2 = ss
             If ss.Curve.Nodes.Last.PositionX = sx And ss.Curve.Nodes.Last.PositionY = sy Then Set s1 = ss
@@ -921,97 +925,6 @@ Private Function corner_off_make(s As Shape, nds As Node, nde As Node)
     End If
 End Function
 
-Public Function autogroup(Optional Group As String = "group", Optional shft = 0, Optional sss As Shapes = Nothing, Optional undogroup = True) As ShapeRange
-  Dim sr As ShapeRange, sr_all As ShapeRange, os As ShapeRange
-  Dim sp As SubPaths
-  Dim arr()
-  Dim s As Shape
-  If sss Is Nothing Then Set os = ActiveSelectionRange Else Set os = sss.all
-  On Error GoTo errn
-  ActiveDocument.BeginCommandGroup:  Application.Optimization = True
-  
-  If ActiveSelection.Shapes.Count > 0 Then
-    gcnt = os.Shapes.Count
-    ReDim arr(1 To gcnt, 1 To gcnt)
-    Set sr_all = ActiveSelectionRange
-    sr_all.RemoveAll
-    ReDim arr(1 To gcnt, 1 To gcnt)
-    ActiveDocument.Unit = cdrTenthMicron
-    sgap = 10
-    If shft = 2 Or shft = 3 Or shft = 6 Or shft = 7 Then
-      os.RemoveAll
-      For Each s In ActiveSelectionRange.Shapes
-          os.Add ActivePage.SelectShapesFromRectangle(s.LeftX - sgap, s.BottomY - sgap, s.RightX + sgap, s.TopY + sgap, True)
-      Next s
-    End If
-    
-    For i = 1 To os.Shapes.Count
-      Set s1 = os.Shapes(i)
-      arr(i, i) = i
-      For j = 1 To os.Shapes.Count
-        Set s2 = os.Shapes(j)
-        If s2.LeftX < s1.RightX + sgap And s2.RightX > s1.LeftX - sgap And s2.BottomY < s1.TopY + sgap And s2.TopY > s1.BottomY - sgap Then
-          If shft = 1 Or shft = 3 Or shft = 5 Or shft = 7 Then
-            Set isec = s1.Intersect(s2)
-            If Not isec Is Nothing Then
-              arr(i, j) = j
-              isec.CreateSelection
-              isec.Delete
-            End If
-          Else
-            arr(i, j) = j
-          End If
-        End If
-      Next j
-    Next i
-    
-    For i = 1 To gcnt
-      arr = collect_arr(arr, i, i)
-    Next i
-    
-    Set sr = ActiveSelectionRange
-
-    For i = 1 To gcnt
-      sr.RemoveAll
-      inar = 0
-      For j = 1 To gcnt
-        If arr(i, j) > 0 Then
-          sr.Add os.Shapes(j)
-          inar = inar + 1
-        End If
-      Next j
-      If inar > 1 Then
-        If Group = "group" Then
-          If shft < 4 Then sr_all.Add sr.Group
-        End If
-      Else
-        If sr.Shapes.Count > 0 Then sr_all.AddRange sr
-      End If
-    Next i
-  Set autogroup = sr_all
-  End If
-
-  ActiveDocument.EndCommandGroup
-  Application.Optimization = False
-  ActiveWindow.Refresh:    Application.Refresh
-  Exit Function
-errn:
-  Application.Optimization = False
-End Function
-
-Public Function collect_arr(arr, ci, ki)
-    lim = UBound(arr)
-    For k = 1 To lim
-        If arr(ki, k) > 0 Then
-            arr(ci, k) = k
-            If ki <> ci Then arr(ki, k) = Empty
-            If ci <> k And ki <> k Then arr = collect_arr(arr, ci, k)
-        End If
-    Next k
-    'If ki <> ci Then arr(ki, ki) = Empty
-    collect_arr = arr
-End Function
-
 '// 两个端点的坐标,为(x1,y1)和(x2,y2) 那么其角度a的tan值: tana=(y2-y1)/(x2-x1)
 '// 所以计算arctan(y2-y1)/(x2-x1), 得到其角度值a
 '// VB中用atn(), 返回值是弧度，需要 乘以 PI /180
@@ -1030,7 +943,7 @@ Public Function Angle_to_Horizon()
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
-  If nr.Count = 2 Then
+  If nr.count = 2 Then
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2): sr.Rotate -a
@@ -1049,7 +962,7 @@ Public Function Auto_Rotation_Angle()
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
-  If nr.Count = 2 Then
+  If nr.count = 2 Then
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2): sr.Rotate 90 + a
@@ -1062,7 +975,7 @@ End Function
 '// 交换对象
 Public Function Exchange_Object()
   Set sr = ActiveSelectionRange
-  If sr.Count = 2 Then
+  If sr.count = 2 Then
     X = sr.LastShape.CenterX: Y = sr.LastShape.CenterY
     sr.LastShape.CenterX = sr.FirstShape.CenterX: sr.LastShape.CenterY = sr.FirstShape.CenterY
     sr.FirstShape.CenterX = X: sr.FirstShape.CenterY = Y
@@ -1076,12 +989,12 @@ Public Function Mirror_ByGuide()
   Set sr = ActiveSelectionRange
   Set nr = sr.LastShape.DisplayCurve.Nodes.all
 
-  If nr.Count >= 2 Then
+  If nr.count >= 2 Then
     byshape = False
     x1 = nr.FirstNode.PositionX: y1 = nr.FirstNode.PositionY
     x2 = nr.LastNode.PositionX: y2 = nr.LastNode.PositionY
     a = lineangle(x1, y1, x2, y2)  '// 参考线和水平的夹角 a
-    sr.remove sr.Count
+    sr.Remove sr.count
     
     ang = 90 - a    '// 镜像的旋转角度
     For Each s In sr
@@ -1112,7 +1025,7 @@ End Function
 
 '// 按面积排列计数
 Public Function Count_byArea(Space_Width As Double)
-  If 0 = ActiveSelectionRange.Count Then Exit Function
+  If 0 = ActiveSelectionRange.count Then Exit Function
   API.BeginOpt
   ActiveDocument.ReferencePoint = cdrCenter
   
@@ -1149,7 +1062,7 @@ Public Function Count_byArea(Space_Width As Double)
   Dim s1 As Shape
 ' Set s1 = ActiveLayer.CreateParagraphText(0, 0, 100, 150, Str, Font:="华文中宋")
   X = ssr.FirstShape.LeftX - 100
-  Y = ssr.FirstShape.TopY
+  Y = ssr.FirstShape.topY
   Set s1 = ActiveLayer.CreateParagraphText(X, Y, X + 90, Y - 150, str, Font:="华文中宋")
 
   API.EndOpt
@@ -1177,7 +1090,7 @@ Private Function Subtotals(str As String) As String
   str = "   规   格" & vbTab & vbTab & vbTab & "数量" & vbNewLine
 
   a = d.keys: b = d.items
-  For i = 0 To d.Count - 1
+  For i = 0 To d.count - 1
     ' Debug.Print a(i), b(i)
     str = str & a(i) & vbTab & vbTab & b(i) & "条" & vbNewLine
   Next

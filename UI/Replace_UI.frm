@@ -12,9 +12,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
-
 #If VBA7 Then
     Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
@@ -38,6 +35,7 @@ Private Const WS_EX_DLGMODALFRAME = &H1&
 Private Sub Close_Icon_Click()
   Unload Me    '// 关闭
 End Sub
+
 
 Private Sub UserForm_Initialize()
   Dim IStyle As Long
@@ -138,56 +136,106 @@ Private Sub copy_shape_replace_resize()
   On Error GoTo ErrorHandler
   API.BeginOpt
 
-  ActiveDocument.ReferencePoint = cdrCenter
-  Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
-  Set shs = ActiveSelection.Shapes
-  cnt = 0
-  For Each sh In shs
-    If cnt = 0 Then
-      Set sc = ActiveDocument.ActiveLayer.Paste
-      cnt = 1
-    Else
-      sc.Duplicate 0, 0
-    End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
-    
-    sh.GetSize X, Y
-    sc.SetSize X, Y
-    sh.Delete
-    
-  Next sh
+  Set sr = ActiveSelectionRange
+  
+  If OptBt.value = True Then
+    If Select_A_Shape = True Then Set sc = ActiveSelectionRange(1)
+    OptBt.value = False
+  Else
+    Set sc = ActiveLayer.Paste
+    ActiveDocument.ClearSelection
+  End If
 
+  For Each s In sr.ReverseRange
+    vsh_SizeReplace sc, s
+  Next s
+  sc.Delete
+  
 ErrorHandler:
-'// MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
   API.EndOpt
 End Sub
-
 
 Private Sub copy_shape_replace()
   On Error GoTo ErrorHandler
   API.BeginOpt
 
-  ActiveDocument.ReferencePoint = cdrCenter
-  Dim sh As Shape, shs As Shapes, cs As Shape
-  Dim X As Double, Y As Double
-  Set shs = ActiveSelection.Shapes
-  cnt = 0
-  For Each sh In shs
-    If cnt = 0 Then
-      Set sc = ActiveDocument.ActiveLayer.Paste
-      cnt = 1
-    Else
-      sc.Duplicate 0, 0
-    End If
-    sh.GetPosition X, Y
-    sc.SetPosition X, Y
-    sh.Delete
-  Next sh
-
+  Set sr = ActiveSelectionRange
+  
+  If OptBt.value = True Then
+    If Select_A_Shape = True Then Set sc = ActiveSelectionRange(1)
+    OptBt.value = False
+  Else
+    Set sc = ActiveLayer.Paste
+    ActiveDocument.ClearSelection
+  End If
+  
+  For Each s In sr.ReverseRange
+    vsh_Replace sc, s
+  Next s
+  sc.Delete
+  
 ErrorHandler:
-'// MsgBox "请先复制Ctrl+C，然后选择要替换的物件运行本工具!"
   API.EndOpt
 End Sub
 
+'// 使用虚拟形状替换: 目标 dst 替换成 源物件src
+Private Function vsh_Replace(src, dst)
+  Dim X As Double, Y As Double
+  Dim vsh As Shape
+  
+  ' 获取 目标dst 形状的中心位置
+  dst.GetPositionEx cdrCenter, X, Y
+  
+  ' 创建 源物件src 虚拟副本，并将其定位到目标dst的中心位置
+  Set vsh = src.TreeNode.GetCopy().VirtualShape
+  vsh.SetPositionEx cdrCenter, X, Y
+  
+  ' 用虚拟形状替换第二个形状
+  dst.ReplaceWith vsh
+End Function
+
+'// 使用虚拟形状替换: 目标 dst 替换成 源物件src ，并且尺寸相同
+Private Function vsh_SizeReplace(src, dst)
+  Dim X As Double, Y As Double
+  Dim vsh As Shape
+  
+  ' 创建 源物件src 虚拟副本，并将其定位到目标dst的中心位置
+  Set vsh = src.TreeNode.GetCopy().VirtualShape
+  
+  ' 尺寸相同，中心点相同
+  dst.GetSize X, Y: vsh.SetSize X, Y
+  dst.GetPositionEx cdrCenter, X, Y
+  vsh.SetPositionEx cdrCenter, X, Y
+  
+  ' 用虚拟形状替换第二个形状
+  dst.ReplaceWith vsh
+End Function
+
+' 选择一个物件对象
+Private Function Select_A_Shape() As Boolean
+    Dim X As Double, Y As Double
+    Dim Shift As Long
+    Dim b As Boolean
+    Dim sel As Shape
+
+    b = False ' 初始化布尔变量以控制循环
+
+    ' 等待用户点击以选择对象
+    While Not b
+        b = ActiveDocument.GetUserClick(X, Y, Shift, 10, False, cdrCursorWeldSingle)
+
+        If Not b Then
+            ' 获取点击位置的对象
+            Set sel = ActiveDocument.ActivePage.SelectShapesAtPoint(X, Y, False)
+
+            ' 检查是否找到对象
+            If Not sel Is Nothing Then
+                Select_A_Shape = True ' 返回成功状态
+                Exit Function
+            Else
+                MsgBox "未找到对象，请在对象上点击。"
+            End If
+        End If
+    Wend
+    Select_A_Shape = False ' 返回失败状态
+End Function

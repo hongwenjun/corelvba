@@ -66,7 +66,7 @@ Private Function ShapeRange_To_Sort_Array(ByRef sr As ShapeRange, ByRef Sort_By 
   Dim sp As ShapeProperties
   Dim size As Long, ret As Long
   Dim s As Shape
-  size = sr.Count
+  size = sr.count
   
   Dim sr_Array() As ShapeProperties
   Dim ret_Array() As Long
@@ -77,7 +77,7 @@ Private Function ShapeRange_To_Sort_Array(ByRef sr As ShapeRange, ByRef Sort_By 
     sp.Item = sr.IndexOf(s)
     sp.StaticID = s.StaticID
     sp.lx = s.LeftX: sp.rx = s.RightX
-    sp.by = s.BottomY: sp.ty = s.TopY
+    sp.by = s.BottomY: sp.ty = s.topY
     sp.cx = s.CenterX: sp.cy = s.CenterY
     sp.sw = s.SizeWidth: sp.sh = s.SizeHeight
     sr_Array(sp.Item) = sp

@@ -34,7 +34,7 @@ Public Function Arrange()
   Dim s1 As Shape
   Dim X As Double, Y As Double
   
-  If 0 = ActiveSelectionRange.Count Then
+  If 0 = ActiveSelectionRange.count Then
     X = Val(arr(0)):    Y = Val(arr(1))
     row = Int(ActiveDocument.Pages.First.SizeWidth / X)
     List = Int(ActiveDocument.Pages.First.SizeHeight / Y)
@@ -57,7 +57,7 @@ Public Function Arrange()
       ArrowHeads(0), cdrFalse, cdrFalse, cdrOutlineButtLineCaps, cdrOutlineMiterLineJoin, 0#, 100, MiterLimit:=5#
 
   '// 如果当前选择物件，按当前物件拼版
-  ElseIf 0 < ActiveSelectionRange.Count Then
+  ElseIf 0 < ActiveSelectionRange.count Then
     Set s1 = ActiveSelection
     X = s1.SizeWidth:    Y = s1.SizeHeight
     row = Int(ActiveDocument.Pages.First.SizeWidth / X)

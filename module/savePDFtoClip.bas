@@ -1,15 +1,14 @@
 Attribute VB_Name = "savePDFtoClip"
 #If VBA7 Then
-  Private Declare PtrSafe Function vbadll Lib "lycpg64.cpg" (ByVal code As Long, ByVal x As Double) As Long
+  Private Declare PtrSafe Function vbadll Lib "lycpg64.cpg" (ByVal code As Long, ByVal X As Double) As Long
 #Else
   Private Declare Function vbadll Lib "lycpg32.cpg" (ByVal code As Long, ByVal x As Double) As Long
 #End If
 
 Sub CorelDRAW_CopyPDF()
 '//  savePDFtoClip.CdrCopyToAI
-'// VBA调用CPG_CDR复制物件到AI()
+'// VBA调用CPG_CDR复制物件到AI
  ret = vbadll(2, 0)
- 
 End Sub
 
 Sub CorelDRAW_PastePDF()
@@ -17,6 +16,7 @@ Sub CorelDRAW_PastePDF()
 '// AI复制物件到CDR()
  ret = vbadll(1, 0)
 End Sub
+
 
 Private Function GetTempFile(ByVal sExtension As String) As String
     GetTempFile = CorelScriptTools.GetTempFolder() & "CDR2AI" & "." & sExtension
@@ -73,25 +73,20 @@ Public Function AICopyToCdr()
   sTempFilePDF = GetTempFile("pdf")
   '// 调用 clip2pdf.exe 把读取剪贴板保存成PDF
   cmd_line = "C:\TSP\clip2pdf.exe  " & sTempFilePDF
-
+  
   Dim ret As Long
   ret = Shell(cmd_line, vbHide)
   
-  '// 暂停 1 秒 让Shell 调用exe程序完成结果
+  '// 暂停 1/2 秒 让Shell 调用exe程序完成结果
   Dim startTime As Variant
   startTime = Now
-  Do While (Now - startTime) < TimeSerial(0, 0, 1)
+  Do While (Now - startTime) < TimeSerial(0, 0, 1) / 2#
     DoEvents
   Loop
-
-Dim impopt As StructImportOptions
-Set impopt = CreateStructImportOptions
-impopt.MaintainLayers = True
-
-Dim impflt As ImportFilter
-Set impflt = ActiveLayer.ImportEx(sTempFilePDF, cdrAI9, impopt)
-impflt.Finish
-
+  
+  Dim impflt As ImportFilter
+  Set impflt = ActiveLayer.ImportEx(sTempFilePDF, cdrPDF)
+  impflt.Finish
+  
 ErrorHandler:
 End Function
-

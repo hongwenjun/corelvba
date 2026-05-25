@@ -101,18 +101,18 @@ Private Sub Dimension_width_and_height()
     Optimization = True '优化启动
     For Each s In ActiveSelection.Shapes
         If CheckBox1 Then
-            Set st1 = ActiveLayer.CreateArtisticText(s.LeftX, s.TopY + 4, Round(s.SizeWidth, 0) & "mm", , , "微软雅黑", TextBox1.value, , , , cdrCenterAlignment)
+            Set st1 = ActiveLayer.CreateArtisticText(s.LeftX, s.topY + 4, Round(s.SizeWidth, 0) & "mm", , , "微软雅黑", TextBox1.value, , , , cdrCenterAlignment)
                 st1.text.Story.CharSpacing = 0 '字符间距
                 st1.Fill.UniformColor.RGBAssign 40, 170, 20 ' 填充颜色
                 st1.Move s.SizeWidth / 2, 0
                 st1.name = "Text" ' 设置名
-            Set sox = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY + 3, s.RightX, s.TopY + 3)
+            Set sox = ActiveLayer.CreateLineSegment(s.LeftX, s.topY + 3, s.RightX, s.topY + 3)
                 sox.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 sox.name = "line"
-            Set sox1 = ActiveLayer.CreateLineSegment(s.LeftX, s.TopY + 1, s.LeftX, s.TopY + 3)
+            Set sox1 = ActiveLayer.CreateLineSegment(s.LeftX, s.topY + 1, s.LeftX, s.topY + 3)
                 sox1.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 sox1.name = "line"
-            Set sox2 = ActiveLayer.CreateLineSegment(s.RightX, s.TopY + 1, s.RightX, s.TopY + 3)
+            Set sox2 = ActiveLayer.CreateLineSegment(s.RightX, s.topY + 1, s.RightX, s.topY + 3)
                 sox2.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 sox2.name = "line"
             s.CreateSelection
@@ -124,13 +124,13 @@ Private Sub Dimension_width_and_height()
             st2.Rotate 90
             st2.Move -st2.SizeWidth / 2, s.SizeHeight / 2
             st2.name = "Text" ' 设置名
-            Set soy = ActiveLayer.CreateLineSegment(s.LeftX - 3, s.BottomY, s.LeftX - 3, s.TopY)
+            Set soy = ActiveLayer.CreateLineSegment(s.LeftX - 3, s.BottomY, s.LeftX - 3, s.topY)
                 soy.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 soy.name = "line"
             Set soy1 = ActiveLayer.CreateLineSegment(s.LeftX - 1, s.BottomY, s.LeftX - 3, s.BottomY)
                 soy1.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 soy1.name = "line"
-            Set soy2 = ActiveLayer.CreateLineSegment(s.LeftX - 1, s.TopY, s.LeftX - 3, s.TopY)
+            Set soy2 = ActiveLayer.CreateLineSegment(s.LeftX - 1, s.topY, s.LeftX - 3, s.topY)
                 soy2.Outline.Color.RGBAssign 40, 170, 20 ' 填充颜色
                 soy2.name = "line"
             s.CreateSelection
@@ -238,7 +238,7 @@ Private Sub Select_Font_Size()
 End Sub
 
 Private Sub Delete_callout()
-    If ActiveSelection.Shapes.Count > 0 Then
+    If ActiveSelection.Shapes.count > 0 Then
         ActiveSelection.Shapes.FindShapes(Query:="@type ='text:artistic' and @Name='Text' ").Delete
         ActiveSelection.Shapes.FindShapes(Query:="@Name='line' ").Delete
     Else

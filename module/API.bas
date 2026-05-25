@@ -1,9 +1,7 @@
 Attribute VB_Name = "API"
 '// This is free and unencumbered software released into the public domain.
 '// For more information, please refer to  https://github.com/hongwenjun
-
 '// Attribute VB_Name = "CorelVBA工具窗口启动"   CorelVBA Tool Window Launches  2023.6.11
-
 
 '// CorelDRAW 窗口刷新优化和关闭
 Public Function BeginOpt(Optional ByVal name As String = "Undo")
@@ -25,6 +23,7 @@ Public Function EndOpt()
   Application.Refresh
   ActiveDocument.EndCommandGroup
 End Function
+
 
 Public Function Speak_Msg(message As String)
   Speak_Help = Val(GetSetting("LYVBA", "Settings", "SpeakHelp", "0"))     '// 关停语音功能
@@ -225,7 +224,7 @@ Public Function FindAllShapes() As ShapeRange
   Dim srPowerClipped As New ShapeRange
   Dim sr As ShapeRange, srAll As New ShapeRange
   
-  If ActiveSelection.Shapes.Count > 0 Then
+  If ActiveSelection.Shapes.count > 0 Then
     Set sr = ActiveSelection.Shapes.FindShapes()
   Else
     Set sr = ActivePage.Shapes.FindShapes()
@@ -239,7 +238,7 @@ Public Function FindAllShapes() As ShapeRange
     sr.RemoveAll
     sr.AddRange srPowerClipped
     srPowerClipped.RemoveAll
-  Loop Until sr.Count = 0
+  Loop Until sr.count = 0
   
   Set FindAllShapes = srAll
 End Function

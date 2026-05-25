@@ -49,4 +49,3 @@ Private Function refresh_Icon()
     .Controls.Item(4).SetIcon2 ("guid://1a0b1202-d0ef-4fe7-8a95-ac7617b30703")
   End With
 End Function
-

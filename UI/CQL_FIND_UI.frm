@@ -260,6 +260,7 @@ Private Sub CQLSameUniformColor()
   Else
     ActivePage.Shapes.FindShapes(Query:="@fill.color.rgb[.r='" & r & "' And .g='" & G & "' And .b='" & b & "']").CreateSelection
   End If
+  
   Exit Sub
 err:
   MsgBox "对象填充为空。"

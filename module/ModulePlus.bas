@@ -37,7 +37,7 @@ Public Function Nodes_Reduce()
   ps = Array(1)
   doc.Unit = cdrTenthMicron
   Set os = ActivePage.Shapes
-  If os.Count > 0 Then
+  If os.count > 0 Then
     For Each s In os
     s.ConvertToCurves
       If Not s.DisplayCurve Is Nothing Then
@@ -77,7 +77,7 @@ Public Function Dimension_Select_or_Delete(Shift As Long)
       If s.Type = cdrLinearDimensionShape Then sr.Add s
     Next s
     sr.Delete
-    If os.Count > 0 Then
+    If os.count > 0 Then
       os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
       ActiveSelectionRange.Delete
     End If
@@ -98,7 +98,7 @@ Public Function Untie_MarkLines()
         dss.Add s
       End If
   Next s
-  If dss.Count > 0 Then
+  If dss.count > 0 Then
     dss.BreakApartEx
     os.Shapes.FindShapes(Query:="@name ='DMKLine'").CreateSelection
     ActiveSelectionRange.Delete
@@ -107,3 +107,21 @@ Public Function Untie_MarkLines()
 ErrorHandler:
   API.EndOpt
 End Function
+
+'// 函数：判断 ShapeRange 中的所有物件尺寸是否相同
+Function IsAllSameSize(sr As ShapeRange) As Boolean
+    Dim s As Shape
+    Dim tol As Double
+    tol = 0.01
+ 
+    For Each s In sr
+        If Abs(s.SizeWidth - sr.FirstShape.SizeWidth) > tol Or _
+           Abs(s.SizeHeight - sr.FirstShape.SizeHeight) > tol Then
+            IsAllSameSize = False
+            Exit Function
+        End If
+    Next s
+
+    IsAllSameSize = True
+End Function
+

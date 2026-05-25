@@ -23,10 +23,16 @@ Sub Start_CutLines()
   CutLines.Draw_Lines  '// 调用角线
 End Sub
 
-Sub AIClipboard_CopyAIFormat()
-   value = GMSManager.RunMacro("AIClipboard", "CopyPaste.CopyAIFormat")
+Sub Start_UniteOne()
+  '// 开始拼版
+   UniteOne.Show 0
 End Sub
 
-Sub AIClipboard_PasteAIFormat()
-   value = GMSManager.RunMacro("AIClipboard", "CopyPaste.PasteAIFormat")
+
+Sub Start_ContainerSelect()
+  ContainerForm.Show 0
+End Sub
+
+Sub Start_CardsTools()
+    CardsToolsForm.Show 0
 End Sub
